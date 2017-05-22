@@ -1,0 +1,160 @@
+\chapter{Umělá inteligence [UISZ]}
+
+\section{Učící se systémy a klasifikátory [USK]}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{p{4cm} p{12cm}}
+\textit{vyučující:}             & Prof. Ing. Josef Psutka, CSc. \\
+\textit{ročník/semestr studia:} & 3.ročník/LS \\
+\textit{datum zkoušky:}         & X. 4. 2014 \\
+\textit{hodnocení:}             & 1 \\
+\textit{cíl předmětu (STAG):}   & \\
+\multicolumn{2}{p{16cm}}{Cílem předmětu je seznámit studenty se základními metodami klasifikace předmětů a jevů, které jsou reprezentovány svými obrazy (vektory příznaků). Výuka bude zaměřena na klasifikátory, které jsou trénovány s podporou učitele (supervised) anebo bez učitele (unsupervised).}
+\end{tabular}
+\end{table}
+
+\subsection{Kritérium minimální chyby.}
+Často nejsme schopni posoudit jednoznačně, do které třídy vektor příznaků $ X $ patří. Cílem je potom nastavit klasifikátor tak, aby ztráty způsobené chybným rozhodnutím byly minimální.
+
+\begin{definition}
+Ztráta, která vznikne, jestliže obraz náležející do třídy $ \omega_s $ zařadí klasifikátor do třídy $ \omega_r $: $ l(\omega_r | \omega_s) $
+\end{definition}
+
+\begin{itemize}
+\item předp., že obrazový prostor $ X $ obsahuje obrazy z $ R $ tříd: $ \omega_1, ..., \omega_R $
+\item apriorní ppsti výskytu obrazů náležejících ke třídě $ \omega_r => p(\omega_r), \qquad r = 1,...,R $
+\item podmíněná hustota ppsti obrazu $ x $ ze třídy $ \omega_r $ je $ p(x | \omega_r), \qquad r = 1,...,R $
+\item nechť je dána matice ztrátových funkcí:
+\begin{equation}
+l = \begin{bmatrix} l(\omega_1 | \omega_1) & \dots & l(\omega_1 | \omega_R) \\  
+\vdots & \ddots & \vdots \\
+l(\omega_R | \omega_1) & \dots & l(\omega_R | \omega_R) \end{bmatrix}
+\end{equation}
+\end{itemize}
+
+Předpokládejme, že na vstup klasifikátoru přicházejí $ x $ pouze z $ \omega_s $ a klasifikátor je bude zařazovat do $ \omega_r $ podle diskriminační funkce $ \omega_r = d (x, q) $.
+
+\begin{definition}
+Podmíněná střední ztráta (střední ztráta podmíněná výběrem obrazů výlučně ze třídy $ \omega_s $:
+\begin{equation}
+J(q | \omega_s) = \displaystyle{\int_X} l[d(x,q) | \omega_s] \cdot p(x | \omega_s) \, dx
+\end{equation}
+\end{definition}
+
+Protože jednotlivé třídy $ \omega_s $ se vyskytují s ppstí $ p(\omega_s) $, bude celková střední ztráta:
+
+\begin{equation}
+J(q) = \displaystyle{\sum_{s=1}^R} J(q | \omega_s) \cdot p(\omega_s) = \displaystyle{\int_X \sum_{s=1}^R} l[d(x,q) | \omega_s] \cdot p(x | \omega_s) \cdot p(\omega_s) \, dx
+\end{equation}
+
+Hledáme $ q^* $, které minimalizuje $ J(q) $:
+\begin{align}
+\begin{split}
+J(q^*) &= \underset{q}{\mathrm{min}} \, J(q) = \displaystyle{\int_X} \underset{q}{\mathrm{min}} \displaystyle{\sum_{s=1}^R} l[d(x,q) | \omega_s] \cdot p(x | \omega_s) \cdot p(\omega_s) \, dx = \\ &= \displaystyle{\int_X} \underset{r}{\mathrm{min}} \displaystyle{\sum_{r=1}^R} l(\omega_r | \omega_s) \cdot p(x | \omega_s) \cdot p(\omega_s) \, dx = \displaystyle{\int_X} \underset{r}{\mathrm{min}} \, L_x(\omega_r) \, dx
+\end{split}
+\end{align}
+
+Místo minima $ J(q) $ hledáme minimum $ L_x (\omega_r) = \displaystyle{\sum_{r=1}^R} l(\omega_r | \omega_s) \cdot p(x | \omega_s) \cdot p(\omega_s), \qquad r = 1,...,R $.
+
+Při klasifikaci podle funkce $ L_x (\omega_r) $ by se postupovalo tak, že pro daný $ x $ by se vyčíslily všechny $ L_x(\omega_r), r = 1,...,R $ a obraz $ x $ by se přiřadil do té třídy $ \omega_s $, pro kterou by byla ztráta minimální. Je zřejmé, že různou volbou ztrátové funkce $ l(\omega_r | \omega_s) $ dostáváme různý tvar rozhodovacího pravidla. Předpokládejme, že ztrátová funkce je zvolena tak, že při správném rozhodnutí přiřadí ztrátu $ 0 $ a při jakémkoliv špatném rozhodnutí ztrátu $ 1 $ (penalta $ 0/1 $).
+
+\begin{equation}
+l(\omega_r | \omega_s) = 1 - \delta_{rs}, \qquad \delta_{rs} = \begin{cases} 1 & r=s \\ 0 & r \neq s \end{cases}
+\end{equation}
+
+Po dosazení:
+\begin{align}
+\begin{split}
+L_x(\omega_r) &= \displaystyle{\sum_{s=1}^R} (1-\delta_{rs}) p(x|\omega_s) \cdot p(\omega_s) = \displaystyle{\sum_{s=1}^R} p(x|\omega_s) \cdot p(\omega_s) - \displaystyle{\sum_{s=1}^R} \delta_{rs} \, p(x|\omega_s) \cdot p(\omega_s) \\ &= \displaystyle{\sum_{s=1}^R} \, \left[p(x|\omega_s) \cdot p(\omega_s)\right] - p(x|\omega_r) \cdot p(\omega_r)
+\end{split}
+\end{align}
+Platí známý Bayesův vztah:
+\begin{align}
+\Aboxed{p(\omega_s|x) = \frac{p(x|\omega_s) \cdot p(\omega_s)}{p(x)}} \qquad ,
+\end{align}
+kde $ p(\omega_s|x) $ je aposteriorní pravděpodobnost, která vyjadřuje ppst třídy $ \omega_s $ za předpokladu, že je na vstupu klasifikátoru obraz $ x $.
+
+\begin{description}[leftmargin=!, labelwidth=\widthof{$ p(x|\omega_s) $}]
+\item[$ p(x|\omega_s) $] ... ppst $ x $ za předpokladu, že patří do $ \omega_s $
+\item[$ p(\omega_s) $] ... apriorní ppst třídy $ \omega_s $
+\item[$ p(x) $] ... ppst obrazu $ x $ (celková hustota funkce do obrazového prostoru) 
+\end{description}
+
+\begin{equation}
+\displaystyle{\sum_{s=1}^R} p(\omega_s|x) \overset{!}{=} 1 = \displaystyle{\sum_{s=1}^R} \frac{p(x|\omega_s) \cdot p(\omega_s)}{p(x)} => p(x) = \displaystyle{\sum_{s=1}^R} p(x|\omega_s) \cdot p(\omega_s)
+\end{equation}
+
+Dosadíme: $ L_x(\omega_r) = p(x) - p(x|\omega_r) \cdot p(\omega_r) $. Hodnota $ p(x) $ je pro všechny třídy konstantní a jedná se v podstatě o aditivní konstantu, takže lze definovat novou funkci $ L'_x(\omega_r) = p(x|\omega_r) \cdot p(\omega_r) $. Klasifikace zde probíhá tak, že se hledá takové zařazení $ \omega_s $, pro které je $ L'_x(\omega_r) $ maximální:
+
+\begin{equation}
+\omega_r^* = \underset{r}{\mathrm{argmax}} \, p(x|\omega_r) \cdot p(\omega_r), \qquad r=1,...,R
+\end{equation}
+
+\subsection{Pravděpodobnostní diskriminační funkce. Souvislost s klasifikátory podle lineární diskriminační funkce, podle nejmenší vzdálenosti, podle nejbližšího souseda a podle k-nejbližšího souseda.}
+Kritérium minimální chyby se často označuje jako Bayesovo kritérium. Klasifikaci lze zajistit s využitím diskriminačních funkcí:
+
+\begin{equation}
+g_r'(x) = p(x|\omega_r) \cdot p(\omega_r), \qquad r=1,...,R
+\end{equation}
+
+\subsection{Klasifikátor s lineární diskriminační funkcí. Klasifikace do dvou a do více tříd.}
+
+\subsection{Metody nastavování klasifikátorů (trénování klasifikátorů).}
+
+\subsection{Metody shlukové analýzy (učení bez učitele).}
+
+\subsection{Výběr informativních příznaků.}
+
+\section{Neuronové sítě [NEU]}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{p{4cm} p{12cm}}
+\textit{vyučující:}             & Doc. Dr. Ing. Vlasta Radová \\
+\textit{ročník/semestr studia:} & 5.ročník/ZS \\
+\textit{datum zkoušky:}         & 5. 1. 2017 \\
+\textit{hodnocení:}             & 1 \\
+\textit{cíl předmětu (STAG):}   & \\
+\multicolumn{2}{p{16cm}}{Cílem předmětu je seznámit studenty se základními typy umělých neuronových sítí a s možnostmi jejich využití.}
+\end{tabular}
+\end{table}
+
+\subsection{Základní umělé modely neuronu, vlastnosti, souvislost s biologickým neuronem.}
+
+\subsection{Základní typy neuronových sítí. Způsoby činnosti a učení neuronových sítí.}
+
+\subsection{Algoritmus backpropagation.}
+
+\subsection{Sítě se zpětnou vazbou. Hopfieldova neuronová síť.}
+
+\subsection{Samoorganizující se sítě.}
+
+\subsection{Oblasti použití neuronových sítí.}
+
+\section{Zpracování digitalizovaného obrazu [ZDO]}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{p{4cm} p{12cm}}
+\textit{vyučující:}             & Doc. Ing. Miloš Železný Ph.D. \\
+								 & Ing. Petr Neduchal \\
+\textit{ročník/semestr studia:} & 4.ročník/LS \\
+\textit{datum zkoušky:}         & 13. 7. 2015 \\
+\textit{hodnocení:}             & 1 \\
+\textit{cíl předmětu (STAG):}   & \\
+\multicolumn{2}{p{16cm}}{Porozumět principům zpracování digitalizovaného obrazu a počítačového vidění. Analyzovat vlastnosti obrazové informace a interpretovat tyto informace, navrhnout a vytvořit algoritmus pro zpracování obrazové informace s cílem rozpoznání objektů, jevů či vlastností scény v obraze obsažené.}
+\end{tabular}
+\end{table}
+
+\subsection{Bodové jasové transformace.}
+
+\subsection{Geometrické transformace.}
+
+\subsection{Filtrace šumu.}
+
+\subsection{Gradientní operátory.}
+
+\subsection{Metody segmentace.}
+
+\subsection{Matematická morfologie.}
