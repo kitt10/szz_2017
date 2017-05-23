@@ -98,7 +98,111 @@ Kritérium minimální chyby se často označuje jako Bayesovo kritérium. Klasi
 g_r'(x) = p(x|\omega_r) \cdot p(\omega_r), \qquad r=1,...,R
 \end{equation}
 
+Klasifikátor pracující podle Bayesova kritéria se nazývá Bayesův klasifikátor. Pro jeho konstrukci je třeba znát hodnoty apriorní pravděpodobnosti a hustoty pravděpodobnosti pro každou třídu. Rozhodnutí, do které třídy neznámý obraz $ x $ patří, se provede podle hodnoty $ g_r'(x) $ výběrem maxima.
+
+Velmi často se místo diskriminační funkce $ g_r'(x) $ používá její přirozený logaritmus:
+
+\begin{equation}
+g_r(x) = ln \, g_r'(x) = ln \, p(x|\omega_r) + ln \, p(\omega_r), \qquad r=1,...,R
+\end{equation}
+
+Např. pro $ R = 3 $ a jednosložkový vektor $ x $:
+
+\vspace{3cm}
+
+Předpokládejme, že obrazy v jednotlivých třídách vyhovují normálnímu rozložení (velmi častý případ). Pro obrazy v r-té třídě nechť platí:
+\begin{align}
+\Aboxed{p(x|\omega_r) = \frac{1}{(2\pi)^{\frac{n}{2}} \cdot \sqrt{det \, C_r}} \cdot e^{-\frac{1}{2} \cdot (x-\mu_r)^T \cdot C_r^{-1} \cdot (x-\mu_r)}}
+\end{align}
+
+\begin{description}
+\item[$ \mu_r = E\{x\}_{x \in \omega_r} $] ... vektor středních hodnot obrazů r-té třídy
+\item[$ C_r = E\{(x-\mu_r) \cdot (x-\mu_r)^T\}_{x \in \omega_r} $] ... kovarianční matice r-té třídy
+\end{description}
+
+Dosadíme do diskriminační funkce:
+\begin{equation}
+g_r(x) = ln \, p(x|\omega_r) + ln \, p(\omega_r) = - \frac{n}{2} \, ln \, 2\pi - \frac{1}{2} \, ln(det \, C_r) -\frac{1}{2} \cdot (x-\mu_r)^T \cdot C_r^{-1} \cdot (x-\mu_r) + ln \, p(\omega_r)
+\end{equation}
+
+Podle tvarů kovariančních matic $ C_r $, hodnot $ \mu_r $ a $ p(\omega_r) $ dostáváme typické tvary diskriminačních funkcí.
+
+\begin{enumerate}
+\item \textbf{Obecné kovarianční matice $ C_r, r=1,...,R $}
+
+Hyperplochy konstantních hodnot diskriminačních funkcí $ g_r(x) $ jsou n-dimenzionální hyperelipsoidy (různě natočené a různě velké). Rozdělující hyperplocha mezi třídou $ \omega_r $ a $ \omega_s $, tj. plocha, která je geometrickým místem shodných hodnot diskriminačních funkcí $ g_r(x) $ a $ g_s(x) $.
+\begin{align}
+\begin{split}
+\varphi_{rs}(x) &= g_r(x) - g_s(x) \overset{!}{=} 0 \\
+&= -\frac{1}{2} \, ln\left[\frac{det \, C_s}{det \, C_r}\right] + ln\left[\frac{p(\omega_r)}{p(\omega_s)}\right] -\frac{1}{2} \cdot (x-\mu_r)^T \cdot C_r^{-1} \cdot (x-\mu_r) + \frac{1}{2} \cdot (x-\mu_s)^T \cdot C_s^{-1} \cdot (x-\mu_s)
+\end{split}
+\end{align}
+Rozdělující hyperplochy mohou být podle tvaru $ C_r $ a $ C_s $ např. n-dimenzionální hyperroviny, hyperelipsoidy, hyperparaboloidy apod.
+
+\item \textbf{Všechny třídy mají stejnou kovarianční matici $ C_r = C, \forall r=1,...,R $}
+
+Shluky vzorků všech tříd vytvářejí stejně orientované a velké n-dimenzionální elipsoidy.
+\begin{equation}
+g_r(x) = -\frac{1}{2} x^T C_r^{-1} x + \mu_r^T C_r^{-1} x - \frac{1}{2} \mu_r^T C_r^{-1} \mu_r + ln \, p(\omega_r) - \frac{n}{2} \, ln \, 2\pi - \frac{1}{2} \, ln(det \, C)  
+\end{equation}
+Plochy konstantních velikostí diskriminačních funkcí jsou n-rozměrné elipsoidy, které mají stejný tvar a jsou stejně orientovány. Rozdělující plochu $ \varphi_{rs}(x) $ mezi třídami $ \omega_r $ a $ \omega_s $ lze vyjádřit:
+\begin{align}
+\begin{split}
+\varphi_{rs}(x) &= (\mu_r - \mu_s)^T C^{-1} x - \frac{1}{2} \mu_r^T C^{-1} \mu_r + \frac{1}{2} \mu_s^T C^{-1} \mu_s + ln \, p(\omega_r) - ln \, p(\omega_s) = \\
+&= \varphi_{rsn} x_n + \dots + \varphi_{rs1} x_1 + \varphi_{rs0} = \varphi_{rs}^T x + \varphi_{rs0}
+\end{split}
+\end{align}
+Rozdělující plocha mezi třídami $ \omega_r $ a $ \omega_s $ je n-dimenzionální \textit{rovina}. Jedná se tedy o n-dimenzionální \textit{lineární diskriminační funkci}.
+
+\item \textbf{Všechny třídy mají stejnou diagonální kov. matici $ C_r = C = \delta^2 I, r=1,...,R $}
+
+Předpokladem je, že obrazy každé třídy mají statisticky nezávislé příznaky a každý příznak má stejnou varianci $ \delta^2 $. Geometricky to odpovídá situaci, kdy vzorky každé třídy vytváří shluky tvaru n-dimenzionálních koulí centrovaných kolem příslušné střední hodnoty. Potom $ det \, C = \delta^{2n} $ a $ C^{-1} = \frac{1}{\delta^2} I $. Předpokládejme, že všechny třídy jsou stejně pravděpodobné, tj. $ p(\omega_r) = p(\omega), \forall r=1,...,R $. Potom:
+\begin{equation}
+g_r(x) = - \frac{1}{2\delta^2} || x-\mu_r ||^2 + ln \, p(\omega) -\frac{n}{2} \, ln \, 2\pi - \frac{1}{2} \, ln(\delta^{2n}) = -k_1 \cdot || x-\mu_r ||^2 + k_2
+\end{equation}
+Konstanty $ k_1 > 0 $ a $ k_2 $ jsou shodné pro všechny třídy a výraz $ || x-\mu_r ||^2 $ představuje kvadrát Euklidovské vzdálenosti mezi vektorem $ x $ a střední hodnotou $ \omega_r $. Klasifikátor zařadí neznámý obraz $ x $ do té třídy $ \omega_r $, pro kterou je $ g_r(x) $ maximální. Z výrazu pro $ g_r(x) $ vyplývá, že  $ g_r(x) $ bude tím větší, čím bude $ || x-\mu_r ||^2 $ menší ($ k_1 > 0 $). Jedná se tedy v podstatě o \textit{klasifikátor podle minimální vzdálenosti}.
+\end{enumerate}
+
+\subsubsection*{Klasifikace podle minimální vzdálenosti}
+Diskriminační funkce: $ g_r^*(x) = || x-\mu_r ||^2 $. Klasifikátor zařadí neznámý obraz $ x $ do té třídy, pro kterou bude $ g_r^*(x) $ minimální ($ \omega_r^* = \underset{r}{\mathrm{min}} \, d^2(x, \mu_r) $). Není to určitě nejlepší klasifikátor, ale je tu velká lákavost ho používat, protože stačí jediný obraz na třídu. Rozdělující nadrovina má tvar:
+\begin{align}
+\begin{split}
+\varphi_{rs}(x) &= -k1 \cdot || x-\mu_r ||^2 + k_2 - \left[-k_1 \cdot || x-\mu_s ||^2 + k_2 \right] = \\
+&= k_1 \cdot \left[x^Tx - 2\mu_sx + \mu_s^T\mu_s - x^Tx - 2\mu_rx + \mu_r^T\mu_r\right] \overset{!}{=} 0 \\
+&=> (\mu_r - \mu_s)^T x - \frac{1}{2}(\mu_r^T\mu_r - \mu_s^T\mu_s) = 0
+\end{split}
+\end{align}
+Rozdělující nadplochy mezi třídami jsou \textit{lineární}, jsou to n-dimenzionální roviny kolmé na úsečku $ \mu_r - \mu_s $, kterou půlí \footnote{Klasifikátor podle minimální vzdálenosti je ekvivalentní co do struktury lineárnímu klasifikátoru s $ R $ diskriminačními funkcemi, který může vytvořit až $ \frac{R (R-1)}{2} $ rozdělujících nadrovin. Má však obecně jiné parametry, tj. klasifikuje obecně jiným způsobem než lineární klasifikátor.}. Tento klasifikátor je velmi jednoduchý na implementaci - pro jeho nastavení stačí získat střední hodnoty každé třídy a pro neznámý obraz $ x $ ve fázi klasifikace vypočítat vzdálenost ke všem středním hodnotám (též nazýván \textit{klasifikátor se vzorovými etalony}. Pro svou jednoduchost je často nasazován i v případech, kdy není zabezpečena jeho optimální funkce podle kritéria minimální chyby (např. je málo početná trénovací množina nebo není znám typ rozložení nebo není známa disperzní matice ap.). To vede k negativním vlivům klasifikátoru:
+\begin{itemize}
+\item vzhledem k tomu, že využívá pouze střední hodnoty, nerespektuje tvar shluků jednotlivých tříd (pokud je odlišný od $ C_r = C = \delta^2 I $; tvar shluku koresponduje s tvarem disperzní matice).
+\item nerespektuje případné odlišné apriorní pravděpodobnosti jednotlivých tříd
+\end{itemize}
+Dobrých výsledků dosáhneme, když budou třídy dobře distribuované (střední hodnoty dostatečně vzdálené, shluky dostatečně kompaktní a jednotlivé třídy stejně pravděpodobné).
+
+\subsubsection*{Klasifikace podle nejbližšího souseda (Nearest Neighbour Classifier)}
+Uvedené nevýhody klasifikátoru podle minimální vzdálenosti lze zmírnit často tím, že využijeme více vzorových etalonů pro každou třídu. Zvolíme-li pro každou třídu $ \omega_r $ $ S_r $ vzorových etalonů: $ \mu_{r1}, \mu_{r2}, \dots, \mu_{rS_r} $ , pak klasifikace probíhá podle pravidla vyjádřeného vztahem:
+\begin{equation}
+\omega_r^* = \underset{s,r}{\mathrm{argmin}} \, ||x-\mu{rs}|| = \underset{s,r}{\mathrm{argmin}} \, d(x, \mu{rs})
+\end{equation}
+Obraz $ x $ se tedy zařadí do té třídy $ \omega_r $, jejíž některý etalon má mezi všemi ostatními etalony nejmenší vzdálenost od $ x $. Tento způsob klasifikace má tu výhodu, že při dostatečně rozsáhlé trénovací množině se tvar rozdělujících funkcí pro jednotlivé třídy "blíží" Bayesovskému klasifikátoru. Na druhou stranu to však znamená značné zvýšení výpočetních nároků (klasifikátor si musí neustále pamatovat celou množinu vzorových etalonů - celou trénovací množinu) a při klasifikaci musíme počítat vzdálenost neznámého obrazu $ x $ ke všem vzorům.
+
+\subsubsection*{Klasifikace podle k-nejbližšího souseda (k-Nearest Neighbour Classifier)}
+Lepších výsledků lze často dosáhnout využitím tzv. rozhodovacího pravidla, kdy nejprve vyčíslíme všechny vzdálenosti $ ||x - \mu_{rs}|| \forall r=1,...,R \forall s=1,...,S_r $ a pak je pro každou třídu $ \omega_r $ uspořádáme tak, aby pro nový soubor $ ||x - \mu_{r[s]}|| $ platilo:
+\begin{align*}
+||x - \mu_{r[1]}|| \leq ||x - \mu_{r[2]}|| \leq \dots \leq ||x - \mu_{r[S_r]}||
+\end{align*}
+Klasifikátor pak zařadí obraz $ x $ do třídy $ \omega_r^* $ podle minima průměrné vzdálenosti k-nejbližších sousedů:
+\begin{equation}
+\omega_r^* = \underset{r}{\mathrm{argmin}} \, \frac{1}{k} \displaystyle{\sum_{k=1}^k} ||x - \mu_{r[i]}||, \qquad r=1,...,R
+\end{equation}
+Nevýhody:
+\begin{itemize}
+\item musím si pamatovat všechny obrazy
+\item při každé klasifikaci náročné výpočty
+\end{itemize}
+
 \subsection{Klasifikátor s lineární diskriminační funkcí. Klasifikace do dvou a do více tříd.}
+fs
 
 \subsection{Metody nastavování klasifikátorů (trénování klasifikátorů).}
 
