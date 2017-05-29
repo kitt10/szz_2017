@@ -242,7 +242,140 @@ Pro $ \varphi_{rs}(x) > 0 $ je $ g_r(x) > g_s(x) $. Z toho vyplývá, že klasif
 \textit{Hodnocení:} Je zřejmé, že případ ad a) není vhodný k aplikování vzhledem k vytváření rozsáhlých oblastí, ve kterých nejsme schopni provést jednoznačné přiřazení. Rozhodnutí mezi případem ad b) a ad c) závisí do značné míry na intuici (zvláště v prostorech vyšší dimenze). Obecně lze říci, že případ ad b) vyžaduje určení $ \frac{R(R-1)}{2} $ diskriminačních funkcí $ \varphi_{rs}(x) $, kdežto případ ad c) požaduje nalezení pouze $ R $ diskriminačních funkcí $ g_r(x) $. Jestliže se však počet tříd $ R $ blíží dimenzi $ n $ obrazového prostoru nebo se očekává, že obrazy jednotlivých tříd jsou špatně distribuované, bude možná postup podle ad b) lepším řešením.
 
 \subsection{Metody nastavování klasifikátorů (trénování klasifikátorů).}
+\begin{enumerate}[label=(\alph*)]
+\item Známe-li celou trénovací množinu apriori, můžeme se pokusit o \textit{analytické řešení:}
+\begin{itemize}
+\item \textit{pravděpodobnostní diskriminační funkce}: je třeba určit a prokázat typ rozložení a hodnoty parametrů rozložení včetně apriorní pravděpodobnosti tříd
+\item \textit{klasifikátor dle minima vzdálenosti}: je třeba určit střední hodnotu obrazů v každé třídě
+\item \textit{klasifikátor podle nejbližšího či k-nejbližšího souseda}
+\end{itemize}
+Pro prostory vyšší dimenze nepoužitelné, navíc je třeba si pamatovat celou trénovací množinu. Dále není umožněno dotrénování klasifikátoru, pokud se objeví nové informace o trénovací množině. Častou chybou je nerespektování apriorních pravděpodobností tříd.
+\item Trénovací množinu neznáme apriori: \textit{metody učení}
+Učící se klasifikátor má dvě fáze:
+\begin{itemize}
+\item \textit{fáze učení}: postupně předkládány dvojice $ [x_k, \Omega_k] $ z trénovací množiny, nastavujeme parametry $ q $ tak, aby pro $ k \to \infty $ bude $ q \to q^* $ (optimální nastavení, minimální střední hodnota ztrát).
+\item \textit{fáze klasifikace}: využívá se zkušenosti nashromážděné v parametrech $ q $ k predikci neznámých obrazů. Klasifikátor se chová jako jednoúčelový automat.
+\end{itemize}
+Střední ztráta:
+\begin{equation}
+J(q) = \displaystyle{\int_{X \times O}} Q(x, \Omega, q) \, dF(x, \Omega) = \displaystyle{\sum_{r=1}^R} \, p(\omega_r) \displaystyle{\int_{X}} Q(x, \Omega, q) p(x|\omega_r) \, dx
+\end{equation}
+Úkolem je najít takové $ q^* $, které minimalizuje $ J(q) $.
+\begin{equation}
+\underset{q}{\mathrm{grad}} \, J(q^*) = \displaystyle{\int_{X \times O}} \underset{q}{\mathrm{grad}} \, Q(x, \Omega, q^*) \, dF(x, \Omega) \overset{!}{=} 0
+\end{equation}
+Běžně ovšem neznáme distribuční (ani hustotní) funkce, proto se obracíme na rekurentní algoritmy, které obcházejí přímé řešení rovnice. Existují dva přístupy:
+\begin{itemize}
+\item metody učení založené na odhadování hustot ppsti
+\item metody učení založené na přímé minimalizaci ztrát
+\end{itemize}
+\end{enumerate}
 
+\subsubsection*{Metody učení založené na odhadování hustot ppsti}
+Snaha stanovit distribuční funkci $ dF(x, \Omega) $ z trénovací množiny, poté se využije kritérium minimální chyby a dostáváme soustavu diskriminačních funkcí $ g_r(x) = p(x|\omega_r) \cdot p(\omega_r) $. Hledáme odhady $ \hat{p}(x|\omega_r) $ a $ \hat{p}(\omega_r) $. Žádané vlastnosti:
+\begin{itemize}
+\item \textit{nestrannost}: má zaručovat, že se odhad bude v průměru pohybovat kolem neznámé odhadované veličiny
+\item \textit{konzistence}: s rostoucím počtem obrazů trénovací množiny se odhad blíží stále více k odhadované veličině
+\item \textit{eficience}: eficientní odhad je odhad s nejmenší disperzí
+\end{itemize}
+
+Je-li trénovací množina vybrána nezávisle, lze odhad $ \hat{p}(\omega_r) $ apriorní ppsti určit podle:
+\begin{equation}
+\hat{p}(\omega_r) = \frac{K_r}{K}, \qquad r=1,...,R
+\end{equation}
+kde $ K_r $ je počet obrazů trénovací množiny, které patří do třídy $ \omega_r $ a $ K $ je celkový počet obrazů v trénovací množině. Podle velikosti apriorní informace o hledané hustotě rozdělujeme metody získávání odhadů hustotní funkce na \textit{parametrické} a \textit{neparametrické}.
+\begin{enumerate}
+\item \textit{Parametrické metody}: známe informaci o tvaru hustotní funkce $ p(x|\omega_r) $, ale neznáme parametry $ q $, který rozložení blíže popisuje (např. u Gausse: $ \mu_r $ a $ \delta_r $).
+\begin{itemize}
+\item \textit{Metoda momentů}
+
+Teoretické momenty náhodných veličin se porovnávají s výběrovými momenty do takového stupně $ l $, kolik je neznámých parametrů.
+
+výběrový průměr: $ \bar{x} = \frac{1}{K} \displaystyle{\sum_{k=1}^K x_k} $
+
+výběrový rozptyl: $ S = \frac{1}{K-1} \displaystyle{\sum_{k=1}^K (x_k-\bar{x})(x_k-\bar{x})^T} $
+
+$ l $-tý výběrový moment: $ M_l = \frac{1}{K} \displaystyle{\sum_{k=1}^K x_k^l} $
+\item \textit{Metoda nejlepších nestranných lineárních odhadů}
+
+Odhad parametrů $ q $ se uvažuje jako lineární funkce obrazů $ x_1, ..., x_K $: $ \hat{q} = c_1 x_1 + ... + c_K x_K $. Koeficienty $ c_k, k=1,...,K $ se určují z podmínek nestrannosti a minimální disperze odhadu $ \hat{q} $. Platí $ E \, \hat{q} = q $ a odhad $ \hat{q} $ parametru $ q $ je eficientní, jestliže minimalizuje stopu disperzní matice $ tr \, D \, \hat{q} $.
+
+\item \textit{Metoda maximální věrohodnosti}
+
+Metoda je založena na maximalizaci tzv. Fisherovy funkce věrohodnosti:
+\begin{equation}
+L(x_1, ..., x_K|q) = \displaystyle{\prod_{k=1}^K} p(x_k|q)
+\end{equation}
+Hledáme takový parametr $ q $, pro který je funkce maximální. Místo tohoto maxima lze hledat maximum logaritmu této věrohodnostní funkce $ \underset{q}{\mathrm{grad}} \, ln \, L(x_1,...,x_K|q) \overset{!}{=} 0 $. Např. pro normální rozdělení je nejlepším odhadem střední hodnoty aritmetický průměr $ \hat{\mu} = \frac{1}{N} \displaystyle{\sum_{i=1}^N} x_i $ a nejlepším odhadem kovarianční matice je: 
+\begin{equation}
+C = \frac{1}{N} \displaystyle{\sum_{i=1}^N} (x_i-\mu)(x_i-\mu)^T
+\end{equation}
+\end{itemize}
+\item \textit{Neparametrické metody}: máme nulovou apriorní informaci, musíme odhadovat celý tvar hustotní funkce.
+\begin{itemize}
+\item \textit{Metoda histogramu}
+
+Obrazový prostor rozdělíme na $ L $ disjunktních podmnožin $ A_l, l=1,...,L $ (obvykle to jsou n-rozměrné intervaly). Symbolem $ c_l $ označíme počet obrazů $ x_k $, které padnou do $ A_l $, dělený číslem $ K $. Za odhad $ \hat{p}(x|\omega_r) $ pak bereme po částech konstantní funkci, která na intervalu $ A_l $ nabývá $ c_l $. Nevýhodou je nutnost znalosti apriorního rozdělení obrazového prostoru na intervaly před fází učení. Odhad hustotní funkce:
+\begin{equation}
+\hat{p}(x|\omega_r) = \displaystyle{\sum_{l=1}^L c_l \cdot \varphi_l(x)}, \qquad \varphi_l = \begin{cases} 1 & x \in A_l \\ 0 & jinak \end{cases}
+\end{equation}
+\end{itemize}
+\end{enumerate}
+
+\subsubsection*{Metody učení založené na přímé minimalizaci ztrát}
+Cílem je navrhnout parametry klasifikátoru, které budou minimalizovat ztrátu, rekurentním vypočítáváním odhadů $ \hat{q}(0) \to \hat{q}(1) \to \dots \to \hat{q}^* $. 
+\begin{equation}
+\underset{q}{\mathrm{grad}} \, J(q^*) = \displaystyle{\int_{X \times O}} \underset{q}{\mathrm{grad}} \, Q(x, \Omega, q^*) \, dF(x, \Omega) = 0
+\end{equation}
+Nabízí se využití gradientních metod. V praktických úlohách neznáme distribuční funkci a nelze tak vyčíslit $ \mathrm{grad} \, J(q) $. Navíc, při pevném $ q $ hodnota funkce $ Q(x, \Omega, q^*) $ náhodně kolísá v závislosti na $ x $ a $ \Omega $ - to je u gradientních metod nepoužitelné. Řešení rovnice hledáme pomocí metody \textit{stochastických aproximací}. Základní algoritmus přímé minimalizace ztrát:
+\begin{equation}
+q(k+1) = q(k) - C_{k+1} \, \underset{q}{\mathrm{grad}} \, Q[x(k+1), \Omega(k+1), q(k)] \qquad k=1,...,K
+\end{equation}
+$ C_k $ je čtvercová matice (obvykle $ C_k = c_k \cdot I $), $ [x(k), \Omega(k)] $ je k-tá dvojice trénovací množiny a $ q $ je vektor parametrů. Vhodnou volbou $ Q(x, \Omega, q) $ a $ C_k $ lze získat téměř všechny algoritmy přímé minimalizace ztrát.
+
+Položíme $ x_0 = 1 $: $ x^T = [x_0, x_1, ..., x_n] $ a váhový vektor rozšíříme o práh $ q_0 $: $ q^T = [q_0, q_1, ..., q_n] $. Diskriminační funkce má tvar $ g(x) = q^T \cdot x $ a rozhodovací pravidlo $ \omega = \mathrm{sign} \, g(x) $. Po zavedení pásma necitlivosti $ \delta $ volíme:
+\begin{equation}
+\underset{q}{\mathrm{grad}} \, Q(x, \Omega, q) = \begin{cases} 0 & q^T x \Omega \geq \delta \\ -x \Omega & q^T x \Omega < \delta \end{cases}
+\end{equation}
+Dosadíme-li do vztahu pro rekurentní výpočet $ q $, dostaneme algoritmus učení:
+\begin{align}
+\begin{split}
+q(k+1) &= q(k) - C_{k+1} \, \underset{q}{\mathrm{grad}} \, Q[x(k+1), \Omega(k+1), q(k)] = \\
+&= \begin{cases} q(k) & q^T(k) x(k+1) \Omega(k+1) \geq 0 \\ q(k) + C_{k+1} x(k+1) \Omega(k+1) & q^T(k) x(k+1) \Omega(k+1) < 0 \end{cases}
+\end{split}
+\end{align}
+\begin{enumerate}[label=(\alph*)]
+\item \textit{Rosenblattův algoritmus}
+
+$ C_k = C_{k+1} = 1 $, $ \delta = 0 $:
+\begin{align}
+\begin{split}
+q(k+1) = \begin{cases} q(k) & q^T(k) x(k+1) \Omega(k+1) \geq 0 \\ q(k) + x(k+1) \Omega(k+1) & q^T(k) x(k+1) \Omega(k+1) < 0 \end{cases}
+\end{split}
+\end{align}
+Nedostatkem je, že nikdy nezjistíme absolutně přesný klasifikátor. 
+\item \textit{Metoda konstantních přírůstků}
+
+$ C_k = \frac{\beta}{||x(k)||^2}, \, \beta > 0 $
+\begin{align}
+\begin{split}
+q(k+1) = \begin{cases} q(k) & q^T(k) x(k+1) \Omega(k+1) \geq \delta \\ q(k) + \frac{\beta}{||x(k+1)||^2} x(k+1) \Omega(k+1) & q^T(k) x(k+1) \Omega(k+1) < \delta \end{cases}
+\end{split}
+\end{align}
+\item \textit{Upravená metoda konstantních přírůstků}
+
+Připočítáváme vektor $ \frac{\beta}{||x(k+1)||^2} x(k+1) \Omega(k+1) $ tolikrát, až pro určitý obraz $ x(k+1) $ dosáhneme správné klasifikace, tj. bude platit $ q^T(k+1) x(k+1) \Omega(k+1) \geq \delta $.
+Může se stát, že nikdy nedojdeme k řešení.
+\item \textit{Relaxační metoda učení}
+
+\begin{align}
+\begin{split}
+q(k+1) = \begin{cases} q(k) & q^T(k) x(k+1) \Omega(k+1) \geq \delta \\ q(k) + 2 C_{k+1} x(k+1) \Omega(k+1) [\delta - q^T(k) x(k+1) \Omega(k+1)] & q^T(k) x(k+1) \Omega(k+1) < \delta \end{cases}
+\end{split}
+\end{align}
+
+kde $ c_k = \frac{\sigma}{2 ||x(k)||^2} $ a $ \sigma \in (0, 2) $.
+\end{enumerate}
 
 \subsection{Metody shlukové analýzy (učení bez učitele).}
 
