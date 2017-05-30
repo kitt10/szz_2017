@@ -378,8 +378,135 @@ kde $ c_k = \frac{\sigma}{2 ||x(k)||^2} $ a $ \sigma \in (0, 2) $.
 \end{enumerate}
 
 \subsection{Metody shlukové analýzy (učení bez učitele).}
+Někdy se stane, že je k dispozici jen trénovací množina bez údajů o správné klasifikaci, někdy chybí i informace o počtu tříd. Úkolem je nalézt shluky obrazů, tj. takové skupiny jejichž prvky jsou si vzájemně podobné (geometricky blízké). Lze aplikovat pouze na data, kde ty shluky opravdu jsou.
+
+Požadavky pro míry podobnosti: $ d(x_i, x_i) = 0 $; $ d(x_i, x_j) \geq 0, \, i \neq j $; $ d(x_i, x_j) = d(x_j, x_i) $.
+
+Míry podobnosti mezi dvěma obrazy $ x $ a $ x' $:
+\begin{itemize}
+\item $ d(x, x') = || x-x' || $
+\item Euklidova vzdálenost: $ d(x, x') = \sqrt{\displaystyle{\sum_{i=1}^n}(x_i - x_i')^2} $
+\end{itemize}
+
+Míry podobnosti mezi dvěma shluky $ T_i $ a $ T_j $:
+\begin{itemize}
+\item minimální míra: $ D_{min}(T_i, T_j) = \underset{x \in T_i; x' \in T_j}{\mathrm{min}} d(x, x') $
+\item maximální míra: $ D_{max}(T_i, T_j) = \underset{x \in T_i; x' \in T_j}{\mathrm{max}} d(x, x') $
+\item průměrná míra: $ D_{mean}(T_i, T_j) = \frac{1}{s_i \cdot s_j} \displaystyle{\sum_{x \in T_i} \sum_{x' \in T_j}} d(x, x') $
+\item centroidní míra: $ D_{c}(T_i, T_j) = || \frac{1}{s_i} \displaystyle{\sum_{x \in T_i} x} - \frac{1}{s_j} \displaystyle{\sum_{x' \in T_j} x'} || = d(\bar{x}, \bar{x}')$
+\end{itemize}
+
+\subsubsection*{Nehierarchické shlukovací metody}
+Snaha provést optimální rozklad dané množiny $ T $ do předem známého počtu $ R $ shluků. Hledáme takové rozdělení, pro které nabývá kritérium $ J $ extrém.
+\begin{equation}
+J = \displaystyle{\sum_{i=1}^R J_i} = \displaystyle{\sum_{i=1}^R \sum_{x \in T_i} d^2(x, \mu_i)}
+\end{equation}
+\begin{enumerate}
+\item \textbf{McQueenova metoda k-means (1967)}
+Algoritmus se snaží minimalizovat celkový ukazatel jakosti $ J $ rozdělením obrazů do shluků.
+
+Dáno:
+\begin{description}
+\item[$ T = \{x_i\}_{i=1}^N $] ... obrazy trénovací množiny
+\item[$ R $] ... počet tříd
+\item[$ T_i(k) $] ... množina obrazů i-tého shluku v k-tém kroku algoritmu
+\item[$ \mu_i(k) $] ... střední (průměrná) hodnota i-tého shluku v k-tém kroku
+\item[$ J_i(k) $] ... hodnota kritéria i-tého shluku v k-tém kroku
+\item[$ s_i(k) $] ... počet obrazů ve shluku $ T_i $ v k-tém kroku
+\end{description}
+Postup:
+\begin{enumerate}[label=(\roman*)]
+\item Zvol $ R $ počátečních středů shluků $ \mu_1(1), ..., \mu_R(1) $.
+\item V k-tém iteračním kroku se rozdělují obrazy trénovací množiny do $ R $ shluků $ T_1(k), ..., T_R(k) $ podle vztahu $ x \in T_j(k) $ jestliže $ d(x, \mu_j(k)) < d(x, \mu_i(k)) \, \forall i,j=1,...R; \, i \neq j $. Vztah je postupně aplikován pro všechny obrazy z množiny $ T $.
+\item Z výsledků předchozího kroku vypočti pro každý shluk nový střed, tj. $ \mu_j(k+1), \, j=1,...,R $ klasickým zprůměrováním (zaručí, že $ J_j(k+1 $ bude minimální):
+\begin{equation}
+\mu_j(k+1) =  \frac{1}{s_j(k)} \displaystyle{\sum_{x \in T_j(k)} x}, \qquad j=1,...,R
+\end{equation}
+\item Jestliže $ \mu_j(k+1) = \mu_j(k) \, j=1,..,R $, algoritmus dokonvergoval a procedura je ukončena. Jinak jdi na krok (ii). Alternativně lze proces ukončit v případě, že pokles hodnoty kriteriální funkce je již nevýznamný.
+\end{enumerate}
+
+Funkce metody je ovlivněna zejména specifickým počtem shluků a volbou počátečních středů shluků. Metoda sice pro vhodná data poskytuje přijatelné výsledky, ale dosažení globálního minima ukazatele jakosti  procesu shlukování není zaručeno (konvergence nejčastěji končí v nějakém lokálním minimu).
+
+\item \textbf{Iterativní optimalizace}
+V k-tém iteračním kroku změníme zařazení jednoho obrazu.
+
+Postup:
+\begin{enumerate}[label=(\roman*)]
+\item Proveď  počáteční rozklad $ N $ obrazů do $ R $ shluků a vypočti hodnotu kriteriální funkce $ J $ a urči $ \mu_i(1), \, i=1,...,R $.
+\item Vyber obraz $ \hat{x} $, kde např. $ \hat{x} \in T_i $ (nejlépe nějaký systematický výběr).
+\item Jestliže $ s_i(k) = 1 $, jdi na bod (vi)
+\item Vypočti:
+\begin{align}
+\begin{split}
+A_i &= \frac{s_i(k)}{s_i(k) - 1} d^2(\hat{x}, \mu_i(k)) \\
+A_j &= \frac{s_j(k)}{s_j(k) + 1} d^2(\hat{x}, \mu_j(k)), \qquad \forall j \neq i
+\end{split}
+\end{align}
+Urči $ j^* = \underset{j}{\mathrm{argmin}} \, A_j $. Jestliže $ A_i > A_{j^*} $, přesuň $ \hat{x} $ do $ T_{j^*} $. Jinak ponech $ \hat{x} $ v $ T_i $.
+\item Aktualizuj $ J $, $ \mu_i $ a $ \mu_{j^*} $.
+\item Jestliže se $ J $ po pokusu přesunout postupně všech $ N $ obrazů trénovací množiny nezměnila, proces ukonči. Jinak přejdi do bodu (ii).
+\end{enumerate}
+
+Pokud bychom chtěli dosáhnout opravdu globálního minima $ J $, mohli bychom vyzkoušet teoreticky všechny možnosti rozkladu, ale existuje obecně $ \frac{R^N}{R!} $ možností (pro $ R = 3 $ a $ N = 100 $ je to $ \approx 10^{47} $ možností).
+\end{enumerate}
+
+\subsubsection*{Hierarchické shlukovací metody}
+Většinou aplikujeme, pokud není známa informace o počtu tříd.
+\begin{enumerate}[label=(\Alph*)]
+\item \textit{Aglomerativní přístup}
+Vycházíme z jednotlivých obrazů, které postupně shlukujeme, až dojde ke spojení všech obrazů do jedné množiny.
+\begin{enumerate}[label=\arabic*.]
+\item \textbf{Metoda shlukové hladiny}
+Celé množině obrazů $ T = \{x_1, ..., x_N\} $ postupně přiřazujeme posloupnost rozkladů $ B_0 $ až $ B_{N-1} $ a každému vzniklému shluku $ A $ přiřazujeme tzv. shlukovací hladinu $ h(A) \geq 0 $.
+
+Postup:
+\begin{enumerate}[label=(\roman*)]
+\item Rozklad $ B_0 $ tvoří jednotlivé obrazy, tj. $ A_{0j} = \{x_j\} $ a $ h(A_{0j}) = 0, \, j=1,...,N $.
+\item V i-tém kroku pro $ 1 \leq i \leq N-1 $ vybereme jedinou dvojici shluků (obrazů) $ A_{i-1, u} $ a $ A_{i-1, v} $, pro kterou nastala nejmenší vzdálenost (ve smyslu zvolené metriky).
+\begin{itemize}
+\item provedeme sjednocení shluků $ A_{i-1, u} \cup A_{i-1, v} < A_{i, l}, \, l=1,...,N-1 $;
+\item utvoříme rozklad $ B_i = \{A_{i,1},...,A_{i,N-1}\} $, kde všechny shluky s výjimkou sjednoceného $ A_{i,l} $ přechází do $ B_i $ beze změny;
+\item položíme $ A_{i,l} = \underset{u,v}{\mathrm{min}} D(A_{i-1, u}, A_{i-1, v}) $
+\end{itemize}
+\item Bod (ii) opakujeme, až v posledním kroku procedury vznikne jediný shluk.
+\end{enumerate}
+\end{enumerate}
+\item \textit{Divisní přístup}
+Celkový shluk obrazů určený ke klasifikaci postupně rozdělujeme a získáme hierarchický systém podmnožin.
+\begin{enumerate}[label=\arabic*.]
+\item \textbf{Jednoprůchodový heuristický algoritmus hledání shluků}
+Je zadána trénovací množina $ T = \{x_1, ..., x_N\} $. Definujeme ve vztahu se zvolenou mírou podobnosti neznámý práh $ t > 0 $.
+\begin{enumerate}[label=(\roman*)]
+\item Z obrazů trénovací množiny vybereme jeden, např. $ x_{(1)} \in T $ a ztotožníme ho se středem prvního shluku $ \mu_1 = x_{(1)} $.
+\item Z trénovací množiny vybereme obraz $ x_{(2)} \in T $ a vypočteme vzdálenost $ d_{21} = d(x_{(2)}, \mu_1) $. Jestliže $ d_{21} > t $, pak zavedeme nový shluk se středem $ \mu_2 \coloneqq x_{(2)} $. Jinak přidělíme obraz $ x_{(2)} $ do shluku se středem $ \mu_1 $.
+\item Předpokládáme, že shluk se středem $ \mu_2 $ byl zaveden, poté vybereme obraz $ x_{(3)} \in T $ a vyčíslíme $ d_{31} = d(x_{(3)}, \mu_1) $ a $ d_{32} = d(x_{(3)}, \mu_2) $. Jestliže $ d_{31} > t $ a $ d_{32} > t $, zavedeme nový shluk se středem $ \mu_3 \coloneqq x_{(3)} $. Jinak přidělíme obraz $ x_{(3)} $ do shluku, k jehož středu má nejmenší vzdálenost.
+\item Postupujeme analogicky, až rozdělíme všechny obrazy trénovací množiny.
+\end{enumerate}
+Výsledky závisí na prvním vybraném středu shluku; pořadí, v němž jsou obrazy uvažovány; hodnotě $ t $; geometrických vlastnostech dat. Algoritmus je velmi jednoduchý a rychlý a stanovuje první náhled na trénovací množinu obrazů. Podle velikosti prahu $ t $ se mění i výsledný počet shluků. Metoda vyžaduje pouze jediný průchod trénovací množinou, ale v praxi je potřeba rozsáhlé experimentování s hodnotou prahu a startovacím obrazem.
+
+\item \textbf{Metoda řetězové mapy}
+Základním krokem při vytváření řetězové mapy je přeuspořádání dat. Z trénovací množiny vybereme libovolný "startovací" obraz $ x_{(1)} $, najdeme jeho nejbližšího souseda $ x_{(1)[1]} $ a položíme $ x_{(2)} = x_{(1)[1]} $ (druhá položka seznamu). Další položkou bude nejbližší soused k $ x_{(2)} $, atd. Nejbližšího souseda vždy vybíráme z množiny dosud neuspořádaných obrazů. Proces pokračuje, dokud nezískáme posloupnost ze všech obrazů trénovací množiny.
+\begin{equation}
+\tilde{T} = \{x_{(1)}, ..., x_{(N)}\}
+\end{equation}
+S i-tým členem této posloupnosti potom spojíme vzdálenost $ d_i = d(x_{(i), x_{i+1}}, \, i=1,...,N-1 $. Řetězovou mapu získáme jako závislost $ d_i = f(i) $. Znázorníme-li tuto závislost graficky, pak pokud jsou obrazy trénovací množiny dobře distribuovány, tj. vytvářejí v prostoru kompaktní shluky, které jsou od sebe dostatečně vzdálené, lze typicky na diagramu nalézt souvislé oblasti relativně malých hodnot $ d_i $, které jsou od sebe odděleny (relativně) vyšší hodnotou $ d_j $. Tyto zvýšené hodnoty $ d_j $ odpovídají hranicím shluků.
+
+\item \textbf{Metoda MAXIMIN (maximum-minimum)}
+
+\item \textbf{Metody binárního dělení}
+
+\begin{itemize}
+\item \textbf{Rovnoměrné binární dělení}
+
+\item \textbf{Nerovnoměrné binární dělení}
+
+\end{itemize}
+\end{enumerate}
+\end{enumerate}
+
 
 \subsection{Výběr informativních příznaků.}
+
 
 \section{Neuronové sítě [NEU]}
 
