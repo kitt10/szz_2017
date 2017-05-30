@@ -562,6 +562,62 @@ Definujeme míru diskriminativnosti množiny příznaků $ J = \mathrm{tr}(\hat{
 \subsection{Sítě se zpětnou vazbou. Hopfieldova neuronová síť.}
 
 \subsection{Samoorganizující se sítě.}
+Samy se snaží objevit zákonitosti a souvislosti ve vstupních datech (tzv. proces samoorganizace), tzn. během učení (bez učitele) se snaží nastavit své váhy a prahy tak, aby na podobné vstupy reagovaly podobnými výstupy $ \to $ dochází k tzv. shlukování vstupních dat. Míra podobnosti se obvykle posuzuje pomocí Eukleidovské vzdálenosti
+\begin{equation}
+||a-b|| = \sqrt{\displaystyle{\sum_{i=1}^n} (a_i-b_i)^2}
+\end{equation}
+Značení:
+\begin{description}
+\item[$ S_m(k) $] ... množina vektorů, které jsou zahrnuty ve shluku $ S_m $ před přidáním vektoru $ x $
+\item[$ w_m(k) $] ... centroid shluku $ S_m $ před přidáním vektoru $ x $
+\item[$ P_m(k) $] ... počet vektorů ve shluku $ S_m $ před přidáním vektoru $ x $
+\item[$ S_m(k+1) $] ... množina vektorů, které jsou zahrnuty ve shluku $ S_m $ po přidání vektoru $ x $, tzn. $ S_m(k+1) = S_m(k) \cup x $
+\item[$ w_m(k+1) $] ... centroid shluku $ S_m $ po přidání vektoru $ x $
+\item[$ P_m(k+1) $] ... počet vektorů ve shluku $ S_m $ po přidání vektoru $ x $, tzn. $ P_m(k+1) = P_m(k) + 1 $
+\end{description}
+Předpokládejme, že máme množinu $ P $ vektorů dimenze $ n $: $ \{x_1, x_2, ..., x_P\} $, které chceme rozdělit do $ R $ shluků $ S_1, S_2, ..., S_R $, přičemž každý shluk je reprezentován svým centroidem $ w_1, w_2, ..., w_R $, pro které platí:
+\begin{equation}
+w_r = \frac{1}{P_r} \displaystyle{\sum_{x_j \in S_r}} x_j, \qquad r=1,...,R
+\end{equation}
+kde $ P_r $ je počet vektorů ve shluku $ S_r $. Vektor $ x $ chceme zařadit do jednoho z $ R $ shluků $ \to $ zařadíme ho do toho shluku $ S_m $, k jehož centroidu je $ x $ nejblíže:
+\begin{equation}
+||x-w_m|| = \underset{r=1,...,R}{\mathrm{min}} \, ||x-w_r||
+\end{equation}
+Po přidání vektoru $ x $ do shluku $ S_m $ se změní poloha centroidu $ w_m $, centroidy ostatních shluků zůstávají beze změny.
+
+\subsubsection*{Kohonenova síť}
+Určena pro shlukování vstupních vektorů dimenze $ n $ do $ R $ shluků. Je to jednovrstvá dopředná síť s $ R $ výstupy, $ n $ vstupy a nulovým prahovým vektorem. Každý řádek váhové matice je normalizován tak, že má velikost $ 1 $, tzn., že pro i-tý řádek váhové matice platí:
+\begin{equation}
+||w_i|| = \sqrt{\displaystyle{\sum_j} w_{ij}^2} = 1
+\end{equation}
+
+Síť se učí bez učitele. Učení probíhá na základě tzv. \textit{pravidla vítěze} ("vítěz bere vše") $ \to $ na základě vstupního vektoru $ x $ se změní váhy m-tého neuronu podle vztahu:
+\begin{equation}
+\hat{w}_m(k+1) = w_m(k) + c \cdot (x^T - w_m(k))
+\end{equation}
+kde $ c \in \langle 0.1, 0.7 \rangle $ je konstanta učení a m-tý neuron je tzv. \textit{vítěz}, pro kterého platí:
+\begin{equation}
+w_m \cdot x = \underset{r=1,...,R}{\mathrm{max}} \, w_r \cdot x
+\end{equation}
+To znamená, že se mění váhy neuronů s nejvyšší aktivační hodnotou, váhy ostatních neuronů se nemění. Po změně vah je třeba váhový vektor m-tého neuronu normalizovat, tzn.
+\begin{equation}
+w_m = \frac{\hat{w_m}}{||\hat{w_m}||}
+\end{equation}
+Váhová matice $ W(0) $ se inicializuje náhodnými čísly, poté je třeba provést normalizaci každého řádku.
+
+Vlastnosti Kohonenovy sítě:
+\begin{itemize}
+\item Váhy neuronů se při trénování blíží do středu shluků, které reprezentují.
+\item Síť má pouze jednu vrstvu $ \to $ lze s ní najít pouze lineárně oddělitelné shluky.
+\item I v případě lineárně oddělitelných shluků nemusí být tyto shluky vždy nalezeny.
+\item Váhy měnící se podle výše zmíněného vztahu při konstantní hodnotě $ c $ nekonvergují ke konstantním hodnotám. Proto se často využívá proměnlivá konstanta učení $ c(t) $, která má po určitou dobu $ t_p $ (např. 1000 kroků) konstantní hodnotu $ c_0 $, a pak se snižuje, např. dle vztahu:
+\begin{equation}
+c(t) = c_0 \cdot e^{-\frac{t-t_p}{t_q}}, \qquad t > t_p
+\end{equation}
+kde $ t_q $ udává rychlost poklesu. Pokud předem neznáme počet shluků, předpokládáme, že shluků je velké množství. Během trénování pak některé neurony pravděpodobně nebudou měnit své váhy $ \to $ nemají význam a lze je vypustit.
+\item Po natrénování sítě bude pro zadaný vstupní vektor největší hodnota na výstupu toho neuronu, jehož váhy reprezentují centroid shluku, ke kterému má daný vstupní vektor nejblíže.
+\end{itemize}
+Využití: hledání shluků ve vstupních datech; vektorová kvantizace.
 
 \subsection{Oblasti použití neuronových sítí.}
 Obecně lze aplikace matematicky formulovat jako aproximaci funkce (tj. optimalizační úlohu):
