@@ -492,13 +492,29 @@ Základním krokem při vytváření řetězové mapy je přeuspořádání dat.
 S i-tým členem této posloupnosti potom spojíme vzdálenost $ d_i = d(x_{(i), x_{i+1}}, \, i=1,...,N-1 $. Řetězovou mapu získáme jako závislost $ d_i = f(i) $. Znázorníme-li tuto závislost graficky, pak pokud jsou obrazy trénovací množiny dobře distribuovány, tj. vytvářejí v prostoru kompaktní shluky, které jsou od sebe dostatečně vzdálené, lze typicky na diagramu nalézt souvislé oblasti relativně malých hodnot $ d_i $, které jsou od sebe odděleny (relativně) vyšší hodnotou $ d_j $. Tyto zvýšené hodnoty $ d_j $ odpovídají hranicím shluků.
 
 \item \textbf{Metoda MAXIMIN (maximum-minimum)}
+Jedná se o jednoduchý heuristický algoritmus, který je vhodný pro odhad počtu shluků v obrazovém prostoru. Je dána množina obrazů $ T = \{x_k\}_{k=1}^N $ a volitelná konstanta $ q > 0 $.
+
+Postup:
+\begin{enumerate}[label=(\roman*)]
+\item Z trénovací množiny vybereme "startovací" obraz a ztotožníme ho se středem prvního shluku, tj. $ \mu_1 \coloneqq x_{(1)} $.
+\item Dále zvolíme (ve smyslu zvolené metriky) nejvzdálenější obraz k $ \mu_1 $ a ztotožníme ho se středem druhého shluku, tj. $ \mu_2 \coloneqq x_{(2)} $.
+\item Pro každý obraz z trénovací množiny (bez $ x_{(1)} $ a $ x_{(2)} $) vyčíslíme vzdálenosti k $ \mu_1 $ a k $ \mu_2 $ a vždy vybereme tu minimální.
+\item Z uchovaných minimálních vzdáleností vybereme tu maximální a porovnáme její velikost s velikostí vzdálenosti $ d(\mu_1, \mu_2) $ a obraz, pro který tato maximální vzdálenost nastala, označíme jako $ x_{(3)} $.
+\item Jestliže je ta maximální vzdálenost větší než $ q \cdot d(\mu_1, \mu_2) $, zavedeme nový shluk se středem $ \mu_3 \coloneqq x_{(3)} $, jinak shlukovací proces končí.
+\item V dalším kroku algoritmu postupujeme stejně jako v kroku (iii), ale pro tři středy shluků. To znamená, že z minimálních vzdáleností obrazů trénovací množiny ($ T \setminus \{x_{(1)}, x_{(2)}, x_{(3)} \} $) ke středům shluků $ \mu_1 $, $ \mu_2 $ a $ \mu_3 $ vybereme maximální a opět posoudíme, je-li větší než q-násobek např. průměru vzdáleností mezi již vytvořenými středy shluků. Postup opakujeme pro vzrůstající počet (středů) shluků, dokud se nová maximální vzdálenost nedostane do sporu s podmínkou vytvoření nového středu shluku.
+\end{enumerate}
+Po nalezení počtu shluků a jejich středů lze provést rozdělení obrazů trénovací množiny do jednotlivých shluků podle kritéria minimální vzdálenosti, přičemž za vzorové obrazy považujeme středy shluků.
 
 \item \textbf{Metody binárního dělení}
-
+Předpokládejme, že jsme v procesu shlukování získali $ R $ shluků. V dalším postupu obvykle provádíme zařazování neznámých obrazů do nejvhodnějších shluků podle pravidla nejbližšího souseda $ \to $ musíme nalézt takový shluk, jehož centroid má k neznámému obrazu $ x_i $ nejmenší vzdálenost. Při vyčerpávajícím porovnání se všemi centroidy narážíme při velkém $ R $ na velké množství operací. Metoda binárního dělení umožňuje redukci množství operací.
 \begin{itemize}
 \item \textbf{Rovnoměrné binární dělení}
+Požadovaný počet výsledných shluků $ R $ musí být mocninou $ 2 $. V prvním kroku dělení je prvotní shluk obrazů trénovací množiny rozdělen na dva subshluky a každý z těchto subshluků je poté v dalším kroku rozdělen na další dva subshluky, atd. Proces končí, až je dosažen požadovaný konečný počet shluků $ R $. Platí $ R = 2^B $, kde $ B $ je počet kroků dělení. Proces lze znázornit prohledávacím stromem.
+
+Při rovnoměrném dělení se mechanicky rozdělují všechny koncové shluky (reprezentované v prohledávacím stromu aktuálními koncovými uzly). Při tomto procesu se může stát, že v některém subshluku zůstane několik nebo dokonce jen jediný obraz $ \to $ další dělení takových shluků výrazně nepřispívá k minimalizaci celkového zkreslení.
 
 \item \textbf{Nerovnoměrné binární dělení}
+Zde výsledný počet shluků $ R $ nemusí být mocninou $ 2 $. Abychom zajistili nižší celkové zkreslení při daném počtu shluků, je vhodné nedělit prohledávací strom rovnoměrně, ale v každém kroku subdělícího procesu vyčíslit zkreslení všech koncových shluků a rozdělit ten shluk, který přispívá do celkového zkreslení největší měrou. Po každém kroku algoritmu, který měl za následek rozdělení nějakého subshluku zjistíme, zda již nebylo dosaženo stanoveného počtu shluků nebo zda velkost celkového zkreslení nepoklesla pod stanovenou mez. Pokud některá z těchto podmínek byla splněna, proces dělení končí.
 
 \end{itemize}
 \end{enumerate}
@@ -506,7 +522,22 @@ S i-tým členem této posloupnosti potom spojíme vzdálenost $ d_i = d(x_{(i),
 
 
 \subsection{Výběr informativních příznaků.}
+Velikost vektorů příznaků všech vzorků uvažovaných pro stejnou úlohu musí být shodná. Pokud není, lze přemýšlet o úpravě těchto vektorů, která obecně velmi závisí na fyzikální podstatě jednotlivých jevů (příznaků). Pokud to fyzikální podstata dovoluje, můžeme řetězce lineárně natáhnout, popř. lineárně smrštit, na požadovanou velikost. Plyne-li z fyzikální podstaty vektorů příznaků možnost lineárního kolísání (nejčastěji v časové ose), lze pro výpočet vzdálenosti takových vektorů využití metody tzv. nelineárního borcení jednoho z pozorovaných obrazů (\textit{DTW - dynamic time warping}).
 
+Obecně při výběru informativních příznaků je třeba zachovat minimální hodnoty disperzí uvnitř jednotlivých tříd a maximální hodnoty disperzí mezi třídami.
+
+\subsubsection*{Extrakce}
+Metoda extrakce výběru minimálního počtu informativních příznaků je založena na nejlepší aproximaci původních obrazů z prostoru $ H_m $ o dimenzi $ m $ obrazy z prostoru $ H_n $ o dimenzi $ n < m $, a to ve smyslu minima střední kvadratické odchylky (Karhunen-Loevův rozvoj).
+\vspace{2cm}
+
+\subsubsection*{Selekce}
+Definujeme míru diskriminativnosti množiny příznaků $ J = \mathrm{tr}(\hat{T}_{AKVI}^{-1} \cdot \hat{T}_{AKT}) $. Ta se rovná největšímu vlastnímu číslu matice $ T_{AKVI}^{-1} \cdot T_{AKT} $. Výběr příznaků založený na míře diskriminativnosti se provádí iterativně:
+\begin{enumerate}[label=(\roman*)]
+\item Vypočte se míra diskriminativnosti pro celý soubor příznaků.
+\item Vypočte se míra diskriminativnosti při vynechání jednoho příznaku. Tento krok se provede n-krát (vynechávají se postupně příznaky $ v_1, ..., v_n $)
+\item Z původního souboru příznaků vyloučíme definitivně ten příznak, při jehož vynechání v kroku (ii) došlo k nejmenšímu poklesu míry diskriminativnosti. Takový příznak je zřejmě nejméně informativní.
+\end{enumerate}
+\vspace{2cm}
 
 \section{Neuronové sítě [NEU]}
 
