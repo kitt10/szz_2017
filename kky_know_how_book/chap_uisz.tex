@@ -564,6 +564,23 @@ Definujeme míru diskriminativnosti množiny příznaků $ J = \mathrm{tr}(\hat{
 \subsection{Samoorganizující se sítě.}
 
 \subsection{Oblasti použití neuronových sítí.}
+Obecně lze aplikace matematicky formulovat jako aproximaci funkce (tj. optimalizační úlohu):
+\begin{equation}
+y = f(x, parametry)
+\end{equation}
+\begin{itemize}
+\item \textit{Klasifikátory}: úkolem je zařadit vstupní data do skupin (tříd) podle vzájemné podobnosti (nelineární sítě); Vstupem jsou jednotlivé klasifikované obrazy (tj. vektory příznaků), výstupem je informace o zařazení vstupního obrazu do určité třídy. Je-li $ R $ počet tříd, potom počet výstupů je sítě je obvykle roven buď $ R $ nebo $ log_2R $. Obecně platí, že počet výstupu sítě může být jakékoli číslo z intervalu $ \langle log_2R, R\rangle$. Většinou se ve všech vrstvách využívá některá ze sigmoidálních aktivačních funkcí, která se po natrénování ve výstupní vrstvě nahradí odpovídající binární aktivační funkcí.
+\item \textit{Aproximátory funkcí (regresory)}: z několika zadaných (naměřených) hodnot je třeba sestavit funkční závislost (nelineární sítě); Jednotlivé vstupy nelineárních sítí představují nezávisle proměnné aproximované funkce, výstupy představují závisle proměnné. Pro aproximaci libovolné funkce postačují 2 až 3 skryté vrstvy neuronů:
+\begin{itemize}
+\item jedna vrstva rozdělí vstupní prostor nadrovinou (ve 2D přímkou)
+\item dvě vrstvy jsou schopny oddělit konvexní oblast
+\item tři vrstvy jsou schopny oddělit i nekonvexní oblasti
+\end{itemize}
+Počet skrytých vrstev a počet neuronů v nich má vliv na schopnost sítě zobecňovat (generalizovat) vstupní body trénovací množiny. Velké množství vrstev a neuronů může vést k přetrénování (overfitting) sítě, malé množství k nedotrénování (underfitting) sítě.
+\item \textit{Paměti a rekonstruktory}: na základě předloženého vstupního obrazu je síť schopna "vybavit si" odpovídající výstupní obraz (asociativní paměť - nelineární sítě), popř. je schopna zrekonstruovat zašuměný vstupní obraz do původní podoby (Hopfieldova síť); Asociativní paměť je paměť adresovaná obsahem, adresou je klíčová hodnota ukládaná s informací. Vstupem sítě je vstupní obraz (tzv. klíč), kterým se přistupuje do paměti, výstupem sítě je příslušný asociovaný obraz. Zapamatovaná informace je v síti uložena v hodnotách vah a prahů a je rozprostřena po celé síti. Asociativní paměť je schopna vykonávat svou funkci dostatečně správně i při částečném poškození (například při odstranění části neuronů skryté vrstvy). U pamětí adresovaných adresou se obsah z poškozené části ztrácí úplně.
+\item \textit{Optimalizace}: úkolem je minimalizovat určitou ztrátovou funkci, která je obvykle definována uživatelem (rozvrhování činností, hledání optimální cesty, apod.);
+\item \textit{Shlukování a redukce příznaků}: objevování shluků ve vstupních datech a redukce počtu příznaků. Základní charakteristikou těchto sítí je tzv. samoorganizace (Hopfieldova síť).
+\end{itemize}
 
 \section{Zpracování digitalizovaného obrazu [ZDO]}
 
