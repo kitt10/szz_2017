@@ -554,6 +554,39 @@ Definujeme míru diskriminativnosti množiny příznaků $ J = \mathrm{tr}(\hat{
 \end{table}
 
 \subsection{Základní umělé modely neuronu, vlastnosti, souvislost s biologickým neuronem.}
+Lidský mozek se skládá ze 100 miliard neuronů, které mezi sebou komunikují prostřednictvím sítě vazeb. Podnět z receptorů (zrak, sluch, čich, chuť, hmat) je ve formě elektrických impulsů přenášen do centrálního nervového systému, kde je zpracováván.
+
+\subsubsection*{Biologický neuron}
+Základní buňka biologických neuronových sítí.
+\begin{itemize}
+\item \textit{soma} (tělo)
+\item \textit{axon} (výstup): jediný, dlouhý až 60 cm
+\item \textit{dendrity} (vstupy): krátké do 3 mm, je jich až několik tisíc na neuron
+\item \textit{synapse} (rozhraní): jednosměrné brány umožňující přenos signálu pouze ve směru axon $ \to $ dendrita, je jich asi 10000 na neuron
+\end{itemize}
+Přenášené signály jsou elektrické impulsy, jejich přenos je ovlivněn uvolňováním budicích (excitátory) a tlumicích (inhibitory) látek v synapsích. Překročí-li hodnota budicích signálů hodnotu tlumicích signálů o určitý \textit{práh}, nastává tzv. \textit{aktivace neuronu} - na jeho výstupu se objeví impuls. Po vygenerování impulsu se neuron na určitou dobu (tzv. období pauzy) dostane do stavu, kdy nereaguje na žádné podněty $ \to $ chování neuronu lze popsat diskrétně v čase. Období pauzy není pro všechny neurony stejně dlouhé $ \to $ neurony v mozku pracují asynchronně.
+
+\subsubsection*{McCullochův-Pittsův model (1943)}
+Vstupy $ x_1,...,x_n $ mohou nabývat pouze hodnot 0 nebo 1 podle toho, zda je přítomen signál nebo ne. Váhy $ w_1,...,w_n $ nabývají hodnot 1 pro budící signály a -1 pro tlumící signály. Dále je definován práh $ b $. Jedná se tedy o jednoduchý binární model. Váhy jsou pevně nastaveny a práh je rovněž pevně stanoven.
+
+\subsubsection*{Perceptron (1958)}
+Diskrétní verze perceptronu byla poprvé prezentována Frankem Rosenblattem. Pro výstup platí:
+\begin{equation}
+y(k+1) = f\left[ \displaystyle{\sum_{i=1}^n} w_i x_i(k) + b \right] = f(w^T \cdot x(k) + b)
+\end{equation}
+\begin{description}
+\item[$ w $] ... váhový vektor
+\item[$ x $] ... vstupní vektor
+\item[$ z = w^T \cdot x(k) + b $] ... aktivační hodnota
+\item[$ f(\cdot) $] ... aktivační funkce, nejčastěji používané:
+\begin{itemize}
+\item \textit{bipolární binární}: $ f(z) = \mathrm{sgn}(z) = \begin{cases} 1 & z \geq 0 \\ -1 & z < 0 \end{cases} $
+\item \textit{unipolární binární}: $ f(z) = \begin{cases} 1 & z \geq 0 \\ 0 & z < 0 \end{cases} $ 
+\item \textit{bipolární spojitá}: $ f(z) = \frac{2}{1 + e^{-\lambda \cdot z}}-1 $
+\item \textit{unipolární spojitá}: $ f(z) = \frac{1}{1 + e^{-\lambda \cdot z}} $
+\item \textit{lineární}: $ f(z) = \lambda \cdot z $
+\end{itemize}
+\end{description}
 
 \subsection{Základní typy neuronových sítí. Způsoby činnosti a učení neuronových sítí.}
 
