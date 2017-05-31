@@ -607,7 +607,77 @@ Umělá neuronová síť vznikne spojením jednotlivých modelů neuronů. Výsl
 \item \textit{učení bez učitele (unsupervised learning)}: síti jsou předkládány pouze vstupy, informace učitele (požadovaný výstup) chybí. Síť se sama snaží najít zákonitosti ve vstupních datech a nastavit své váhy a prahy tak, aby na podobné vstupy reagovala podobnými výstupy. Podobnost je většinou definována eukleidovskou vzdáleností a dochází tak ke shlukování vstupních dat.
 \end{itemize}
 
+\subsubsection*{RBF (Radial Basis Function) sítě}
+Motivaci pro jejich studium lze nalézt v matematice u řešení aproximačních úloh, kdy řešení hledáme ve tvaru lineární kombinace vhodných bazických funkcí. Představena je dvouvrstvá síť bez zpětné vazby. Ve druhé (výstupní) vrstvě jsou neurony s lineární aktivační funkcí. V první (skryté) vrstvě mají všechny váhy hodnotu 1. Každý neuron této vrstvy je reprezentován tzv. \textit{radiální funkcí}, která je funkcí vzdálenosti mezi vstupním vektorem a centroidem příslušného neuronu. Pro výstup j-tého neuronu ve skryté vrstvě tedy platí: $ a_j = f(r_j) $, kde $ f(\cdot) $ je radiální funkce a $ r_j $ je vzdálenost mezi vstupním vektorem $ x $ a centroidem j-tého neuronu $ c_j $ (obvykle eukleidovská vzdálenost: $ r_j = \sqrt{(x-c_j)^T(x-c_j)} $).
+
+Trénuje se pouze druhá (výstupní) vrstva, a to pomocí učení s učitelem. Centroidy první vrstvy lze najít jakýmkoli shlukovacím algoritmem, obvykle se používá \textit{k-means}. Pomocí RBF-sítí lze aproximovat vícerozměrné nelineární funkce a je oproti klasické dopředné síti obecně rychleji natrénovatelná a výsledná aproximace je přesnější.
+
 \subsection{Algoritmus backpropagation.}
+Jedná se učení s učitelem, tj. předpokládá se znalost trénovací množiny o $ P $ dvojicích $ [x_p, u_p] $. Cílem je nastavit váhy a prahy sítě tak, aby výstup sítě byl pro všechny vstupní vektory z trénovací množiny správný, tj. aby byla minimální chyba definována vztahem:
+\begin{equation}
+E = \frac{1}{2PM} \displaystyle{\sum_{p=1}^P} ||u_p-y_p||^2 = \frac{1}{2PM} \displaystyle{\sum_{p=1}^P \sum_{m=1}^M} (u_{pm}-y_{pm})^2
+\end{equation}
+\begin{description}
+\item[$ y_p $] ... skutečný výstup sítě pro vstup $ x_p $
+\item[$ u_p $] ... požadovaný výstup sítě pro vstup $ x_p $
+\item[$ P $] ... počet trénovacích dvojic
+\item[$ M $] ... počet výstupů sítě
+\end{description}
+Váhy a prahy se mění úměrně gradientu chybové funkce, tzn. chyba se z výstupu sítě šíří zpět do jednotlivých vrstev, kde se podle ní mění váhy a prahy.
+
+Značení (předpokládáme síť s jednou skrytou vrstvou):
+\begin{description}
+\item[$ E $] ... chyba způsobená nesprávnou činností sítě během jednoho trénovacího cyklu
+\item[$ f(\cdot) $] ... aktivační funkce ve skryté vrstvě
+\item[$ g(\cdot) $] ... aktivační funkce ve výstupní vrstvě
+\end{description}
+
+Algoritmus:
+\begin{enumerate}[label=(\roman*)]
+\item \textit{Inicializace}
+\begin{description}
+\item[$ W^{(1)}(0) $] ... váhová matice pro skrytou vrstvu ($ j \times n $) v kroku 0
+\item[$ W^{(2)}(0) $] ... váhová matice pro výstupní vrstvu ($ m \times j $) v kroku 0
+\item[$ B^{(1)}(0) $] ... prahový vektor pro skrytou vrstvu ($ j \times 1 $) v kroku 0
+\item[$ B^{(2)}(0) $] ... prahový vektor pro výstupní vrstvu ($ m \times 1 $) v kroku 0
+\item[$ c > 0 $] ... konstanta učení
+\item[$ E_{max} > 0 $] ... maximální povolená chyba, pod kterou se chceme dostat
+\item[$ ep_{max} > 0 $] ... maximální počet trénovacích cyklů (epoch)
+\end{description}
+
+\item \textit{výpočet výstupu pro vstup $ x_p $ v kroku $ k $}
+\begin{equation}
+y_p = g\left[ W^{2}(k) \cdot f(W^{1}(k) \cdot x_p + B^{1}(k)) \right]
+\end{equation}
+
+\item \textit{výpočet chyby predikce pro vstup $ x_p $}
+\begin{equation}
+E_p = \frac{1}{2} (u_p - y_p)^T (u_p - y_p)
+\end{equation}
+
+\item \textit{modifikace vah a prahů pro vstup $ x_p $ v kroku $ k $}
+\begin{align}
+\begin{split}
+W_{ji}^{(1)}(k+1) &= W_{ji}^{(1)}(k) + c \cdot \displaystyle{\sum_{m=1}^M} (u_{pm} - y_{pm}) \cdot g'(A_{m\cdot}^{(2)}(k)) \cdot W_{mj}^{(2)} \cdot f'(A_{j\cdot}^{(1)}(k)) \cdot x_i \\
+B_{j}^{(1)}(k+1) &= B_{j}^{(1)}(k) + c \cdot \displaystyle{\sum_{m=1}^M} (u_{pm} - y_{pm}) \cdot g'(A_{m\cdot}^{(2)}(k)) \cdot W_{mj}^{(2)} \cdot f'(A_{j\cdot}^{(1)}(k)) \\
+W_{mj}^{(2)}(k+1) &= W_{mj}^{(2)}(k) + c \cdot (u_{pm} - y_{pm}) \cdot g'(A_{m\cdot}^{(2)}(k)) \cdot A_{j\cdot}^{(1)}(k) \\
+B_{m}^{(2)}(k+1) &= D_{m}^{(2)}(k) + c \cdot (u_{pm} - y_{pm}) \cdot g'(A_{m\cdot}^{(2)}(k))
+\end{split}
+\end{align}
+
+\item \textit{zastavovací podmínky}
+Pokud $ E(k) \leq E_{max} $, síť je úspěšně natrénována. Pokud počet trénovacích epoch přesáhl $ ep_{max} $, trénování končí bez ohledu na chybu.
+\end{enumerate}
+Malá hodnota konstanty učení $ c $ zpomaluje proces, ovšem pro velkou hodnotu zase hrozí nebezpečí nestability - je vhodné volit adaptivní $ c $. Strmost aktivační funkce má podobný vliv jako konstanta učení. Algoritmus může skončit v nevyhovujících "mělkých" lokálních minimech chybové funkce (chybová funkce je závislost chyby na parametrech, tj. vahách a prazích sítě). Možná řešení:
+\begin{itemize}
+\item vyzkoušet různé inicializace vah a prahů
+\item zvýšit počet neuronů ve skrytých vrstvách, popř. počet skrytých vrstev (pouze částečné řešení)
+\item \textit{momentová metoda}: Jejím smyslem je zabránit tomu, aby se proces trénování zastavil v mělkém lokálním minimu. Pro změnu vah použijeme:
+\begin{equation}
+w(k+1) = w(k) + \alpha \cdot \Delta w(k-1) - (1-\alpha) \cdot c \cdot \frac{\partial \epsilon}{\partial w}
+\end{equation}
+kde $ \Delta w(t-1) $ je minulá změna váhy, tj. $ \Delta w(t-1) = w(t) - w(t-1) $ a $ \alpha $ je momentová konstanta. Analogicky se mění i prahy. Při inicializaci je třeba nastavit $ \Delta w(0) = 0 $, resp. $ \Delta b(0) = 0 $. Používá se zejména při dávkovém trénování.
+\end{itemize}
 
 \subsection{Sítě se zpětnou vazbou. Hopfieldova neuronová síť.}
 S předpokladem čtvercové matice $ W $ se výstup sítě počítá:
