@@ -827,6 +827,34 @@ Počet skrytých vrstev a počet neuronů v nich má vliv na schopnost sítě zo
 \end{table}
 
 \subsection{Bodové jasové transformace.}
+\subsubsection*{Jasové korekce}
+Cílem je stanovit nový jas daného pixelu (bodu), který je funkcí původního jasu a polohy:
+\begin{equation}
+p^{new}_{ij} = f(i,j,p^{old}_{ij})
+\end{equation}
+Nejčastěji se používá matice opravných koeficientů $ \mathrm{OPR} $ a dostáváme tedy:
+\begin{equation}
+p^{new}_{ij} = p^{old}_{ij} \cdot OPR_{ij}
+\end{equation}
+Matici opravných koeficientů získáme \textit{kalibrací} - na snímacím zařízení nesnímáme obraz se známými hodnotami. Z těchto známých správných hodnot ($ \mathrm{actual} $) a z naměřených hodnot ($ \mathrm{measured} $) vypočteme matici opravných koeficientů:
+\begin{equation}
+OPR_{ij} = \frac{actual_{ij}}{measured_{ij}}
+\end{equation}
+Využití se najde například při opravě systematických chyb snímacího řetězce.
+
+\subsubsection*{Jasové transformace}
+V tomto případě je funkce stejná pro všechny body (pixely) obrazu, nezáleží na poloze v obrázku:
+\begin{equation}
+p^{new}_{ij} = f(p^{old}_{ij})
+\end{equation}
+Využívá se:
+\begin{itemize}
+\item vyhledávací/převodní tabulky (LookUp Table)
+\vspace{2.5cm}
+\item prahování (segmentace - rozdělení obrazu na oblasti, které souvisejí s reálnými objekty)
+\vspace{2.5cm}
+\item ekvalizace histogramu
+\end{itemize}
 
 \subsection{Geometrické transformace.}
 
