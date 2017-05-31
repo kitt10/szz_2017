@@ -560,6 +560,44 @@ Definujeme míru diskriminativnosti množiny příznaků $ J = \mathrm{tr}(\hat{
 \subsection{Algoritmus backpropagation.}
 
 \subsection{Sítě se zpětnou vazbou. Hopfieldova neuronová síť.}
+S předpokladem čtvercové matice $ W $ se výstup sítě počítá:
+\begin{equation}
+y_j(k+1) = f\left[\displaystyle{\sum_{i=1}^J} \, w_{ji} y_j(k) + b_j\right]
+\end{equation} 
+Přenos může být:
+\begin{itemize}
+\item \textit{synchronní}: všechny výstupy přepočítám naráz, tedy pro vstupy v kroku $ (k+1) $ používám výstupy z kroku $ (k) $
+\item \textit{asynchronní}: přepočítávám jeden výstup po druhém, tedy např. pro vstup $ y_2(k+1) $ používám výstup $ y_1(k+1) $, tj. v každém kroku se vypočítává výstup pouze jednoho neuronu
+\end{itemize}
+Proces samovolného přechodu končí buď v \textit{rovnovážných stavech}, kdy $ y(k+1) = y(k) $, nebo v \textit{rovnovážných cyklech} tvořených stavy, mezi kterými síť kmitá. Jestliže rekurentní síť pracuje v asynchronním režimu, váhová matice je symetrická a prvky na diagonále jsou nezáporné $ \to $ síť vždy konverguje do rovnovážného stavu. Jestliže rekurentní síť pracuje v synchronním režimu a váhová matice je symetrická, pak síť vždy konverguje do rovnovážného stavu nebo cyklu délky 2.
+
+\subsubsection*{Hopfieldova síť}
+Jedná se o jednovrstvou rekurentní síť s neurony s bipolární binární aktivační funkcí, symetrickou váhovou maticí s nulami na diagonále a nulovým prahovým vektorem ($ w_{ij} = w_{ji} \, \forall i,j, i \neq j; \, \land \, w_{ii} = 0 $). Pro výstup i-tého neuronu platí:
+\begin{equation}
+y_i(k+1) = \mathrm{sgn}\left[ \displaystyle{\sum_{i=1}^n w_{ij} y_j(k)} \right]
+\end{equation}
+\begin{description}
+\item[$ y(k) $] ... výstup sítě v čase $ (k) $ $ = $ stav sítě v čase $ (k) $
+\item[$ y(0) $] ... inicializační stav sítě
+\end{description}
+Po inicializace v čase $ k=0 $ přechází síť samovolně z jednoho stavu do druhého (jedná se o dynamický systém). Ke změně stavu sítě může docházet synchronně či asynchronně. Při asynchronním přenosu se neuron, jehož výstup se bude přepočítávat, obvykle vybírá náhodně $ \to $ \textit{stochastická asynchronní rekurze}. 
+
+U Hopfieldovy sítě nedochází k učení, váhy sítě jsou určovány pomocí tzv. \textit{záznamového algoritmu}, během kterého se do sítě zaznamenávají požadované rovnovážně stavy. Pro váhovou matici platí:
+\begin{equation}
+W = \left[ \displaystyle{\sum_{p=1}^P} u_p \cdot u_p^T \right] - P \cdot I
+\end{equation}
+\begin{description}
+\item[$ u_p $] ... tzv. prototypy, tj. rovnovážné stavy, které mají být do sítě zaznamenány (dimenze $ n $)
+\item[$ P $] ... počet zaznamenaných prototypů
+\item[$ I $] ... identická matice řádu $ n $
+\end{description}
+Pro Hopfieldovu síť lze definovat tzv. \textit{výpočetní energii} ve tvaru:
+\begin{equation}
+E(y) = -\frac{1}{2} y^T \cdot W \cdot y
+\end{equation}
+Lze ukázat, že při přechodu sítě z jednoho stavu do jiného se tato energie nezvyšuje a v rovnovážném stavu (resp. cyklu) je minimální. Pro každý rovnovážný stav $ u $ existuje tzv. \textit{komplementární stav} $ u' $, pro který platí $ u' = -u $. Tento stav je rovněž rovnovážným stavem, i když v průběhu záznamového algoritmu nebyl do sítě zaznamenán. Zda proces přechodu sítě z jednoho stavu do jiného skončí v požadovaném nebo komplementárním stavu závisí při asynchronním režimu na pořadí přepočítávání výstupů jednotlivých neuronů $ \to $ nelze ovlivnit. Do Hopfieldovy sítě lze spolehlivě zaznamenat maximálně $ P \leq 0.14 \cdot n $ rovnovážných stavů ($ n $ je počet neuronů sítě). Pokud je v síti zaznamenáno rovnovážných stavů více, může proces synchronní i asynchronní rekurze skončit v tzv. \textit{falešném rovnovážném stavu}, který neodpovídá žádnému zaznamenanému ani žádnému komplementárnímu stavu.
+
+V praxi se Hopfieldova síť příliš nevyužívá, právě z důvodů možné existence falešných rovnovážných stavů. Dá se však využít jako rekonstruktor zašuměných dat či pro řešení optimalizačních úloh (např. hledání nejkratší cesty). Princip: Optimalizační úloha se popíše vhodnou funkcí, která se převede do tvaru výpočetní energie sítě. Hopfieldova síť pak samovolně hledá minimum této funkce. Existují i sítě pracující v čase spojitě, ale při jejich analýze je třeba řešit nelineární diferenciální rovnice.
 
 \subsection{Samoorganizující se sítě.}
 Samy se snaží objevit zákonitosti a souvislosti ve vstupních datech (tzv. proces samoorganizace), tzn. během učení (bez učitele) se snaží nastavit své váhy a prahy tak, aby na podobné vstupy reagovaly podobnými výstupy $ \to $ dochází k tzv. shlukování vstupních dat. Míra podobnosti se obvykle posuzuje pomocí Eukleidovské vzdálenosti
@@ -618,6 +656,21 @@ kde $ t_q $ udává rychlost poklesu. Pokud předem neznáme počet shluků, př
 \item Po natrénování sítě bude pro zadaný vstupní vektor největší hodnota na výstupu toho neuronu, jehož váhy reprezentují centroid shluku, ke kterému má daný vstupní vektor nejblíže.
 \end{itemize}
 Využití: hledání shluků ve vstupních datech; vektorová kvantizace.
+
+\subsubsection*{Kohonenova mapa (feature map)}
+Jedná se o speciální případ Kohonenovy sítě. Neurony jsou uspořádány tak, že tvoří jednorozměrné či dvojrozměrné pole. Učení probíhá bez učitele dle pravidla vítěze. Mění se ovšem nejen váhy vítězného neuronu, ale i váhy neuronů okolních. Pro změnu vah platí:
+\begin{equation}
+w_i(k+1) = w_i(k) + c \cdot (x^T - w_i(k)), \qquad i \in N_m(k)
+\end{equation}
+\begin{description}
+\item[$ w_i(k) $] ... i-tý řádek matice $ W $ (není normalizovaný)
+\item[$ N_m(k) $] ... okolí m-tého (vítězného) neuronu v čase k
+\end{description}
+Pro vítězný neuron s indexem $ m $ přitom platí:
+\begin{equation}
+||x-w_m^T|| = \underset{i=1,...,R}{\mathrm{min}} \, ||x-w_i^T||
+\end{equation}
+Řádky váhové matice se nenormalizují! V procesu trénování sítě se velikost okolí zmenšuje. Na začátku trénování se velikost okolí obvykle volí tak, že zahrnuje všechny neurony sítě. Pak se velikost okolí lineárně snižuje až na nulu, kdy okolí obsahuje pouze vítězný neuron. Doba trénování se obvykle volí tak, aby doba, po kterou je velikost okolí rovna 0, byla přibližně 3-krát větší než doba, po kterou docházelo ke snižování velikosti okolí. Inicializace vah se provádí malými náhodnými čísly, obvykle z intervalu $ \langle -0.1, 0.1 \rangle $. Konstanta učení $ c $ se podobně jako u Kohonenovy sítě volí proměnlivá v čase. Kohonenova mapa se využívá pro redukci počtu příznaků pro klasifikaci či pro vizualizaci vektorů velké dimenze.
 
 \subsection{Oblasti použití neuronových sítí.}
 Obecně lze aplikace matematicky formulovat jako aproximaci funkce (tj. optimalizační úlohu):
