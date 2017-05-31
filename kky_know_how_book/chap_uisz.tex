@@ -589,6 +589,23 @@ y(k+1) = f\left[ \displaystyle{\sum_{i=1}^n} w_i x_i(k) + b \right] = f(w^T \cdo
 \end{description}
 
 \subsection{Základní typy neuronových sítí. Způsoby činnosti a učení neuronových sítí.}
+Umělá neuronová síť vznikne spojením jednotlivých modelů neuronů. Výsledná funkce sítě je určena způsobem propojení jednotlivých neuronů (tzv. topologií sítě), váhami těchto spojení a způsobem činnosti jednotlivých neuronů (aktivačními funkcemi). Mezi základní typy patří:
+\begin{itemize}
+\item \textit{vícevrstvé dopředné neuronové sítě (feedforward nets)}: výstup jedné vrstvy je připojen na vstup následující vrstvy a signál se šíří pouze ze vstupu sítě na její výstup
+\item \textit{neuronové sítě se zpětnou vazbou (recurrent, feedback nets)}: oproti dopředným sítím se zde signál šíří také z výstupu sítě zpět na její vstup
+\end{itemize}
+
+\subsubsection*{Fáze činnosti}
+\begin{enumerate}
+\item \textit{Fáze nastavování}: cílem je nastavit váhy a prahy sítě tak, aby prováděla požadovanou činnost (předpokládá se, že je dána topologie sítě); Provádí se buď výpočtem (lze jen u naprosto jednoduchých sítí) a nebo učením - trénováním
+\item \textit{Fáze pracovní}: síť reaguje na předložené vstupy podle svého předchozího nastavení
+\end{enumerate}
+
+\subsubsection*{Způsoby učení}
+\begin{itemize}
+\item \textit{učení s učitelem (supervised learning)}: předpokládáme, že máme k dispozici tzv. trénovací množinu, tj. množinu dvojic $ \mathrm{[input, desired\_output]} $, které jsou síti postupně předkládány. Pro každý předložený vstup neuronová síť vygeneruje skutečný výstup, který se porovná s požadovaným výstupem, a trénovací algoritmus upraví nastavení vah a prahů tak, aby rozdíl mezi skutečným a požadovaným výstupem byl minimální. Každá dvojice se síti předkládá opakovaně - trénování probíhá v trénovacích cyklech (epochách), kdy během jedné epochy jsou sítě předloženy všechny dostupné dvojice. Pořadí výběru dvojic má vliv na výsledek učení. Dobře natrénovaná síť je schopna to, co se naučila, zobecňovat (schopnost generalizace). Trénování může být \textit{dávkové} (váhy a prahy se mění po předložení více dvojic) nebo \textit{sekvenční} (váhy a prahy se mění po každé dvojici).
+\item \textit{učení bez učitele (unsupervised learning)}: síti jsou předkládány pouze vstupy, informace učitele (požadovaný výstup) chybí. Síť se sama snaží najít zákonitosti ve vstupních datech a nastavit své váhy a prahy tak, aby na podobné vstupy reagovala podobnými výstupy. Podobnost je většinou definována eukleidovskou vzdáleností a dochází tak ke shlukování vstupních dat.
+\end{itemize}
 
 \subsection{Algoritmus backpropagation.}
 
