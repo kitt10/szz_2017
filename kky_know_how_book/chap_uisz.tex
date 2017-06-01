@@ -912,6 +912,57 @@ V případě $ h_1 $ jde o rovnoměrnou masku (Average), $ h_2 $ zvýhodňuje st
 Alternativně se dá využít tzv. \textit{maximální zastoupení} (Modus) - výsledkem filtrace je jas, který se v daném okolí vyskytuje nejčastěji. Dále můžeme využít nějakého \textit{výběrového kvantilu} (jako např. Medián). Ten dobře řeší problém výskytu jedné nebo více vychýlených hodnot (např. Salt\&Pepper Noise), ovšem je nelineární, porušuje tenké čáry a "trhá" rohy.
 
 \subsection{Gradientní operátory.}
+Též se označují jako diferenciální operátory či hranové detektory. Dokáží např. detekovat nespojitosti šedé úrovně v obraze, lze je tedy využít pro segmentaci. Hledáme velikost a směr gradientu.
+
+Gradient ve spojitém případě:
+\begin{equation}
+|grad \, g| = \sqrt{\left( \frac{\partial g}{\partial x} \right)^2 + \left( \frac{\partial g}{\partial y} \right)^2}
+\end{equation}
+
+V diskrétním případě:
+\begin{equation}
+\Delta xg(i,j) = g(i, j) - g(i,j-1); \qquad \Delta yg(i,j) = g(i, j) - g(i-1,j)
+\end{equation}
+\begin{equation}
+|grad \, g| = \sqrt{(\Delta xg)^2 + (\Delta yg)^2}
+\end{equation}
+\begin{equation}
+\varphi = \mathrm{arctg} \left( \frac{\Delta yg}{\Delta xg} \right)
+\end{equation}
+Máme tři typy gradientních operátorů:
+\begin{enumerate}
+\item \textit{Aproximace derivací diferencemi}
+\begin{itemize}
+\item Roberts: $ g(i,j) = |f(i,j)-f(i+1,j+1)| + |f(i,j+1)-f(i+1,j)| $
+\item Laplace: $ h = \begin{bmatrix}
+0 & 1 & 0 \\ 1 & -4 & 1 \\ 0 & 1 & 0
+\end{bmatrix} $
+$ \to $ aproximace Laplaceova operátoru ($ \nabla^2 = \frac{\partial^2}{\partial x^2} + \frac{\partial^2}{\partial y^2} $)
+\begin{equation}
+\Delta_x^2 f(i,j) = f(i,j+1) + f(i,j-1) - 2f(i,j)
+\end{equation}
+\begin{equation}
+\Delta_y^2 f(i,j) = f(i+1,j) + f(i-1,j) - 2f(i,j)
+\end{equation}
+\begin{equation*}
+\nabla^2 f(i,j) = \Delta_x^2 f(i,j) + \Delta_y^2 f(i,j) = f(i,j+1) + f(i,j-1) + f(i+1,j) + f(i-1,j) - 4f(i,j)
+\end{equation*}
+Udává pouze velikost hrany, ale ne její směr. Chceme-li znát i směr hrany, použijeme směrově závislý gradientní operátor.
+\end{itemize}
+\item \textit{Srovnání s parametrickým modelem hran}
+Nejprve označíme směry (např. 8). Vztahy:
+\begin{equation}
+|grad \, g| \hat{=} \underset{k=0,...,7}{\mathrm{max}}\{ g * h_k \}
+\end{equation}
+\begin{equation}
+\varphi = \underset{k=0,...,7}{\mathrm{argmax}}\{ g * h_k \}
+\end{equation}
+Používají se masky \textit{Prewitt}, \textit{Sobel}, \textit{Kirsch}.
+
+\item \textit{Průchody nulou 2. derivace obrazové funkce (Marrova teorie)}
+Hledáme průchody nulou druhé derivace obrazové funkce. Používají se masky pro detekci čáry a masky pro detekci bodu.
+\vspace{3cm}
+\end{enumerate}
 
 \subsection{Metody segmentace.}
 
