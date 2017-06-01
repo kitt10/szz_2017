@@ -857,6 +857,29 @@ Využívá se:
 \end{itemize}
 
 \subsection{Geometrické transformace.}
+Obecná definice:
+\begin{equation}
+i' = u(i,j); \qquad j' = v(i,j); \qquad g(i',j') = f(i,j)
+\end{equation}
+\begin{itemize}
+\item \textit{vztah známe}: např. rotace, posun, zvětšení, ...
+\item \textit{vztah hledáme} na základě původního a transformovaného obrazu: např. pomocí korespondence souřadnic na družicovém snímku a na mapě, používají se tzv. vlícovací body
+\end{itemize}
+Proces se skládá ze dvou kroků:
+\begin{enumerate}
+\item \textit{plošná transformace}
+\begin{equation}
+x' = \displaystyle{\sum_{r=0}^m \sum_{k=0}^{m-r}} a_{rk} \cdot x^r \cdot y^k; \qquad y' = \displaystyle{\sum_{r=0}^m \sum_{k=0}^{m-r}} b_{rk} \cdot x^r \cdot y^k
+\end{equation}
+Jedná se o polynom m-tého stupně. Např.:
+\begin{itemize}
+\item bilineární: $ x' = a_0 + a_1 \cdot x + a_2 \cdot y + a_3 \cdot xy; \qquad y' = b_0 + b_1 \cdot x + b_2 \cdot y + b_3 \cdot xy $
+\item afinní: $ x' = a_0 + a_1 \cdot x + a_2 \cdot y; \qquad y' = b_0 + b_1 \cdot x + b_2 \cdot y $ - sem patří např. rotace, posun, zvětšení, zkosení, atd.
+\end{itemize}
+\item \textit{interpolace jasu}: Nejbližší soused - většinou se postupuje tak, že se udělá inverzní transformace a odečte se nejbližší hodnota v původním obrazu
+\end{enumerate}
+\vspace{2cm}
+Geometrické transformace jsou z principu ztrátové. V některých speciálních případech (jako např. otočení o násobek $ 90^\circ $) je informace zachována, obecně to však neplatí. Využití: dálkový průzkum Země, desktop publishing.
 
 \subsection{Filtrace šumu.}
 
