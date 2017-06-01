@@ -25,6 +25,46 @@ Cílem předmětu LS2 je, aby student:
 \end{table}
 
 \subsection{Matematické modely spojitých a diskrétních lineárních dynamických systémů.}
+Za model považujeme \textit{stavovou reprezentaci} dynamických systémů a nebo dynamiku vyjádřenou \textit{diferenciálními rovnicemi}. K modelu dojdeme buď \textit{experimentálně} a nebo (raději) na základě \textit{matematicko-fyzikálního} modelování (znalost fyzikálních zákonů z dané vědní oblasti)
+\begin{itemize}
+\item \textit{klasická mechanika}
+\begin{enumerate}[label=(\alph*)]
+\item Newtonovská mechanika - silové zákony, rovnováha sil
+\item Lagrangeova mechanika - znalost kinetické a potenciální energie + elektromechanická analogie
+\end{enumerate}
+\item \textit{elektrické obvody} - Kirchhoffovy zákony
+\item \textit{hydrodynamika} - rovnice kontinuity, Bernoulliho zákon
+\item jiné získání struktury a parametrů modelu
+\end{itemize}
+
+\subsubsection*{Newtonova mechanika}
+Newtonův zákon síly:
+\begin{equation}
+\boxed{F = m \cdot a}
+\end{equation}
+K sestavení stavového modelu se zavedou složky vektoru stavu $ x_1(t), x_2(t) $:
+\begin{align}
+\begin{split}
+y(t) &\coloneqq x_1(t) \\
+\dot{y}(t) &= \dot{x}_1(t) \coloneqq x_2(t) \\
+\end{split}
+\end{align}
+Víme, že $ x_1(t) $ odpovídá poloze. Derivace polohy, tedy $ x_2(t) $, odpovídá rychlosti. Zrychlení poté odpovídá derivace rychlosti, tedy $ \dot{x}_2(t) = a = \frac{F(t)}{m} $. Nyní už můžeme sestavit stavový model založený na zákonu síly:
+\begin{align}
+\begin{split}
+\dot{x}(t) &= A \cdot x(t) + b \cdot F(t) = \begin{bmatrix}
+0 & 1 \\ 0 & 0
+\end{bmatrix} \cdot x(t) + \begin{bmatrix}
+0 \\ \frac{1}{m}
+\end{bmatrix} \cdot F(t) \\
+y(t) &= C^T \cdot x(t) = \begin{bmatrix}
+1 & 0
+\end{bmatrix} \cdot x(t)
+\end{split}
+\end{align}
+
+\subsubsection*{Lagrangeova mechanika}
+
 
 \subsection{Linearizace nelineárních dynamických systémů, rovnovážné stavy. Harmonická linearizace.}
 
