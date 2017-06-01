@@ -965,5 +965,98 @@ Hledáme průchody nulou druhé derivace obrazové funkce. Používají se masky
 \end{enumerate}
 
 \subsection{Metody segmentace.}
+Vstupem je intenzitní obraz a výstupem obraz rozčleněný na části, které mají souvislost s objekty reálného světa.
+\begin{itemize}
+\item \textit{Kompletní segmentace}: Vytvořené oblasti jednoznačně korespondují s objekty ve vstupním obraze. Obecně je nezbytná spolupráce s vyšší úrovní zpracování a využívají se znalosti o řešeném problému. V případě, kdy je obraz tvořen kontrastními objekty na pozadí konstantního jasu, přicházejí dobré výsledky i na nižší úrovni zpracování. Např. text, krevní buňky, počítání šroubků.
+\item \textit{Částečná segmentace}: Vytvořené oblasti jsou homogenní vzhledem k určitým zvoleným vlastnostem (jas, barva, textura, apod.). Oblasti se obecně mohou překrývat a je třeba aplikovat další postupy na vyšší úrovni zpracování. Např. scéna s polem a lesem při pohledu z okna - po segmentaci neodpovídá jedna oblast jednomu objektu.
+\end{itemize}
+
+Další příklady využití: hledání lodí na moři, typické vlastnosti železničních tratí a dálnic (např. maximální zakřivení), řeky se neprotínají
+
+\subsubsection*{Prahování}
+Nejjednodušší a nejčastěji používaná metoda segmentace, je nenáročná na hardwarovou realizaci a je nejrychlejší (lze provádět v reálném čase). Důležitá je volba prahu $ T $ - úloha, kterou lze obecně jen velmi obtížně provést automaticky. Také lze použít jen pro určitou třídu obrazů (objekty a pozadí musí být jasově snadno rozlišitelné).
+\begin{equation}
+g(i,j) = \begin{cases} 1 & f(i,j) \geq T \\ 0 & f(i,j) < T \end{cases}
+\end{equation}
+Možná modifikace:
+\begin{equation}
+g(i,j) = \begin{cases} 0 & f(i,j) \in D \\ 1 & \mathrm{jinak} \end{cases}
+\end{equation}
+kde $ D $ je množina jasů odpovídajících pozadí (např. u snímků krevních buněk - cytoplazma se jeví v určitém intervalu jasů, pozadí je světlejší, jádro je tmavší).
+
+Dále můžeme použít prahovaní více prahy či poloprahování (odstraníme pozadí, v objektech však zachováme rozložení jasů). Používá se při vizuálním hodnocení výsledků člověkem. $ f(i,j) $ nemusí být pouze jasová funkce (ale také třeba hodnota gradientu, hloubková mapa, barva, ...).
+
+Metody určování prahu:
+\begin{itemize}
+\item \textit{Histogram}: Hledáme lokální minimum mezi dvěma největšími dostatečně vzdálenými lokálními maximy.
+\item \textit{Procentní prahování}: Máme apriorní znalost o tom, kolik procent plochy obrazu pokrývají objekty (např. průměrné pokrytí plochy stránky textem se pohybuje okolo $ 5\% $). Práh potom nastavíme tak, aby právě tolik procent obrazových bodů mělo barvu objektů, zbytek barvu pozadí.
+\end{itemize}
+
+\subsubsection*{Segmentace na základě detekce hran}
+Hrany jsou místa obrazu, kde dochází k určité nespojitosti, většinou v jasu, ale také v barvě, textuře, apod. Obraz hran vznikne aplikací některého hranového operátoru (Canny). Obvykle jen málo míst v obraze má nulovou hodnotu velikosti hrany (šum), je třeba tedy např. prahováním potlačit nevýrazné hrany a zachovat pouze ty významné. Často se využívá apriorní informace o možné poloze hran, popř. znalosti koncových bodů.
+
+\subsubsection*{Segmentace narůstáním oblastí (region growing)}
+Metoda uplatnitelná v obrazech se šumem, kde se obtížně hledají hranice. Významnou vlastností je homogenita. Kritérium homogenity je založeno na jasových vlastnostech, komplexnějších způsobech popisu nebo dokonce na vytvářeném modelu segmentovaného obrazu. Většinou pro oblasti požadujeme splnění těchto podmínek:
+\begin{itemize}
+\item $ H(R_i) = \mathrm{TRUE}, \, i=1,2,...,l $
+\item $ H(R_i \cup R_j) = \mathrm{FALSE}, \, i,j=1,2,...,l; \, i \neq j; \, \mathrm{(R_i \, soused \, R_j)} $
+\end{itemize}
+\begin{description}
+\item[$ l $] ... počet oblastí
+\item[$ R_i $] ... jednotlivé oblasti
+\item[$ H(R_i) $] ... dvouhodnotové vyjádření kritéria homogenity, oblasti musí být homogenní a maximální
+\end{description}
+\textit{Spojování oblastí}: Na začátku každý obrazový element (2x2, 4x4, 8x8, ...) představuje samostatnou oblast, dále spojujeme vždy dvě sousední oblasti, pokud vyhovuje kritérium homogenity. Výsledek závisí na pořadí spojování. Proces končí v okamžiku, kdy nelze spojit žádné dvě oblasti.
+
+\textit{Štěpení a spojování (split and merge)}: Využívá pyramidální reprezentaci obrazu. Oblasti jsou čtvercové a odpovídají elementu dané úrovně pyramidální datové struktury. Na počátku určíme nějaké počáteční rozložení obrazu. Platí-li pro obraz $ R $ i-té úrovně pyramidální struktury $ H(R) = \mathrm{FALSE} $ (oblast není homogenní), rozdělíme $ R $ na 4 oblasti $ (i+1) $. úrovně. Existují-li sousední oblasti $ R_i $ a $ R_j $ takové, že $ H(R_i \cup R_j) = \mathrm{TRUE} $, spojíme $ R_i $ a $ R_j $ do jedné oblasti. Nelze-li žádnou oblast spojit ani rozdělit, algoritmus končí.
+
+\subsubsection*{Segmentace srovnáváním se vzorem (template matching)}
+Úloha má za úkol nalézt známé objekty (vzory) v obraze. Kromě hledání objektu této metody lze využít také např. pro srovnávání dvou snímků z různých míst či k určování relativního pohybu objektů. Nepřítelem je zde opět šum. Jako míru souhlasu většinou využíváme vzájemnou korelaci:
+\begin{align}
+\begin{split}
+C_1(u,v) &= \frac{1}{\underset{i,j \in V}{\mathrm{max}}|f(i+u,j+v)-h(i,j)|} \\
+C_2(u,v) &= \frac{1}{\displaystyle{\sum_{i,j \in V}}|f(i+u,j+v)-h(i,j)|} \\
+C_3(u,v) &= \frac{1}{\displaystyle{\sum_{i,j \in V}}|f(i+u,j+v)-h(i,j)|^2} \\
+\end{split}
+\end{align}
+Testujeme souhlas obrazu $ f $ se vzorem $ h $ umístěným v poloze $ (u,v) $. Pro každou polohu vzoru $ h $ v obraze $ f $ určíme hodnotu míry souhlasu vzoru s danou částí obrazu. Problémy nastanou, pokud se vzor v obraze vyskytuje natočený, s jinou velikostí nebo s geometrickým zkreslením. Můžeme to řešit zkoušením více případů či hledáním nejprve menších částí vzoru. Metodu lze urychlit zrychleným prováděním testů v hrubším rozlišení a v místě lokálního maxima pak přesným doměřením.
 
 \subsection{Matematická morfologie.}
+Oblast analýzy obrazu, která se opírá o teorii bodových množin (binární obraz, obraz s více úrovněmi jasu). Ve středu pozornosti je tvar objektů $ \to $ identifikace tvaru, optimální rekonstrukce tvaru, který je porušen. Obrazy jsou nejprve předzpracovány např. metodami segmentace jsou nalezeny objekty (binární obraz) a poté jsou použity morfologické postupy. Použití především pro: odstranění šumu, zjednodušení tvaru objektů, zdůraznění struktury objektů (kostra, ztenčování, zesilování, výpočet konvexního obalu, označování objektů), popis objektů číselnými charakteristikami (plocha, obvod, projekce)
+
+\textit{Relace s menší bodovou množinou (strukturním elementem)}: Morfologickou transformaci si představíme, jako bychom pohybovali strukturním elementem systematicky po celém obraze. Bod obrazu, který se shoduje s počátkem souřadnic strukturního elementu, nazýváme okamžitý bod, a právě do něj zapíšeme výsledek relace. Ke každé morfologické transformaci $ \Phi(x) $ existuje duální transformace $ \Phi^*(x) $. Mezi základní transformace patří posunutí, dilatace, eroze, otevření a uzavření
+
+\subsubsection*{Dilatace a eroze}
+\textbf{Dilatace} $ \oplus $ skládá body dvou množin pomocí vektorového součtu
+\begin{equation}
+X \oplus B = \{ d \in E^2; d = x+b; \, x \in X, \, b \in B \}
+\end{equation}
+Nejčastěji používán strukturní element (3x3). Objekty se rozrostou o jednu slupku na úkor pozadí, díry a zálivy tloušťky 2 se zaplní.
+
+\textbf{Eroze} $ \ominus $ skládá dvě bodové množiny s využitím rozdílu vektorů, je duální (ale ne inverzní) transformací k dilataci.
+\begin{equation}
+X \ominus B = \{ d \in E^2; d + b \in X; \, \forall b \in B \}
+\end{equation}
+Nejčastěji se opět používá element (3x3). Zmizí objekty (čáry) tloušťky 2 a osamělé body, objekty se zmenší o 1 slupku. Odečteme-li od původního obrazu jeho erozi, dostaneme obrysy objektu.
+
+\subsubsection*{Otevření a uzavření}
+V obou případech jde o kombinaci dilatace a eroze a výsledný obraz obsahuje méně detailů.
+
+\textbf{Otevření} $ \circ $ je eroze následovaná dilatací:
+\begin{equation}
+X \circ B = (X \ominus B) \oplus B
+\end{equation}
+Oddělí objekty spojené úzkou šíjí, odstraní malé detaily.
+
+\textbf{Uzavření} $ \bullet $ je naopak dilatace následovaná erozí:
+\begin{equation}
+X \bullet B = (X \oplus B) \ominus B
+\end{equation}
+Spojí objekty, které jsou blízko u sebe, zaplní malé díry a úzké zálivy.
+
+Pokud se obraz po otevření/uzavření elementem $ B $ nezmění, říkáme, že je otevřený/uzavřený vzhledem k $ B $. Obě transformace jsou \textit{idempotentní}, tj. opakovaným použitím těchto operací se nezmění výsledek.
+
+\subsubsection*{Skelet}
+Skelet $ S(Y) $ je množina bodů - středů kružnic, které jsou obsaženy v $ Y $ a dotýkají se $ Y $ alespoň ve dvou bodech. Lze vytvořit pomocí erozí a dilatací, ale potom může skelet být tlustší než jeden bod. Často se skelet nahrazuje množinou zpracovanou sekvenčním homotopickým zpracováním (hit or miss transformace).
+
+Aplikací funkcí \textit{ztenčování}, resp. \textit{zesilování}, dojde k okleštění skeletu o izolované body a krátké čáry z konců skeletu. V konečném stavu skelet obsahuje pouze uzavřené křivky.
