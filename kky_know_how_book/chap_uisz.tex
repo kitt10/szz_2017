@@ -882,6 +882,34 @@ Jedná se o polynom m-tého stupně. Např.:
 Geometrické transformace jsou z principu ztrátové. V některých speciálních případech (jako např. otočení o násobek $ 90^\circ $) je informace zachována, obecně to však neplatí. Využití: dálkový průzkum Země, desktop publishing.
 
 \subsection{Filtrace šumu.}
+Obecná diskrétní konvoluce:
+\begin{equation}
+g(i,j) = \displaystyle{\sum_{m,n}, \sum_{i,j}} f(i-m, j-n) \cdot h(m,n)
+\end{equation}
+Někdy se setkáme s problémem, jak počítat konvoluci co nejrychleji (např. při požadavku na zpracování v reálném čase). Tento problém částečně řeší tzv. box-algorithm (Šlesinger).
+
+\subsubsection*{Vyhlazování (filtrace)}
+Cílem je potlačení šumu v obrazu (např. aditivní šum $ \nu $ se střední hodnotou $ \mu $). Myšlenka je založena na využití $ n $ bodů v okolí.
+\begin{equation}
+f'_i = f_i + v_i; \qquad \frac{f_1 + f_2 + \dots + f_n}{n} + \frac{\nu_1 + \nu_2 + \dots + \nu_n}{n}
+\end{equation}
+Průměrovat můžeme přes více snímků: $ g(i,j) = \frac{1}{n} \displaystyle{\sum_{k=1}^n} f_k(i,j) $, kde $ f_k $ je obrazová funkce k-tého snímku a $ n $ se řádově pohybuje v desítkách ($ 30 - 50 $). Alternativně můžeme průměrovat lokálně - v daném okolí, to však přináší nevýhodu rozostření hran (ztratí se detaily) $ \to $ velikost masky by měla být menší, než je nejmenší detail v obraze, který chceme zachovat.
+
+Používané masky:
+\begin{equation*}
+h_1 = \frac{1}{9} \begin{bmatrix}
+1 & 1 & 1 \\ 1 & 1 & 1 \\ 1 & 1 & 1
+\end{bmatrix}; \qquad h_2 = \frac{1}{10} \begin{bmatrix}
+1 & 1 & 1 \\ 1 & 2 & 1 \\ 1 & 1 & 1
+\end{bmatrix}; \qquad h_3 = \frac{1}{16} \begin{bmatrix}
+1 & 2 & 1 \\ 2 & 4 & 2 \\ 1 & 2 & 1
+\end{bmatrix}; \qquad h_4 = \frac{1}{18} \begin{bmatrix}
+1 & 1 & 1 \\ 1 & 0 & 1 \\ 1 & 1 & 1
+\end{bmatrix}
+\end{equation*}
+V případě $ h_1 $ jde o rovnoměrnou masku (Average), $ h_2 $ zvýhodňuje středový bod, $ h_3 $ zvýhodňuje středový bod a body v hlavních směrech (Gauss) a maska $ h_4 $ naopak znevýhodňuje středový bod. Poslední dvě masky mají teoretickou výhodu výpočetní rychlosti, neboť dělení 8, resp. 16, lze v počítači realizovat jako bitový posun a tedy velmi rychle.
+
+Alternativně se dá využít tzv. \textit{maximální zastoupení} (Modus) - výsledkem filtrace je jas, který se v daném okolí vyskytuje nejčastěji. Dále můžeme využít nějakého \textit{výběrového kvantilu} (jako např. Medián). Ten dobře řeší problém výskytu jedné nebo více vychýlených hodnot (např. Salt\&Pepper Noise), ovšem je nelineární, porušuje tenké čáry a "trhá" rohy.
 
 \subsection{Gradientní operátory.}
 
