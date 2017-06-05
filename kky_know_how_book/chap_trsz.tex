@@ -37,6 +37,24 @@ Za model považujeme \textit{stavovou reprezentaci} dynamických systémů a neb
 \item jiné získání struktury a parametrů modelu
 \end{itemize}
 
+Z matematicko-fyzikálního modelování získáme diferenciální rovnice vyššího řádu, které lze převést na soustavu diferenciálních rovnic prvního řádu (lineární či nelineární). Odtud potom získáme stavovou reprezentaci.
+
+Spojitý systém:
+\begin{align}
+\begin{split}
+\dot{x}(t) &= A \cdot x(t) + B \cdot u(t) \\
+y(t) &= C^T \cdot x(t) + D \cdot u(t)
+\end{split}
+\end{align}
+
+Diskrétní systém:
+\begin{align}
+\begin{split}
+x(k+1) &= A \cdot x(k) + B \cdot u(k) \\
+y(k+1) &= C^T \cdot x(k) + D \cdot u(k)
+\end{split}
+\end{align}
+
 \subsubsection*{Newtonova mechanika}
 Newtonův zákon síly:
 \begin{equation}
@@ -64,7 +82,88 @@ y(t) &= C^T \cdot x(t) = \begin{bmatrix}
 \end{align}
 
 \subsubsection*{Lagrangeova mechanika}
+Založena na znalosti kinetické a potenciální energie.
 
+Lagrangeova funkce:
+\begin{equation}
+L(y, \dot{y}) \coloneqq T(\dot{y}) - V(y)
+\end{equation}
+
+Lagrangeova rovnice I. druhu:
+\begin{equation}
+F(t) = \frac{d}{dt} \frac{\partial L(y, \dot{y})}{\partial \dot{y}} - \frac{\partial L(y, \dot{y})}{\partial y} = \frac{d}{dt} \frac{\partial T(\dot{y})}{\partial \dot{y}} + \frac{\partial V(y)}{\partial y}
+\end{equation}
+
+Analogie pro hmotný bod z Newtonova zákonu síly:
+\begin{align}
+\begin{split}
+F_1(t) &= m \cdot \ddot{y}(t) = \frac{d}{dt}(m \cdot \dot{y}) = \frac{d}{dt} \left[ \frac{\partial}{\partial \dot{y}} (\frac{1}{2} \cdot m \cdot \dot{y}^2 ) \right] =  \frac{d}{dt} \frac{\partial T(\dot{y})}{\partial \dot{y}} \\
+F_2(t) &= m \cdot g = \frac{\partial}{\partial y} (m \cdot g \cdot y)
+\end{split}
+\end{align}
+
+\subsubsection*{Další příklady}
+\begin{itemize}
+\item \textit{Př.: Matematické kyvadlo}
+\begin{enumerate}[label=(\alph*)]
+\item Newton:
+\begin{align*}
+\begin{split}
+m \cdot a(t) &= m \cdot g \cdot sin(\varphi(t)); \qquad ds(t) = l \cdot d\varphi(t) \\
+v(t) &= \frac{ds(t)}{dt} = l \cdot \dot{\varphi}(t) \\
+a(t) &= \frac{d}{dt} \cdot v(t) = l \cdot \ddot{\varphi}(t) \\
+\to m \cdot l \cdot \ddot{\varphi}(t) &= m \cdot g \cdot sin(\varphi(t)), \, \varphi(0) \\
+\ddot{\varphi}(t) &= \frac{g}{l} \cdot sin(\varphi(t))
+\end{split}
+\end{align*}
+\item Lagrange:
+\begin{align*}
+\begin{split}
+T(\cdot) &= \frac{1}{2} \cdot m \cdot v^2 = \frac{1}{2} \cdot m \cdot (V_x^2 + V_y^2) \\
+x(t) &= l \cdot sin(\varphi(t)); \qquad y(t) = l - l \cdot cos(\varphi(t)) \\
+\dot{x}(t) &\coloneqq V_x(t) = l \cdot cos(\varphi(t)) \cdot \dot{\varphi}(t); \qquad
+\dot{y}(t) \coloneqq V_y(t) = l \cdot sin(\varphi(t)) \cdot \dot{\varphi}(t) \\
+\to T(\cdot) &= \frac{1}{2} \cdot m \cdot \left[l^2 \cdot cos^2(\varphi(t)) \cdot \dot{\varphi}^2(t) + l^2 \cdot sin^2(\varphi(t)) \cdot \dot{\varphi}^2(t)\right] = \frac{1}{2} \cdot m \cdot l^2 \cdot \dot{\varphi}^2(t)
+\end{split}
+\end{align*}
+\begin{align*}
+\begin{split}
+V(\cdot) &= m \cdot g \cdot y(t) = m \cdot g \cdot l - m \cdot g \cdot l \cdot cos(\varphi(t)) \\
+\to L(\cdot) &= T(\cdot) - V(\cdot) = \frac{1}{2} \cdot m \cdot l^2 \dot{\varphi}^2(t) - m \cdot g \cdot l + m \cdot g \cdot l \cdot cos(\varphi(t))
+\end{split}
+\end{align*}
+Dosadíme do Lagrangeovy rovnice:
+\begin{align*}
+\begin{split}
+\frac{d}{dt} \cdot \frac{\partial L}{\partial \dot{\varphi}(t)} - \frac{\partial L}{\partial \varphi} &= 0 \\
+l \cdot \ddot{\varphi}(t) + g \cdot sin(\varphi(t)) &= 0 \\
+\to \ddot{\varphi}(t) + \frac{g}{l} \cdot sin(\varphi(t)) &= 0, \, \varphi(0)
+\end{split}
+\end{align*}
+\end{enumerate}
+\item \textit{Př.: RLC obvod}
+
+Kirchhoff: $ \boxed{\sum u = 0} $
+\begin{align*}
+u(t) &= L \frac{di(t)}{dt} + \frac{1}{C} \int i(t) dt = Ri(t) \\
+\frac{du(t)}{dt} &= L \frac{d^2i(t)}{dt^2} + \frac{1}{C} i(t) + R \frac{di(t)}{dt}
+\end{align*}
+Volba stavových proměnných:
+\begin{equation*}
+x_1(t) \coloneqq i(t); \qquad x_2(t) \coloneqq u_c = \frac{1}{C} \int i(t) dt
+\end{equation*}
+\begin{equation*}
+\to \dot{x}_1(t) = -\frac{R}{L} x_1(t) - \frac{1}{L} x_2(t) + \frac{1}{L} u(t); \qquad \dot{x}_2(t) = \frac{1}{C} x_1(t); \qquad y(t) = R x_1(t)
+\end{equation*}
+\item \textit{Př.: Interaktivní model dravec-kořist}
+\vspace{2.5cm}
+\item \textit{Př.: Levitace kuličky v magnetickém poli}
+\vspace{2.5cm}
+\item \textit{Př.: Stejnosměrný motor řízený do kotvy}
+\vspace{3.5cm}
+\item \textit{Př.: Jednoduchý tlumič}
+\vspace{2.5cm}
+\end{itemize}
 
 \subsection{Linearizace nelineárních dynamických systémů, rovnovážné stavy. Harmonická linearizace.}
 
