@@ -166,6 +166,71 @@ x_1(t) \coloneqq i(t); \qquad x_2(t) \coloneqq u_c = \frac{1}{C} \int i(t) dt
 \end{itemize}
 
 \subsection{Linearizace nelineárních dynamických systémů, rovnovážné stavy. Harmonická linearizace.}
+Pro lineární dynamické systémy (LDS) máme:
+\begin{itemize}
+\item \textit{rovnovážný stav} $ x_r $ při $ u(t) = 0 \, \forall t \, \iff \, 0 = A \cdot x_r \begin{cases} x_r = 0 & h[A] = n \\ \mathrm{integrator} & h[A] = k < n \end{cases} $
+\item \textit{ustálený stav} $ x_r $ při $ u(t) = \mathrm{konst} \, \forall t \, \iff \, 0 = A \cdot x_r + B \cdot u_{konst} $
+\end{itemize}
+Pro nelineární dynamické systémy (NDS):
+\begin{itemize}
+\item \textit{rovnovážný stav} $ x_r $ při $ u(t) = 0 \, \forall t \, \iff 0 = f(x_r) \to y_r = g(x_r) $ (obecně více rovnovážných stavů)
+\item \textit{ustálený stav} $ x_r $ při $ u(t) = \mathrm{konst} \, \forall t \, \iff \, 0 = f(x_r, u_{konst}) \to y_r = g(x_r) $
+\end{itemize}
+
+\subsubsection*{Linearizace NDS}
+Bodová (vs. exaktní) linearizace (v okolí rovnovážných či ustálených stavů).
+
+NDS:
+\begin{equation*}
+\dot{x}(t) = f(x,u); \qquad y(t) = h(x,u)
+\end{equation*}
+Rovnovážné stavy: $ x_r, u_{konst}, y_r $. Linearizovaný model v okolí $ x_r $ (bude akceptovatelný v "blízkém okolí" rovnovážných stavů):
+\begin{align*}
+\begin{split}
+x(t) &= x_r + \Delta x(t); \qquad y(t) = y_r + \Delta y(t); \qquad u(t) = u_{konst} + \Delta u(t) \\
+\dot{x}_r + \Delta \dot{x}(t) &= f(x_r + \Delta x, u_{konst} + \Delta u) = f(x_r, u_{konst} + \frac{\partial f(x,u}{\partial x} \Delta x(t) + \frac{\partial f(x,u)}{\partial u} \\ \Delta y &= \frac{\partial f C}{\partial x} \Delta x + \frac{\partial f C}{\partial u}
+\end{split}
+\end{align*}
+
+O dynamice LDS či linearizovaného DS rozhodují vlastní čísla matice $ A $: $ \lambda_i(A), \, i=1,...,n $, resp. rozhodují o chování trajektorií systému vzhledem k rovnovážným stavům.
+\begin{equation}
+\{\lambda_i(A)\}_{i=1}^n = \begin{cases} \mathrm{realna} & \begin{cases} \mathrm{kladna} \\ \mathrm{zaporna} \end{cases} \\ \mathrm{ryze \, imaginarni}  \\ \mathrm{komplexne \, sdruzena} & \begin{cases} Re\{\lambda_i\} > 0 \\ Re\{\lambda_i\} < 0 \end{cases}\\ \lambda_i \neq 0 \to \infty \, \mathrm{rovnovaznych \, stavu} \end{cases}
+\end{equation}
+
+\subsubsection*{Typy rovnovážných stavů (LDS II. řádu)}
+\begin{enumerate}[label=(\alph*)]
+\item \textit{"střed"}: $ \lambda_{1,2} = \pm i $
+\vspace{2cm}
+\item \textit{"ohnisko"}: $ \lambda_{1,2} = a \pm bi $
+\vspace{2cm}
+\item \textit{"uzel"}: $ \lambda_{1,2} \in R $
+\vspace{2cm}
+\item \textit{"sedlo"}: $ \lambda_{1,2} \in R, \, \lambda_1 < 0 \, \land \, \lambda_2 > 0  $
+\vspace{2cm}
+\end{enumerate}
+\subsubsection*{Explicitní řešení stavové rovnice}
+\begin{equation}
+x(t) = e^{A(t-t_0)} \cdot x(t_0) + \displaystyle{\int_{t_0}^{t}} e^{A(t-\tau)} \cdot \beta \cdot u(\tau) d\tau; \qquad \tau \in \left[t_0, t\right]
+\end{equation}
+Výpočet stavové matice přechodu $ e^{A(t)} $:
+\begin{enumerate}
+\item Rozvoj v řádu: $ e^{A(t)} = I + \frac{A \cdot t}{1!} + \frac{A^2 \cdot t^2}{2!} + \cdots = \displaystyle{\sum_{i=0}^{\infty}} A^i \cdot \frac{t^i}{i!} $
+\item Využití Laplaceovy transformace: $ e^{At} = \mathscr{L}^{-1}\{(pI-A)^{-1}\} $
+\item Každá čtvercová matice může být převedena na diagonální: ($ A = V \cdot D \cdot V^{-1}$)
+\begin{equation}
+\qquad e^{At} = V \cdot e^{Dt} \cdot V^{-1}
+\end{equation}
+\item Využití Clay-Hamiltonovy věty (\textit{"Každá čtvercová matice (A) vyhovuje své charakteristické rovnici"}): $ \lambda_i $ jsou řešením charakteristické rovnice pro matici $ A $.
+\vspace{3cm}
+\end{enumerate}
+\subsubsection*{Harmonická linearizace}
+Pro analýzu uzavřeného obvodu vycházíme z předpokladů:
+\begin{enumerate}
+\item V obvodu vznikly ustálené kmity (autooscilace) ze základní frekvencí $ \omega_0 $
+\item Lineární systém má charakter dolnofrekvenční propust, $ |F_s(j\omega_0)| >> |F_s(jk\omega_0)|, \, k \geq 2 $.
+\item Nelinearita je symetrická vůči nulovému bodu.
+\end{enumerate}
+Za těchto předpokladů je na výstupu nelinearity \textit{periodický signál} se základní frekvencí $ \omega_0 $ a můžeme jej rozložit ve Fourierovu řadu. Protože chceme nahradit statickou nelinearitu v regulační smyčce tzv. \textit{ekvivalentním přenosem}, budeme tento přenos definovat analogicky jako u frekvenčních přenosů lineárních dynamických systémů. Ekvivalentní přenos statické nelinearity definujeme poměrem výstupního a vstupního signálu nelinearity, respektive poměrem jejich Fourierových obrazů.
 
 \subsection{Vlastnosti lineárních dynamických systémů. Řiditelnost, pozorovatelnost, kriteria. Vnitřní a vnější stabilita, kriteria.}
 
