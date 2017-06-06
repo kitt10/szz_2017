@@ -233,6 +233,31 @@ Pro analýzu uzavřeného obvodu vycházíme z předpokladů:
 Za těchto předpokladů je na výstupu nelinearity \textit{periodický signál} se základní frekvencí $ \omega_0 $ a můžeme jej rozložit ve Fourierovu řadu. Protože chceme nahradit statickou nelinearitu v regulační smyčce tzv. \textit{ekvivalentním přenosem}, budeme tento přenos definovat analogicky jako u frekvenčních přenosů lineárních dynamických systémů. Ekvivalentní přenos statické nelinearity definujeme poměrem výstupního a vstupního signálu nelinearity, respektive poměrem jejich Fourierových obrazů.
 
 \subsection{Vlastnosti lineárních dynamických systémů. Řiditelnost, pozorovatelnost, kriteria. Vnitřní a vnější stabilita, kriteria.}
+\begin{enumerate}[label=(\alph*)]
+\item \textit{stabilita}
+\begin{enumerate}[label=\alph*/]
+\item \textit{vnitřní}: stabilita rovnovážného stavu měřeného systému $ \dot{x}(t) = Ax(t), \, x(t_0), \, x_r = 0 $
+\begin{itemize}
+\item LDS je stabilní $ \iff \forall \, x_i: Re\{x_i\} < 0 $
+\item LDS je asymptoticky stabilní $ \iff \forall x(t_0): \underset{t \to \infty}{\mathrm{lim}} ||x(t)-x_r|| = 0 $
+\end{itemize}
+\item \textit{vnější}: BIBO: $ y(t) = g(t) = c^T e^{A(t-t_0)} x(t_0) + c^T \displaystyle{\int_{t_0}^t} e^{A(t-\tau)} Bu(\tau) d\tau $
+\end{enumerate}
+\item \textit{řiditelnost, dosažitelnost stavu}: Matice dosažitelnosti (řiditelnosti): $ Q_D \coloneqq [b, Ab, ..., A^{n-1}b] $. Systém je řiditelný (dosažitelný) $ \iff h[Q_D] = n = dim(x) $.
+\vspace{2cm}
+\item \textit{pozorovatelnost a rekonstruovatelnost}: "Jsem schopný získat počáteční stav?" Matice pozorovatelnosti: $ Q_P \coloneqq [C, A^T \cdot C, ..., (A^{n-1})^T \cdot C]^T $. \\ Systém je pozorovatelný $ \iff h[Q_P] = n = dim(x) $.
+\vspace{2cm}
+
+Kritéria polynomiálně (Hautus):
+\begin{itemize}
+\item LDS je řiditelný (dosažitelný) $ \iff h[pI-A,b] = n, \, \forall p=\lambda_i, i=1,...,n $ ($ < n $ pro neřiditelný)
+\item LDS je pozorovatelný (rekonstruovatelný) $ \iff h[pI-A, C^T]^T = n, \, \forall p=\lambda_i, i=1,...,n $ ($ < n $ pro nepozorovatelný)
+\end{itemize}
+\item \textit{stabilizovatelnost} (oslabená řiditelnost - nebude řiditelný, ale aspoň stabilní): $ u(x) = -kx(t), \qquad \dot{x}(t) = (A-bk^T) $
+\item \textit{detekovatelnost} (oslabená pozorovatelnost): $ u(y) = -hy(t) $
+\item \textit{Duální systém}: $ S(A', b, C^T) = S_{dual}(A^T, C, b^T) $. Systém je v minimální realizaci, pokud je řiditelný a zároveň pozorovatelný.
+\end{enumerate}
+(Kalmanova dekompozice systému)
 
 \subsection{Časové a frekvenční odezvy elementárních členů regulačních obvodů.}
 
