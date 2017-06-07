@@ -303,7 +303,7 @@ Kritéria polynomiálně (Hautus):
 \subsection{Úlohy odhadu stavu lineárního diskrétního stochastického systému – predikce a vyhlazování.}
 
 \subsection{Odhad stavu lineárního systému se spojitým či diskrétním měřením (Kalman-Bucyho filtr).}
-
+\newpage
 \section{Optimální systémy [OPS]}
 
 \begin{table}[H]
@@ -326,8 +326,55 @@ Kritéria polynomiálně (Hautus):
 \end{table}
 
 \subsection{Optimální programové řízení diskrétních dynamických systémů. Formulace úlohy. Hamiltonova funkce. Nutné podmínky pro optimální řízení.}
+\subsubsection*{Formulace úlohy}
+\textit{Dáno:}
+\begin{enumerate}
+\item Systém: $ x_{k+1} = f_k(x_k, u_k), \qquad k=0,...,N-1, \qquad x_0 $ známé, $ x_k \in R^n, u_k \in R^m $
+\item Kritérium: $ J(x_0) = \Phi(x_N) + \displaystyle{\sum_{k=0}^{N-1}}L_k(x_k,u_k) $, kde $ \Phi(x_N) $ je ohodnocení koncového stavu a $ L_k(x_k, u_k) $ je váhová funkce.
+\end{enumerate}
+\textit{Cílem} je nalézt posloupnost řízení $ u_0^{N-1} $ takovou, aby kritérium nabývalo své minimální hodnoty při splnění vazbových podmínek $ x_{k+1} - f_k(x_k, u_k) = 0 $.
+
+\subsubsection*{Rozšířené kritérium a Hamiltonova funkce}
+Diferenční rovnice popisující dynamiku systému jsou chápány jako vazbové podmínky. Definujeme rozšířené kritérium (v podstatě Lagrangeovu funkci):
+\begin{equation}
+\bar{J}(x_0) = \Phi(x_N) + \displaystyle{\sum_{k=0}^{N-1}}\left[ L_k(x_k,u_k) + \lambda_{k+1}^T(f_k(x_k,u_k)-x_{k+1}) \right]
+\end{equation}
+kde $ \lambda_1^N $ představuje Lagrangeovy multiplikátory. Při splnění vazbových podmínek nabývá rozšířené kritérium extrémů ve stejných bodech jako původní kritérium , tj. $ \mathrm{min} J(x_0) = \mathrm{min} \bar{J}(x_0) $. Toto kritérium můžeme alternativě vyjádřit ve tvaru:
+\begin{equation}
+\bar{J}(x_0) = \Phi(x_N) - \lambda_N^T x_N + \displaystyle{\sum_{k=0}^{N-1}}\left[ H_k(x_k,u_k,\lambda_{k+1}) - \lambda_{k+1}^T x_{k+1} \right] + H_0(x_0,u_0,\lambda_1),
+\end{equation}
+kde funkce $ H_k(x_k,u_k,\lambda_{k+1}) = L_k(x_k,u_k) + \lambda_{k+1}^T f_k(x_k,u_k) $ se nazývá Hamiltonova funkce (Hamiltonián).
+
+\subsubsection*{Nutné podmínky optimálního řízení}
+Hledané řešení vyhovuje podmínce $ d\bar{J} = 0 $, kde $ d\bar{J} $ vyjadřuje totální diferenciál vzhledem ke všem veličinám $ x_0^N $, $ u_0^{N-1} $ a $ \lambda_1^N $. "Nulováním" jednotlivých členů definujících $ d\bar{J} $ obdržíme nutné podmínky extrému. Je možné ukázat, že k vyjádření nutných podmínek je potřeba znát jen Hamiltonián. Hamiltonovy kanonické rovnice:
+\begin{align*}
+\begin{split}
+x_{k+1} &= \left(\frac{\partial H_k}{\partial \lambda_{k+1}} \right)^T = f_k(x_k,u_k), \qquad x_0 \\
+\lambda_k &= \left(\frac{\partial H_k}{\partial x_k} \right)^T = \left(\frac{\partial L_k}{\partial x_k} \right)^T + \left(\frac{\partial f_k}{\partial x_k} \right)^T \lambda_{k+1}, \qquad \lambda_N = \left(\frac{\partial \Phi}{\partial x_N} \right)^T \\
+0 &= \left(\frac{\partial H_k}{\partial u_k} \right)^T = \left(\frac{\partial L_k}{\partial u_k} \right)^T + \left(\frac{\partial f_k}{\partial u_k} \right)^T \lambda_{k+1}
+\end{split}
+\end{align*}
+Řešení představuje dvoubodový okrajový problém, který je v obecném případě obtížně analyticky řešitelný!
+
+\subsubsection*{Modifikace úlohy pro pevný konec}
+Předchozí formulace a řešení jsou platné pro úlohu s pevným časem a volným koncem. V případě pevného konce je definována dodatečná sada vazbových podmínek specifikujících koncovou podmínku pro stav ve tvaru $ \Psi(x_N) = 0 $, např. $ \Psi(x_N) = x_N - x_F = 0 $, tj. požadavek na $ x_N = x_F $ pro pevně daný finální stav $ x_f $. Rozšířené kritérium pro tuto úlohu je dáno vztahem:
+\begin{equation}
+\bar{J}(x_0) = \Phi(x_N) + \nu^T \Psi(x_N) + \displaystyle{\sum_{k=0}^{N-1}}\left[ L_k(x_k,u_k) + \lambda_{k+1}^T(f_k(x_k,u_k)-x_{k+1}) \right],
+\end{equation}
+kde $ \nu $ mají též význam (dalších) Lagrangeových multiplikátorů. Nutné podmínky optimálního řízení (tj. Hamiltonovy kanonické rovnice) zůstávají nezměněny. Rozšířena
+je pouze koncová okrajová podmínka
+\begin{equation}
+\lambda_N = \left(\frac{\partial \Phi}{\partial x_N} \right)^T + \left(\frac{\partial \Psi}{\partial x_N} \right)^T \nu
+\end{equation}
 
 \subsection{Optimální programové řízení spojitých dynamických systémů. Formulace úlohy. Hamiltonova funkce. Nutné podmínky pro optimální řízení. Podmínky transverzality. Pontrjaginův princip minima.}
+\subsubsection*{Formulace úlohy s pevným časem}
+\textit{Dáno:}
+\begin{enumerate}
+\item Systém: $ x_{k+1} = f_k(x_k, u_k), \qquad k=0,...,N-1, \qquad x_0 $ známé, $ x_k \in R^n, u_k \in R^m $
+\item Kritérium: $ J(x_0) = \Phi(x_N) + \displaystyle{\sum_{k=0}^{N-1}}L_k(x_k,u_k) $, kde $ \Phi(x_N) $ je ohodnocení koncového stavu a $ L_k(x_k, u_k) $ je váhová funkce.
+\end{enumerate}
+\textit{Cílem} je nalézt posloupnost řízení $ u_0^{N-1} $ takovou, aby kritérium nabývalo své minimální hodnoty při splnění vazbových podmínek $ x_{k+1} - f_k(x_k, u_k) = 0 $.
 
 \subsection{Deterministický diskrétní systém automatického řízení. Princip optimality. Bellmanova funkce. Bellmanova optimalizační rekurze.}
 
