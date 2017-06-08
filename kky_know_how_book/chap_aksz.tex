@@ -17,12 +17,16 @@
 
 \subsection{Metody řešení úloh v UI}
 
+\newpage
 \subsection{Logické formalizmy pro reprezentaci znalostí. Predikátový počet 1. řádu. Rezoluční metoda.}
 
+\newpage
 \subsection{Produkční systém. Báze znalostí a báze dat. Dopředné a zpětné šíření.}
 
+\newpage
 \subsection{Síťové formalizmy pro reprezentaci znalostí. Sémantické sítě. Rámce. Scénáře.}
 
+\newpage
 \subsection{Metody hraní her v UI. Procedura minimax, alfa-beta prořezávání.}
 
 \newpage
@@ -348,6 +352,29 @@ Programovací jazyky pro řízení:
 \end{itemize}
 
 \subsection{Architektura .NET Frameworku; řízený modul, metadata, běh řízeného kódu.}
+Soubor technologií v softwarových produktech, které tvoří celou platformu, která je dostupná nejen pro Web, Windows i Pocket PC. Pro vývoj .NET aplikací vydal Microsoft Visual Studio .NET.
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.5\textwidth]{dot_net}
+\end{figure}
+\textbf{Common Language Runtime (CLR)} je jádrem (společná báze) pro spouštění kódu všech programovacích jazyků v .NET. CLR nepozná v jakém jazyku byl kód vytvořen. Programy vytvořené pro .NET jsou překládány pro CLR. Výsledkem překladu je tzv. řízený modul (managed module).
+
+\subsubsection*{Řízený modul (managed module)}
+Řízený modul je standardní PE (Portable Executable) soubor, potřebující pro běh CLR. Skládá se ze 4 částí:
+\begin{itemize}
+\item {PE header}: hlavička informující o typu souboru (GUI, CUI, DLL) , času překladu, ...
+\item \textit{CLR header}: hlavička interpretovaná CLR a utilitami. Obsahuje
+požadovanou verzi CLR, umístění a velikost metadat, zdroje (resources), silná jména (strong names), příznaky, ...
+\item \textit{metadata}: tabulky údajů udávající 1) typy a členy definované ve zdrojovém kódu modulu; 2) typy a členy, na něž se zdrojový kód odkazuje (které využívá). Odstraňují potřebu hlavičkových souborů (.h) a knihoven (.lib) pro překlad. Celá informace o typech a členech spolu s kódem v IL je obsažena v modulech. Tuto informaci přímo využívají překladače. Visual Studio .NET je využívá pro IntelliSense (nápovědu během psaní kódu, které členy lze použít a jaké parametry mají dané metody). CLR je využívá pro kontrolu, že kód obsahuje jen „bezpečné“ operace. Jsou užívána pro serializaci dat v paměti, pro přenos na vzdálený počítač a obnovení stavu objektů na vzdáleném počítači. Umožňují garbage collectoru sledovat dobu života (lifetime) objektů. Pro každý objekt může garbage collector určit jeho typ a z metadat zjistí které položky se odkazují na jiné objekty.
+\item \textit{Intermediate Language (IL)}: kód generovaný překladačem. Později je tento kód dále CLR překládán do instrukcí procesoru. Je založen na práci se zásobníkem, jeho instrukce vkládají (push) operandy na zásobník a vytahují (pop) výsledky ze zásobníku. Má omezenou množinu instr ukcí a nepracuje přímo s registry procesoru, což zjednodušuje vývoj překladačů. Největším přínosem je robustnost aplikací. Během překladu z IL do instrukcí procesoru CLR provádí tzv. verifikaci. Během ní se zkoumá IL kód, zda vše co provádí je „bezpečné“ (safe).
+\end{itemize}
+
+\subsubsection*{Exekuce řízeného IL kódu}
+Při zavedení do paměti se pro všechny metody vytvoří náhradní metody (stub). Při prvním zavolání jakékoliv metody skáče náhradní metoda do CLR. CLR načte kód v IL a přeloží metodu do kódu procesoru (native CPU code) pomocí tzv. Just-in-time překladače (JITCompiler). Náhradní metoda je přepsána kódem volajícím přeloženou metodu. Přeložená metoda se zavolá. Při druhém a dalším volání se volá přímo přeložená metoda.
+
+Špatně detekovatelné chyby v programech jsou často spojeny se správou paměti. V jazycích C, C++ často dochází k paměťovým únikům (memory leaks) – paměť se naalokuje, ale neuvolní. Řešení v CLR: Garbage Collector (x cyklické odkazy, časová náročnost). CLR nepracuje přímo s moduly, ale se assembly - logická skupina jednoho nebo několika řízených modulů a zdrojů (resources), nejmenší samostatný kus SW pro instalování, má svou verzi (private/shared assembly).
+
+Typy v CLR (Common Type System - CTS): kód napsaný v jednom jazyku může pomoci nich komunikovat s kódem z jiného jazyka: field, method, property, event. Common Language Specification (CLS): CLR integruje všechny jazyky tak, že objekty vytvořené v jednom z nich mohou být plně využívány v úplně jiném jazyku. CLS definuje minimální množinu rysů, které musí podporovat každý překladač pro CLR.
 
 \subsection{Jazyk C Sharp: hodnotové a referenční typy; jednoduché typy, implicitní konverze; výrazy a operátory; příkazy; výjimky.}
 
