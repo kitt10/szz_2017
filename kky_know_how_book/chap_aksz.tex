@@ -376,13 +376,13 @@ Při zavedení do paměti se pro všechny metody vytvoří náhradní metody (st
 
 Typy v CLR (Common Type System - CTS): kód napsaný v jednom jazyku může pomoci nich komunikovat s kódem z jiného jazyka: field, method, property, event. Common Language Specification (CLS): CLR integruje všechny jazyky tak, že objekty vytvořené v jednom z nich mohou být plně využívány v úplně jiném jazyku. CLS definuje minimální množinu rysů, které musí podporovat každý překladač pro CLR.
 
-\subsection{Jazyk C Sharp: hodnotové a referenční typy; jednoduché typy, implicitní konverze; výrazy a operátory; příkazy; výjimky.}
+\subsection{Jazyk C\#: hodnotové a referenční typy; jednoduché typy, implicitní konverze; výrazy a operátory; příkazy; výjimky.}
 Datové typy (Types): hodnotové, referenční (odkazové), zabalení a rozbalení
 
 \subsubsection*{Hodnotové typy}
 Proměnná hodnotového typu obsahuje hodnotu tohoto typu (např. typ:int, proměnná:v, hodnota:123). Přiřazení vytváří kopii přiřazované hodnoty. Od hodnotových typů nelze dále dědit. Patří mezi ně:
 \begin{itemize}
-\item struktury (struct)
+\item struktury (struct): Struktury jsou podobné třídám v tom, že mohou obsahovat datové členy a funkční členy. Na rozdíl od tříd jsou struktury hodnotové typy! Jsou vhodné zejména pro malé objekty, které nevyžadují dědičnost.
 \item jednoduché typy: rezervovaná slova (byte, short, int, long, char, float, bool, ...)
 \item výčtové typy (enum): deklarují množinu pojmenovaných konstant (pro každý enum je v pozadí nějaký celočíselný typ. Např. enum Color \{Red, Green, Blue\}.
 \end{itemize}
@@ -391,10 +391,10 @@ Proměnná hodnotového typu obsahuje hodnotu tohoto typu (např. typ:int, prom�
 Proměnná referenčního typu obsahuje referenci (odkaz) na instanci typu objekt. Přiřazením do proměnné referenčního typu ukazuje proměnná na stejnou instanci objektu jako přiřazovaná. Referenční typy jsou:
 \begin{itemize}
 \item třídy (class)
-\item rozhraní (interface)
-\item pole
+\item rozhraní (interface): Rozhraní definuje „kontrakt“. Třída nebo struktura, implementující interface musí dodržovat tento kontrakt. Interface může dědit z několika bázových interfaců. Interface neimplementuje členy, které definuje. Implementují je třídy nebo struktury, které jsou od daného rozhraní odvozeny.
+\item pole (array): Pole jsou datové struktury, k jejichž prvkům se přistupuje pomocí vypočtených indexů. Dimenze pole = počet indexů; jedno a vícedimenzionální pole (dvou, třídimenzionální, ...). Prvkem pole může být libovolný typ, včetně pole.
 \item delegáty (delegates): Umožňují implementovat scénáře známé z jazyků C, C++, Pascal, atd. jako ukazatele na funkce. Na rozdíl od C++ (atd.) jsou plně objektově orientovány a zapouzdřují (encapsulates) jak instanci objektu, tak i metodu. Deklarace delegáta definuje třídu odvozenou od System.Delegate a delegáty jsou implicitně sealed. Daná metoda a delegát jsou kompatibilní, mají-li stejný počet parametrů stejných typů ve stejném pořadí a se stejnými
-modifikátory parametrů a stejný návratový kód.
+modifikátory parametrů a stejný návratový kód. Delegáty jsou v C\# ekvivalentní podle jména, ne podle struktury deklarace. Dva různé typy delegátů jsou odlišné typy, i když mají shodný seznam parametrů i návratový kód. Seznam volání (invocation list) je posloupnost metod zapouzdřená do instance delegátu.
 \end{itemize}
 
 Převod z hodnotového typu na referenční se nazývá zabalení (boxing). Provádí se automaticky, když se hodnotový typ vyskytuje v místě, kde má být object. Opačný převod je rozbalení (unboxing). Je třeba použít explicitní přetypování, typ před zabalením a při rozbalení se musí přesně shodovat! Konverze mezi dvěma typy může být implicitní (long a = b) nebo explicitní (int c = (int) b).
@@ -408,7 +408,7 @@ Výraz je posloupnost operátorů a operandů. Existují 3 druhy operátorů:
 \end{itemize}
 
 \subsubsection*{Příkazy}
-Patří sem bloky, prázdné příkazy, deklarační příkaz (deklaruje lokální proměnné nebo konstanty), výrazový příkaz (vyhodnocení výrazu), výběrové příkazy (if, switch), iterační příkazy (for, while, do, foreach), skokové příkazy (break, continu, goto, return, throw), příkaz try, příkazy checked a unchecked (určují, jak bude ošetřeno přetečení celočíselných aritmetických operací a konverzí), příkaz lock (realizuje vzájemně výlučný (mutual-exclusive) přístup k danému objektu, vykoná příkaz a přístup uvolní), příkaz using.
+Patří sem bloky, prázdné příkazy, deklarační příkaz (deklaruje lokální proměnné nebo konstanty), výrazový příkaz (vyhodnocení výrazu), výběrové příkazy (if, switch), iterační příkazy (for, while, do, foreach), skokové příkazy (break, continu, goto, return, throw), příkaz try, příkazy checked a unchecked (určují, jak bude ošetřeno přetečení celočíselných aritmetických operací a konverzí), příkaz lock (realizuje vzájemně výlučný (mutual-exclusive) přístup k danému objektu, vykoná příkaz a přístup uvolní), příkaz using (usnadňuje užívání jmenných prostorů a typů v nich definovaných).
 
 Všechny příkazy kromě příkazů s návěštím a deklaračních příkazů se nazývají vložené (embedded). Vložené příkazy se používají v rámci jiných příkazů.
 
@@ -416,7 +416,40 @@ Všechny příkazy kromě příkazů s návěštím a deklaračních příkazů 
 Výjimky jsou v C\# strukturovaným a typově bezpečným způsobem zpracování systémových i aplikačních chyb. Mohou být vyvolány dvěma způsoby: 1) příkazem throw; 2) Během zpracování příkazů a výrazů jazyka C\#, kdy nějaká operace nemůže být dokončena normálně. Jsou obsluhovány příkazem try.
 
 
-\subsection{Jazyk C Sharp: Členy a přístup k nim; jmenné prostory; třídy, metody, vlastnosti, konstruktory, destruktory; struktury; pole; delegáty; atributy.}
+\subsection{Jazyk C\#: Členy a přístup k nim; jmenné prostory; třídy, metody, vlastnosti, konstruktory, destruktory; struktury; pole; delegáty; atributy.}
+\subsubsection*{Členy a přístup k nim}
+Jmenné prostory a typy mají členy. Členy dané entity (objektu, jmenného prostoru) jsou dostupné pomocí kvalifikovaného jména: entita.jméno-člena.
+\begin{itemize}
+\item Jmenný prostor (namespace): členy jsou jmenné prostory a typy deklarované uvnitř něj.
+\item Struktura (struct): členy deklarované ve struktuře (např. jednoduché typy) a členy zděděné od třídy object.
+\item Vyjmenovaný typ (enum): deklarované konstanty a členy zděděné z třídy System.Enum.
+\item Třída (class): deklarované členy v této třídě a členy zděděné od bázové třídy kromě konstruktorů a destruktorů.
+\item Rozhraní (interface): deklarované členy v interfacu, členy všech bázových interfaců a členy zděděné od třídy object.
+\item Pole (array) : členy zděděné z třídy System.Array
+\item Delegát (delegate): členy zděděné z třídy System.Delegate
+\end{itemize}
+Přístup ke členům je určen v deklaraci pomocí modifikátorů:
+\begin{itemize}
+\item public: přístup není omezen
+\item protected: přístup z typu v němž je deklarace a z odvozených typů
+\item internal: přístup omezený na daný program
+\item protected internal: přístup omezený na daný program nebo odvozené typy
+\item private: přístup omezen na typ, v němž je deklarace uvedena
+\end{itemize}
+
+\subsubsection*{Jmenné prostory (Namespaces)}
+Kód programů v C\# je organizován do jmenných prostorů (direktiva using). Deklarace jmenného prostoru se může nacházet v nejvyšší úrovni ve zdrojovém souboru (takový jmenný prostor se stává členem globálního jmenného prostoru) nebo se nachází uvnitř (vnitřní jmenný prostor) jiného jmenného prostoru (vnější jmenný prostor). V obou případech musí být jméno jmenného prostoru jedinečné uvnitř jej obsahujícího jmenného prostoru.
+
+\subsubsection*{Třídy (Classes)}
+Třída je datová struktura, která může obsahovat: 1) datové členy (konstanty a položky); 2) členské funkce (metody, vlastnosti, události, operátory, konstruktory a destruktory); 3) vnořené typy. Mohou využívat dědičnost (inheritance) - odvozená třída může rozšiřovat a specializovat třídu základní (od sealed nelze odvozovat nové třídy). Modifikátor abstract označuje neúplnou třídu, která je určena pouze jako bázová třída.
+\begin{itemize}
+\item \textit{Metody}: Člen implementující výpočet nebo akci s danou třídou (objektem). Může mít hodnotové, referenční (odpovídá stejnému místu v paměti jako proměnná, která je argumentem v okamžiku volání) a výstupní parametry. Dále také pole parametrů deklarované modifikátorem params (pole je vždy posledním parametrem). Statické vs. instanční (this) metody. Virtuální metody mohou být nahrazeny odvozenými třídami vs. override metody mění (přebíjí) implementaci existující zděděné virtuální metody. Abstraktní metody zavádí virtuální metodu, ovšem bez implementace - tu musí dodat odvozené třídy. Externí metody (extern) jsou typické implementovány v jiném programovacím jazyku.
+\item \textit{Vlastnosti}: Člen umožňující přístup k charakteristikám dané třídy (objektu), např. délka řetězce, velikost fontu, apod.
+\item \textit{Konstruktory instancí}: člen implementující akce nezbytné pro inicializaci instance třídy. Nedědí se.
+\item \textit{Destruktory}: Člen, implementující akce nezbytné pro zrušení (destrukci) instance dané třídy. Destruktory se nedědí a nelze je volat explicitně. Instance se stává způsobilou pro destrukci, pokud ji nemůže používat žádný kód. Instanci uklízí garbage collector. Nemohou být přetížené (nemají parametry), proto třída může mít nejvýše jeden destruktor.
+\item \textit{Atributy}: Deklarace v C\# umožňují používat „značky“ vkládané do zdrojového kódu pro specifikaci „přídavné“ informace. Tuto informaci lze získat při běhu programu pomocí tzv. reflexe. Atributy se vkládají do zdrojového kódu do hranatých závorek [ ].
+\item \textit{Indexery}: Člen umožňující, aby byl objekt indexován stejným způsobem jako pole (array).
+\end{itemize}
 
 \subsection{Softwarové komponenty: DLL, RPC, COM; interface; OPC.}
 
