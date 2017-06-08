@@ -313,6 +313,39 @@ prokládání křivek se používají frekvenční odezvové funkce, ale často 
 \end{table}
 
 \subsection{Architektura podnikových řídicích systémů; používané programovací jazyky.}
+Programové prostředky v řídících systémech:
+\begin{itemize}
+\item[L0]: Inteligentní čidla a akční členy
+\begin{itemize}
+\item FPGA (Field Programmable Gate Array) - speciální návrhové systémy
+\item jednočipové procesory - assembler, jazyk C
+\item signálové procesory - assembler, jazyk C
+\end{itemize}
+\item[L1]: Řízení v reálném čase, snímání dat
+\begin{itemize}
+\item PLC (Programmable Logic Controller) - programování podle normy IEC 61131-3 - Ladder diagramy, strukturovaný text (STL), instruction language (IL), function block chart (FBC), sequential flow chart (SFC)
+\item IPC (Industrial PC) - operační systémy reálného času (Windows CE, Phar Lap ETS, VxWorks, QNX, RT Linux), C/C++, .NET Compact Framework, Java
+\item kompaktní regulátory - nejčastěji i s jednočipy, jazyk C
+\end{itemize}
+\item[L2]: Uživatelské rozhraní (HMI, SCADA), archivace, trendy
+\begin{itemize}
+\item HMI (Human-Machine Interface), SCADA (Supervisory Control and Data Acquisition) - Windows, I/O ovladače pro HW v L1, OPC, C++, C\#, .NET, Java
+\item Export do SQL databází - ODBC, ADO.NET, C\#
+\item DCS (Distributed Control Systems - Unix, X Window
+\end{itemize}
+\item[L3]: Management, řízení výroby, vzdálený přístup po internetu
+\begin{itemize}
+\item Podnikové informační systémy, SQL databáze
+\item přístup přes internet - ASP.NET, tenký klient (Java), tlustý klient (ActiveX)
+\end{itemize}
+\end{itemize}
+Programovací jazyky pro řízení:
+\begin{itemize}
+\item \textbf{Jazyk C}: Pracuje s datovými strukturami, ale není objektový. Je rozšířen na většinu HW platforem i OS. Často pracuje s ukazateli (pointry), nekontroluje souhlas typů, představuje základ syntaxe pro C++, Java, C\#
+\item \textbf{C++}: Plně objektově orientovaný, vícenásobná dědičnost, rozšířen na mnoho platforem a OS, používaný pro většinu rozsáhlých systémů.
+\item \textbf{C\#}: Moderní jazyk vycházející ze syntaxe C, C++, Java. potřebuje .NET Framework (Windows, Windows CE), generuje jen řízený kód (managed code). Velmi přísná typová kontrola (minimalizace chyb).
+\item Další: Java, Pascal/Delphi, Visual Basic, \textbf{Python} what the hell
+\end{itemize}
 
 \subsection{Architektura .NET Frameworku; řízený modul, metadata, běh řízeného kódu.}
 
