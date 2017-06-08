@@ -25,6 +25,7 @@
 
 \subsection{Metody hraní her v UI. Procedura minimax, alfa-beta prořezávání.}
 
+\newpage
 \section{Modelování a simulace 1 [MS1]}
 
 \begin{table}[H]
@@ -42,19 +43,132 @@
 \end{table}
 
 \subsection{Systém, model, modelování, simulace, systémová analýza.}
+\subsubsection*{Systém}
+Objekty reálného světa jsou složité, těžko pozorovatelné. Pro studium objektů však máme určitý důvod, sledujeme určitý cíl a tedy nemusíme studovat objekty zcela obecně v plné složitosti – provádíme zjednodušení. Systémy jsou nástrojem studia objektů reálného světa, jsou zjednodušeným, abstraktním pohledem na objekty reálného světa. Systém je složitá entita tvořená vzájemně působícími prvky sloužící společnému účelu nebo podřízená společnému cíli (je-li podstata působení předávání informací, hovoříme o kybernetickém systému).
+\begin{itemize}
+\item \textit{Abstrakce}: zanedbání, vyloučení těch skutečností ze studia systému, které nejsou z hlediska sledovaného účelu (cíle) podstatné
+\item \textit{Dekompozice}: rozklad systému na dílčí části – subsystémy a prvky
+\item \textit{Hierarchie}: zachycení souvislostí mezi částmi systému vyjádřením sounáležitost částí systému ve smyslu nadřazenosti a podřízenosti, princip hierarchie v kombinaci s principem dekompozice vede k analýze systému od celku k částem, k postupnému, interaktivnímu zpřesňování a zjemňování popisu systému.
+\item \textit{Modularita}: specifikace částí systému vykazujících jistou míru samostatnosti a minimální počet vzájemných vazeb
+\end{itemize}
+
+\subsubsection*{Model, modelování}
+Jsou dány dva objekty X a Y a pozorovatel. Objektu X říkáme, že je modelem objektu Y, jestliže pozorovatel může použít objektu X k získání odpovědí na otázky, které se týkají objektu Y. Modelování není samostatným vědním oborem, jedná se o soubor principů, přístupů, metod k tvorbě modelů (definování systémů).
+
+\subsubsection*{Simulační model, simulace}
+Metoda získávání nových znalostí o systému na základě řízeného experimentování s jeho modelem. Simulační model – model určený (vhodný) pro simulaci (napodobení) chování reálného objektu. Provedeme-li nějaké řízené pozorování na reálném objektu, říkáme, že jsme provedli experiment. Provedeme-li takové řízené pozorování na modelu, označujeme ho simulací.
+\begin{itemize}
+\item \textit{Výhody}: cena, rychlost, bezpečnost, možnosti popisu velmi složitých systémů, u kterých by bylo použití jiných metod velmi složité nebo nemožné (například analytické řešení – aplikovatelné na jednoduché systémy nebo zjednodušené popisy složitých systémů)
+\item \textit{Nevýhody}: náročnost tvorby simulačních modelů, problém ověření validity modelu, problém nepřesnosti a nestability numerických metod, výpočetní náročnost, jednorázovost
+\end{itemize}
+\vspace{3cm}
+Vytvoření abstraktního modelu – formulace zjednodušeného popisu zkoumaného systému. Vytvoření simulačního modelu – zápis abstraktního modelu ve formě počítačového programu. Simulace – řízené experimentování se simulačním modelem.
+
+\subsubsection*{Systémová analýza}
+\begin{itemize}
+\item \textit{izomorfní} vs. \textit{homomorfní} systémy: Izomorfní systémy jsou nerozlišitelné od sebe pro pozorovatele, který sleduje pouze jejich
+vstupy a výstupy. Při homomorfismu existuje jednoznačné přiřazení mezi stavem systému A a B a nejednoznačné zpětné přiřazení – systém B získaný ze systému A zjednodušením, je homomorfním modelem systému A (shoda ve vybraných veličinách, nesymetrická relace). Vytváření homomorfních systémů je principem modelování, abstraktní model je homomorfní k modelovanému systému, simulační model je zpravidla izomorfní k abstraktnímu modelu.
+\item \textit{spojité} vs. \textit{diskrétní} systémy: Dělení dle povahy interakce jejich prvků v čase.
+\item \textit{bezsetrvačné} vs. \textit{dynamické} systémy: Dělení dle struktury. Dynamické systém obsahují setrvačnost (paměť) - např. integrátor, sekvenční logické obvody (sítě) vs. zesilovač, kombinační logické obvody
+\item \textit{deterministické} vs. \textit{stochastické}: Dělení dle chování. U deterministických systémů jsou hodnoty proměnných v každém okamžiku přesně definovány, stochastické obsahují náhodu.
+\end{itemize}
 
 \subsection{Modelování systému diskrétních událostí, diskrétní simulace.}
+Diskrétní simulace je simulace prováděná s diskrétními simulačními modely. V anglické literatuře se pro diskrétní simulaci používá výhradně termínu "discrete event
+simulation", tedy simulace diskrétních událostí. Diskrétní simulační modely jsou modely diskrétní v čase i veličinách. Nejčastějším případem diskrétních modelů jsou aplikace teorie hromadné obsluhy.
+\begin{itemize}
+\item diskrétní v čase, časové okamžiky zpravidla neekvidistantní
+\item diskrétní ve veličinách
+\item stochastické chování
+\item proměnný počet prvků systému
+\item výskyt front reprezentovaných zpravidla spojovými seznamy
+\item vysoký stupeň paralelismu a z toho vyplývající vysoké nároky na řízení programu
+\end{itemize}
+
+Událost je změna, jež je elementární a okamžitá (s nulovou dobou trvání). Události odpovídají diskrétním časovým okamžikům, v nichž se něco děje (dochází ke změně
+stavu systému). Proces je posloupnost logicky na sebe navazujících událostí. Neprovádí se celý najednou, v jednom časovém okamžiku se provádí pouze část odpovídající právě jedné události (reakce na událost). Dílčí části procesu jsou od sebe odděleny tzv. plánovacími příkazy, které způsobí pozastavení procesu spojené s předáním řízení jinému procesu. Opětovná aktivace procesu vede k pokračování od místa posledního pozastavení.
+\begin{itemize}
+\item \textit{Aktivní}: Právě běžící proces, v daném okamžiku může být jen jeden
+\item \textit{Ukončený}: Proces, který ukončil svoji operační část, nemůže být již nikdy aktivován
+\item \textit{Pozastavený}: Proces naplánovaný k provedení v určitém čase, pokud nedojde ke zrušení zaplánování jiným procesem nebo nedojde k ukončení simulace, bude v tomto čase proveden
+\item \textit{Pasivní}: Přímo (přímá aktivace) nebo nepřímo (prostřednictvím zaplánování) aktivovatelný proces jiným procesem
+\end{itemize}
+Plánování událostí je obecně vázáno na splnění určité podmínky (dosažení určité hodnoty simulárního času, dosažení určitého stavu modelovaného systému) - časové vs. podmínkové plánování. Nástroje: Simula, J-Sim, JavaSim, javaSimulation, ...
 
 \subsection{Simulační experiment, studie, analýza rizika, náhoda v simulačních úlohách.}
+\textit{Simulační pokus (experiment)}: Jeden experiment se simulačním modelem (fixované parametry simulačního modelu, fixovaná násada generátoru pseudonáhodných čísel).
+
+\textit{Simulační studie}: Posloupnost simulačních pokusů majících stejný účel s cílem zjistit a analyzovat chování simulovaného systému při různých modifikacích nebo působení různých vlivů (proměnný určitý parametr simulačního modelu, fixovaná násada generátoru pseudonáhodných čísel).
+
+\textit{Analýza rizika (posouzení relevantnosti, důvěryhodnosti získaných výsledků)}: 
+\begin{itemize}
+\item Posouzení vlivu změny parametru na získané výsledky.
+\item Posouzení vlivu náhody na získané výsledky. Po nalezení optimální hodnoty parametru simulačního modelu provádíme ověřování vlivu náhody – měníme násadu generátoru pseudonáhodných čísel pro fixovanou hodnotu parametru simulačního modelu.
+\end{itemize}
+$ \mathrm{mira \, rizika} = \frac{\mathrm{pocet \, pokusu \, s \, I < I_{mez}}}{\mathrm{pocet \, vsech \, pokusu}} $, kde $ I_{mez} $ je mezní hodnota kritéria optimality.
+
+\subsubsection*{Náhoda v simulačních úlohách}
+Jednou ze základních charakteristických vlastností systémů diskrétních událostí je stochastický charakter chování. Simulační model musí tuto skutečnost respektovat $ \to $ nutnost specifikace základních parametrů stochastických procesů (příchody zákazníků, doby obsluh, poruchy, ...).
+\begin{itemize}
+\item Pro simulační modely koncepčních systémů (systémů definovaných nad fiktivními, neexistujícími objekty) – odhad získaný na základě zkušeností s chováním obdobných reálně existujících systémů
+\item Pro simulační modely reálných systémů (systémů definovaných nad reálnými objekty) - odhad získaný na základě analýzy získaných experimentálních dat nebo jejich přímé využití
+\end{itemize}
+Implementace náhody v simulačním modelu, získání hodnot náhodných veličin:
+\begin{itemize}
+\item volba a parametrizace teoretické distribuční funkce, tj. funkce dané exaktním vzorcem (zpravidla využívána standardní rozložení pravděpodobnosti - normální, exponenciální, Poissonovo, rovnoměrné, ...)
+\item specifikace empirické distribuční funkce (zpravidla schodovité nebo po částech lineární), jejíž hodnoty se získají analýzou experimentálních dat
+\item přímé využití experimentálních dat
+\end{itemize}
+Diskrétní náhodné proměnné nabývají konečně nebo spočetně mnoho různých hodnot. U spojitých rozložení pravděpodobnosti hodnoty spojitě vyplňují určitý interval.
 
 \subsection{Modelování v netechnických oborech (kompartmenty, buněčné automaty, ...).}
+Speciální simulační techniky a nástroje - jednoduché účelově orientované prostředky pro řešení simulačních úloh v technické praxi a především v netechnických oborech. Popis reálného světa v logice a pojmech blízkých uživateli – odborníkovi z dané oblasti (biologie, lékařství, ...). Jejich užití nevyžaduje detailní znalosti z matematiky, programování, ... – problém řešen intuitivně v grafickém rozhraní. Pracovat se musí velmi opatrně, podmínky nikdy zcela neodpovídají reálným!
+
+Dva přístupy k analýze a vytváření modelu:
+\begin{itemize}
+\item \textit{deduktivní}: potřeba přesné znalosti vyšetřovaných jevů a vstupních podmínek (teoretický přístup – problém!)
+\item \textit{induktivní}: neznáme přesně fyzikální zákonitosti či nejsou odpovídající podmínky (medicína), jde o znalost dynamiky daného děje, ne o matematická pravidla
+\end{itemize}
+
+\subsubsection*{Techniky užívané v inženýrské biologii a lékařství}
+\begin{enumerate}[label=(\alph*)]
+\item \textit{Metoda řešení diferenční či diferenciální rovnice}
+\begin{enumerate}[label=(\roman*)]
+\item \textit{Forresterova (systémová) dynamika}: povaha problému - porodnost, úmrtnost (matematické rovnice se sestavují dle grafického zobrazení)
+\item \textit{Ekvivalence elektrickým schématem}: vhodné pro modelování systémů, u kterých dochází k transportu látky v prostoru i času, např. nervové vlákno
+\item \textit{Populační modely}: slouží k popisu populace, porovnávání a odhadu budoucího vývoje (nutnost matematického modelování); jednodruhové vs. vícedruhové
+\item \textit{Epidemiologické modely}: modely časoprostorového šíření infekčních chorob - i pro modelování principiálně blízkých procesů; spojité (deterministické) vs. diskrétní v úrovni (stochastické)
+\end{enumerate}
+\item \textit{Kompartmentové modelování}: Popis zkoumaného systému prostřednictvím diskrétních oblastí (zón) mezi nimiž protéká kanály určitá látka. Rychlost změny určité látky v čase závisí na množství látky, jež do kompartmentu vstoupilo a vystoupilo (např. změny v endokrinním systému).
+\begin{itemize}
+\item Kompartment – diskrétní oblast (zóna) určitého systému, kterou je možné nějakým způsobem logicky či kineticky odlišit od okolí, homogenní
+\item Kanály – propojení kompartmentů, kterými protéká určitá látka, jejíž dynamika nás zajímá, idealizujeme (nulový objem)
+\item Vstup kompartmentu – reprezentován přivedením látky z jeho okolí nebo syntézou této látky uvnitř kompartment
+\item Výstup kompartmentu – pohyb látky mimo prostor kompartmentu nebo její transformací do jiné formy
+\end{itemize}
+\begin{enumerate}[label=(\roman*)]
+\item \textit{Modelování systému příjmu potravy}: Chceme sledovat dynamiku koncentrace nějaké látky, která je součástí potravy.
+\item \textit{Modelování funkce ledvin}: Zbavování organismu nadbytečné vody.
+\item \textit{Distribuce dýchacích plynů v organismu (1967)}: Kompartmenty propojeny cirkulující krví. 
+\end{enumerate}
+\item \textit{Celulární (buněčné) automaty}: Dynamické systémy s diskrétním prostorem a časem, které jsou charakterizovány čtyřmi základními vlastnostmi:
+\begin{itemize}
+\item Geometrií buněčné mřížky - zpravidla pravidelné N rozměrné soustavy buněk
+\item Specifikací okolí buňky (von Neumann (4), Moor (8), rozšířený Moor (24), ...)
+\item Množinou stavů buňky – často dvoustavové buňky (aktivní x neaktivní, živá x mrtvá)
+\item Algoritmem vypočtu příštího stavu buňky na základě současného stavu této buňky a jejího okolí (pravidla)
+\end{itemize}
+Příklady: hra Life, šíření epidemie
+\end{enumerate}
 
 \subsection{Konstrukce modelů na základě měření, zpracování signálu v časové, frekvenční a časo-frekvenční oblasti, modely periodických procesů.}
+
 
 \subsection{Modely vibrací a kmitání, experimentální modální analýza.}
 
 \subsection{Generování náhodných čísel, metoda Monte Carlo a odhad přesnosti simulačních výsledků.}
 
+\newpage
 \section{Programové prostředky řízení [PP]}
 
 \begin{table}[H]
@@ -85,12 +199,13 @@
 
 \subsection{Struktury vzdálených a virtuálních laboratoří.}
 
+\newpage
 \section{Převodníky fyzikálních veličin [PFV]}
 
 \begin{table}[H]
 \centering
 \begin{tabular}{p{4cm} p{12cm}}
-\textit{vyučující:}             & Ing. Liber Jelínek Ph.D. \\
+\textit{vyučující:}             & Ing. Libor Jelínek Ph.D. \\
 \textit{ročník/semestr studia:} & 4.ročník/LS \\
 \textit{datum zkoušky:}         & 16. 6. 2016 \\
 \textit{hodnocení:}             & 2 \\
@@ -110,6 +225,16 @@
 \subsection{Senzory síly, hmotnosti, deformace, tlaku, rychlosti, zrychlení a vibrací (tenzometrické, piezoelektrické, kapacitní a elektrodynamické).}
 
 \subsection{Senzory průtoku, množství, hustoty, viskozity, koncentrace a chemického složení.}
+\subsubsection*{Senzory průtoku}
+Senzory průtoku tekutin (tj. kapalin i plynů) určují množství objemové $ Q_V $ nebo hmotnostní $ Q_m $ tekutiny proteklé zvoleným průřezem za jednotku času.
+\begin{itemize}
+\item \textit{Plovákové senzory}: Používají plovák pohybující se v kuželovité nádobě jako indikátor rovnováhy sil. Tekutina proudící zespodu nadnáší plovák (drážky na obvodu vyvolávají stabilizační rotaci) a mění se štěrbina mezi nádobkou a plováčkem. Tím klesá tlakový spád na plováčku. K ustálení jeho polohy dojde, když síly působící směrem dolů (gravitační síla zmenšená o vztlak) jsou v rovnováze se sílou působící nahoru (účinek tlakové diference mezi spodní a vrchní plochou plováčku).
+\item \textit{Dávkovací senzory}: Využívají přenosu elementárního množství objemu v uzavřených komorách, např. mezi zuby ozubených kol. Jsou to v podstatě varianty rotačních čerpadel. Jako příklad poslouží senzor se dvěma ozubenými oválnými písty, které se otáčejí ve válcových komorách. Je poháněn rozdílem točivých momentů vyvolaných tlaky $ p_1 $ a $ p_2 $ na příslušné průměty činné plochy pístů.
+\item \textit{Turbínkové a lopatkové senzory}: Protékající tekutina uvádí do rotačního pohybu soustavu vhodně uspořádaných ploch - pro šroubovicový pohyb optimalizovaných lopatek turbiny nebo plochých lopatek vodního kola. Turbínkové senzory při minimalizaci ztrát třením mají široký rozsah lineární závislosti úhlové rychlosti rotoru $ \omega_r $ na rychlosti proudění $ v $. Úhlová rychlost se snímá počítáním průchodů lopatek pod senzorem polohy. Nejčastěji se užívá senzoru indukčního, v němž změna magnetického toku při otáčení lopatek pod snímací cívkou s permanentním magnetem generuje impulsy napětí.
+\item \textit{Vírové senzory}: Vhodně formovaný objekt v cestě proudící tekutiny může vyvolat její oscilační pohyb, jehož parametry jsou úměrné objemovému průtoku. Pro měření průtoku se využívá dvou typů oscilací tekutiny: nucené a přirozené oscilace. Pod nucenými oscilacemi se rozumí generace vírů těsně za žebrovitou překážkou na straně vtoku a jejich spirálový pohyb ve směru proudění. Většina vírových senzorů pracuje však s přirozenými oscilacemi, kdy víry jsou oddělovány za překážkou (střídavě na horní a dolní straně), jelikož proudící tekutina není schopna sledovat tvar překážky (tzv. Kármánovy vírové stezky).
+\item \textit{Ultrazvukové senzory}: Jsou založeny na skládání vektoru rychlosti $ v $ tekutiny a ultrazvukové vlny $ c_0 $. Ultrazvuková vlna se od měniče $ (V_2, P_2) $ k měniči $ (V_1, P_1) $ bude šířit rychlostí $ c_0 + v \cdot cos \alpha $ a zmenšenou rychlostí$ c_0 - v \cdot cos \alpha $, když postupuje proti směru $ v $ k měniči $ (V_2, P_2) $
+\item \textit{Indukční senzory}: 
+\end{itemize}
 
 \subsection{Elektrické akční členy a jejich budiče (stejnosměrné, střídavé, krokové motory, PWM zesilovače, frekvenční měniče).}
 

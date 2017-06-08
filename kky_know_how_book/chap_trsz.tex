@@ -277,6 +277,7 @@ Kritéria polynomiálně (Hautus):
 
 \subsection{Ljapunovova teorie stability. Ljapunovova rovnice.}
 
+\newpage
 \section{Teorie odhadu [TOD]}
 
 \begin{table}[H]
@@ -294,15 +295,21 @@ Kritéria polynomiálně (Hautus):
 
 \subsection{Problémy odhadu, základní etapy vývoje teorie odhadu, náhodné veličiny, náhodné procesy a jejich popis, stochastický systém.}
 
+\newpage
 \subsection{Optimální odhad ve smyslu střední kvadratické chyby. Odhad ve smyslu maximální věrohodnosti.}
 
+\newpage
 \subsection{Jednorázové a rekurzivní odhady.}
 
+\newpage
 \subsection{Odhad stavu lineárního diskrétního systému – filtrace (Kalmanův filtr).}
 
+\newpage
 \subsection{Úlohy odhadu stavu lineárního diskrétního stochastického systému – predikce a vyhlazování.}
 
+\newpage
 \subsection{Odhad stavu lineárního systému se spojitým či diskrétním měřením (Kalman-Bucyho filtr).}
+
 \newpage
 \section{Optimální systémy [OPS]}
 
@@ -371,21 +378,442 @@ je pouze koncová okrajová podmínka
 \subsubsection*{Formulace úlohy s pevným časem}
 \textit{Dáno:}
 \begin{enumerate}
-\item Systém: $ x_{k+1} = f_k(x_k, u_k), \qquad k=0,...,N-1, \qquad x_0 $ známé, $ x_k \in R^n, u_k \in R^m $
-\item Kritérium: $ J(x_0) = \Phi(x_N) + \displaystyle{\sum_{k=0}^{N-1}}L_k(x_k,u_k) $, kde $ \Phi(x_N) $ je ohodnocení koncového stavu a $ L_k(x_k, u_k) $ je váhová funkce.
+\item Systém: $ \dot{x}_{t} = f(x(t), u(t), t), \qquad t \in \langle t_0, t_f \rangle, \qquad x(t_0) $ známé, $ x(t) \in R^n, u(t) \in R^m $
+\item Kritérium: $ J(x(t_0)) = \Phi(x(t_f), t_f) + \displaystyle{\int_{t_0}^{t_f}} L(x(t),u(t),t) dt $, kde $ \Phi(x(t_f), t_f) $ je ohodnocení koncového stavu a $ L(x(t), u(t), t) $ je váhový funkcionál.
 \end{enumerate}
-\textit{Cílem} je nalézt posloupnost řízení $ u_0^{N-1} $ takovou, aby kritérium nabývalo své minimální hodnoty při splnění vazbových podmínek $ x_{k+1} - f_k(x_k, u_k) = 0 $.
+\textit{Cílem} je nalézt funkci řízení $ u(t) $ jako funkci času $ t \in \langle t_0, t_f \rangle $ takovou, aby kritérium nabývalo své minimální hodnoty při splnění vazbových podmínek $ f(x(t), u(t), t) - \dot{x}(t) = 0 $.
+
+\subsubsection*{Rozšířené kritérium a Hamiltonova funkce}
+Diferenciální rovnice popisující dynamiku systému jsou chápány jako vazbové podmínky. Definujeme rozšířené kritérium (v podstatě Lagrangeovu funkci):
+\begin{equation}
+\bar{J}(x(t_0)) = \Phi(x(t_f), t_f) + \displaystyle{\int_{t_0}^{t_f}}\left[ L(x(t),u(t), t) + \lambda^T(t) (f(x(t),u(t), t) - \dot{x}(t)) \right] dt
+\end{equation}
+kde $ \lambda(t) $ představuje funkci Lagrangeových multiplikátorů. Při splnění vazbových podmínek nabývá rozšířené kritérium extrémů ve stejných bodech jako původní kritérium , tj. $ \mathrm{min} J(x_0) = \mathrm{min} \bar{J}(x_0) $. Toto kritérium můžeme alternativě vyjádřit ve tvaru:
+\begin{equation}
+\bar{J}(x(t_0)) = \Phi(t(x_f), t_f)) - \lambda^T(t_f) x(t_f) + \lambda^T(t_0) x(t_0) + \displaystyle{\int_{t_0}^{t_f}}\left[ H(x(t),u(t),\lambda(t), t) + \lambda^T(t) x(t) \right] dt,
+\end{equation}
+kde funkce $ H(x(t), u(t), \lambda(t), t) = L(x(t),u(t), t) + \lambda^T(t) f(x(t), u(t), t) $ se nazývá Hamiltonova funkce (Hamiltonián).
+
+\subsubsection*{Nutné podmínky optimálního řízení}
+Hledané řešení vyhovuje podmínce $ \partial \bar{J} = 0 $, kde $ \partial \bar{J} $ vyjadřuje variaci funkcionálu $ \bar{J} $ vzhledem k variacím funkcí $ x(t) $, $ u(t) $ a $ \lambda(t) $. Vhodnou volbou funkce multiplikátorů a s využitím faktu že variace $ \partial x(t_0) = 0 $ je možné se vyhnout vyšetřování závislosti na variaci stavu $ \partial \dot{x}(t) = \frac{\partial f}{\partial x} \partial x + \frac{\partial f}{\partial u} \partial u $ a zároveň obdržíme nutné podmínky optimálního řízení. Je možné ukázat, že k vyjádření nutných podmínek je potřeba znát jen Hamiltonovu funkci. 
+
+Hamiltonovy kanonické rovnice:
+\begin{align*}
+\begin{split}
+\dot{x}(t) &= \left( \frac{\partial H}{\partial \lambda} \right)^T = f(x(t),u(t),t), \qquad x(t_0) \\
+\dot{\lambda}(t) &= - \left( \frac{\partial H}{\partial x} \right)^T = - \left( \frac{\partial L}{\partial x} \right)^T - \left( \frac{\partial f}{\partial x} \right)^T \lambda, \qquad \lambda(t_f) = \left( \frac{\partial \Phi(t_f)}{\partial x(t_f)} \right)^T \\
+0 &= \left( \frac{\partial H}{\partial u} \right)^T = \left( \frac{\partial L}{\partial u} \right)^T + \left( \frac{\partial f}{\partial u} \right)^T \lambda
+\end{split}
+\end{align*}
+Řešení představuje dvoubodový okrajový problém, který je v obecném případě obtížně analyticky řešitelný!
+
+\subsubsection*{Úloha s volným časem - podmínka transverzality}
+Pro úlohu s volným časem je nutné uvažovat i vliv diferenciální změny času $ dt_f $ na variaci rozšířeného kritéria $ \partial \bar{J} $.
+\vspace{2.5cm}
+Řešení problému je opět dáno dříve uvedenými Hamiltonovými kanonickými rovnicemi. Modifikována je ovšem koncová okrajová podmínka pro určení trajektorie multiplikátorů (tato nová koncová podmínka se nazývá podmínka transverzality):
+\begin{equation}
+\left[\left(\frac{\partial \Phi}{\partial x} - \lambda^T \right) dx(t_f) + \left(\frac{\partial \Phi}{\partial t} + H \right) dt_f \right]_{t=t_f} = 0
+\end{equation}
+Speciální případy úlohy a příslušné podmínky transverzality:
+\begin{itemize}
+\item \textit{Volný konec trajektorie}: Pro libovolné diferenciální změny $ dt_f $ a libovolné $ dx(t_f) $ musí platit:
+\begin{equation}
+\left( \frac{\partial \Phi}{\partial x} - \lambda^T \right)_{t=t_f} = 0; \qquad \left( \frac{\partial \Phi}{\partial t} + H \right)_{t=t_f} = 0
+\end{equation}
+\item \textit{Pevný čas a volný konec trajektorie}: Je-li koncový čas určen, je $ dt_f = 0 $ a podmínky transverzality se redukují na:
+\begin{equation}
+\left( \frac{\partial \Phi}{\partial x} - \lambda^T \right)_{t=t_f} = 0
+\end{equation}
+\item \textit{Volný čas a pevný konec trajektorie}: Např. úloha časově optimálního řízení. Pokud je koncový stav $ x(t_f) $ pevně určený v libovolném konečném čase $ t_f $, je $ dx(t_f) = 0 $ a podmínky transverzality přejdou do tvaru:
+\begin{equation}
+\left( \frac{\partial \Phi}{\partial t} + H \right)_{t=t_f} = 0
+\end{equation}
+\item \textit{Volný čas a konec trajektorie na nadploše}: Je-li koncový bod dán jako bod nadplochy $ \Psi (x(t_f)) = 0 $, pak je tato podmínka chápána jako další vazbová podmínka a podmínka transvezality je dána jako:
+\begin{equation}
+\left[ \left( \frac{\partial \Phi}{\partial x} - \lambda^T + \frac{\partial \Psi}{\partial x} \nu^T \right) dx(t_f) + \left( \frac{\partial \Phi}{\partial t} + H \right) dt_f \right]_{t=t_f} = 0
+\end{equation}
+\item \textit{Koncový bod leží na křivce $ x = \Psi(t) $}: V tomto případě nejsou diferenciální změny $ dt_f $ a $ dx(t_f) $ nezávislé, ale zjevně platí $ dx(t_f) = \frac{d \Psi(t)}{dt} dt_f = \dot{\Psi}(t) dt_f $. Dosazením do obecné podmínky transverzality dostaneme:
+\begin{equation}
+\left[ \left( \frac{\partial \Phi}{\partial x} - \lambda^T \right) \dot{\Psi} \right]_{t=t_f} = \left( \frac{\partial \Phi}{\partial t} + H \right)_{t=t_f}
+\end{equation}
+Je zřejmé, že pokud je křivka popsaná konstantní funkcí času $ \Psi(t) = konst $, platí $ \dot{\Psi} = 0 $, a dostáváme úlohu s pevným koncem a volným časem.
+\end{itemize}
+
+\subsubsection*{Časově optimální řízení}
+Pro tuto úlohu je váhový funkcionál a ohodnocení koncového stavu dáno jako $ L = 1$, a $ \Phi = 0 $ a kritérium
+optimality má tedy tvar $ J = t_f - t_0 $. Optimální trajektorie je funkcí času a získáme ji vyřešením dvouokrajové úlohy:
+\begin{align*}
+\begin{split}
+\dot{x} &= f(x, u, t), \qquad x(t_0), x(t_f) \\
+\dot{\lambda} &= - \left( \frac{\partial f}{\partial x} \right)^T \lambda, \qquad (\lambda^T f)_{t=t_f} = -1 \\
+0 &= \left( \frac{\partial f}{\partial u} \right)^T \lambda
+\end{split}
+\end{align*}
+
+Pokud řešíme \textit{časově invariantní problém}, lze ukázat, že pro t-invariantní systém a kritérium platí, že $ \dot{H}(x^*(t), u^*(t), \lambda^*(t)) = 0 $, tj. H je konstantní podél optimální trajektorie.
+
+\subsubsection*{Pontrjaginův princip minima}
+Máme-li dány optimální trajektorie stavu $ x^*(t) $ a multiplikátorů $ \lambda^*(t) $, tj. jsou splněny následující nutné podmínky:
+\begin{align*}
+\begin{split}
+\dot{x}(t) &= \left( \frac{\partial H}{\partial \lambda} \right)^T = f(x(t), u(t), t), \qquad x(t_0) = x_0 \\
+\dot{\lambda} &= - \left( \frac{\partial H}{\partial x} \right)^T = - \left( \frac{\partial L}{\partial x} \right)^T - \left( \frac{\partial f}{\partial x} \right)^T \lambda, \qquad \left[ \left( \frac{\partial \Phi}{\partial x} - \lambda^T \right) dx(t_f) + \left( \frac{\partial \Phi}{\partial t} + H \right) dt_f \right]_{t=t_f} = 0
+\end{split}
+\end{align*}
+s počáteční podmínkou $ x(t_0) $ a koncovou okrajovou podmínkou danou obecnou podmínkou transverzality. Pak optimální řízení jako funkce času je hledáno jako
+\begin{equation}
+\boxed{u^*(t) = \underset{u(t) \in U \subset R^m}{\mathrm{argmin}} H(x^*(t), u(t), \lambda^*(t), t)}
+\end{equation}
+Toto je nutná podmínka globálního minima a plně nahrazuje podmínku lokálního minima $ \left(\frac{\partial H}{\partial u} \right)^T = 0 $. Největší uplatnění Pontriaginův princip minima přináší pro případy, kdy jsou uvažovány omezení funkce řízení a stavu. V takovém případě platí, že $ \partial \bar{J} \geq 0 $ (protože již není možné libovolně variovat $ \partial u $).
 
 \subsection{Deterministický diskrétní systém automatického řízení. Princip optimality. Bellmanova funkce. Bellmanova optimalizační rekurze.}
+\subsubsection*{Formulace úlohy}
+\textit{Dáno:}
+\begin{enumerate}
+\item Systém: $ x_{k+1} = f_k(x_k, u_k), \qquad k=0,...,N-1, \qquad x_0 $ známé, $ x_k \in R^n, u_k \in R^m $
+\item Kritérium: $ J(x_0, u_0^{N-1}) = \left[ \Phi(x_N) + \displaystyle{\sum_{k=0}^{N-1}} L_k(x_k,u_k) \right]_{\mathrm{P.T.S}} $, kde $ \Phi(x_N) $ je ohodnocení koncového stavu a $ L_k(x_k, u_k) $ je váhová funkce.
+\end{enumerate}
+\textit{Cílem} je nalézt posloupnost strategií řízení $ g_0^{N-1} $, které generují posloupnost řízení $ u_0^{N-1} \in U_0^{N-1} $ takovou, aby kritérium nabývalo své minimální hodnoty.
+
+\subsubsection*{Koncová část kritéria optimality - princip optimality}
+Koncová část kritéria optimality je definována jako:
+\begin{equation}
+J_k(x_k, u_k^{N-1}) = \left[ \Phi(x_N) + \displaystyle{\sum_{l=k}^{N-1}} L_l(x_l,u_l) \right]_{\mathrm{P.T.S.}}
+\end{equation}
+To může být vyjádřeno rekurentním vztahem:
+\begin{equation*}
+J_k(x_k, u_k^{N-1}) = \left[ L_k(x_k,u_k) + J_{k+1}(x_{k+1},u_{k+1}^{N-1}) \right]_{\mathrm{P.T.S.}} = \left[ L_k(x_k,u_k) + J_{k+1}(f_k(x_k,u_k), u_{k+1}^{N-1}) \right]_{\mathrm{P.T.S.}}
+\end{equation*}
+Mějme optimální posloupnost strategií řízení $ g_0^{N-1} $ generující optimální posloupnost řízení $ u_0^{N-1} $. Rozdělíme-li trajektorii v čase $ k $ na neměnnou minulost a neuskutečněnou budoucnost, pak bude platit, že:
+\begin{equation*}
+J^*(x_0) = J_0(x_0, u_0^{* N-1}) + \left[ \displaystyle{\sum_{l=0}^{k-1}}(L_l(x_l^*, u_l^*)) + J_k(x_k^*,u_k^{* N-1}) \right]_{\mathrm{P.T.S.}}
+\end{equation*}
+\textbf{Princip optimality}: \textit{Každý koncový úsek optimální trajektorie je optimálním koncovým úsekem trajektorie.}
+
+\subsubsection*{Bellmanova funkce}
+Bellmanova funkce je definována jako minimální hodnota koncového úseku kritéria:
+\begin{equation}
+V_k(x_k) = \underset{u_k^{N-1} \in U_k^{N-1}}{\mathrm{min}} J_k(x_k, u_k^{N-1})
+\end{equation}
+S využitím rekurentního vztahu pro koncovou část kritéria lze Bellmanovu funkci vyjádřit jako:
+\begin{equation}
+V_k(x_k) = \underset{u_k \in U_k}{\mathrm{min}} \left[ L_k(x_k, u_k) + \underset{u_{k+1}^{N-1} \in U_{k+1}^{N-1}}{\mathrm{min}} J_{k+1}(x_{k+1}, u_{k+1}^{N-1}) \right]
+\end{equation}
+
+\subsubsection*{Bellmanova optimalizační rekurze}
+\begin{align*}
+\begin{split}
+V_k(x_k) &= \underset{u_k \in U_k}{\mathrm{min}} \left[ L_k(x_k, u_k) + V_{k+1}(f_k(x_k,u_k)) \right], \qquad k= N-1, N-2, ..., 0 \\
+u_k &= g_k(x_k) = \underset{u_k \in U_k}{\mathrm{argmin}} \left[ L_k(x_k, u_k) + V_{k+1}(f_k(x_k,u_k)) \right], \qquad k= N-1, N-2, ..., 0 \\
+V_N(x_N) &= J_N(x_N) = \Phi(x_N)
+\end{split}
+\end{align*}
+Minimální hodnota kritéria je dána jako $ J^*(x_0) = J_0(x_0,u_0^{* N-1}) = V_0(x_0) $
 
 \subsection{Syntéza optimálního deterministického systému automatického řízení pro diskrétní lineární řízený systém a kvadratické kritérium. Formulace a řešení. Asymptotické řešení a jeho stabilita.}
+\subsubsection*{Formulace úlohy}
+\textit{Dáno:}
+\begin{enumerate}
+\item Systém: $ x_{k+1} = A_k x_k + B_k u_k, \qquad k=0,...,N-1, \qquad x_0 $ známé, $ x_k \in R^n, u_k \in R^m $
+\item Kritérium: $ J(x_0, u_0^{N-1}) = \left[ x_N^T Q_N x_N + \displaystyle{\sum_{k=0}^{N-1}} \begin{bmatrix} x_k \\ u_k \end{bmatrix}^T \begin{bmatrix} Q_k & S_k \\ S_k^T & R_k \end{bmatrix} \begin{bmatrix} x_k \\ u_k \end{bmatrix} \right]_{\mathrm{P.T.S}} $, 
+
+kde je $ \begin{bmatrix} Q_k & S_k \\ S_k^T & R_k \end{bmatrix} = \begin{bmatrix} Q_k & S_k \\ S_k^T & R_k \end{bmatrix}^T, \qquad Q_k \geq 0, R_k > 0 $.
+\end{enumerate}
+\textit{Cílem} je nalézt posloupnost strategií řízení $ g_k(x_k) \, \forall k $, které generují posloupnost řízení $ u_0^{N-1} \in U_0^{N-1} $ takovou, aby kritérium nabývalo své minimální hodnoty.
+
+\subsubsection*{Bellmanova funkce}
+Indukcí lze dokázat, že Bellmanova funkce je dána kvadratickou formou $ V_k(x_k) = x_k^T P_k x_k \, \forall k $, kde $ P_k = P_k^T $ je pozitivně semidefinitní matice. Pro koncový čas pak platí $ V_N(x_N) = x_N^T Q_N x_N $, z čehož vyplývá, že $ P_N = Q_N $.
+
+\subsubsection*{Bellmanova optimalizační rekurze}
+Předpokládáme-li, že v čase $ k+1 $ je Bellmanova funkce dána kvadratickou formou $ V_{k+1}(x_{k+1}) = x_{k+1}^T P_{k+1} x_{k+1} $, pak je optimalizační rekurze dána vztahy:
+\begin{align*}
+\begin{split}
+V_k(x_k) &= \underset{u_k \in U_k}{\mathrm{min}} \left[ \begin{bmatrix} x_k \\ u_k \end{bmatrix}^T \begin{bmatrix} Q_k & S_k \\ S_k^T & R_k \end{bmatrix} \begin{bmatrix} x_k \\ u_k \end{bmatrix} + V_{k+1}(A_k x_k + B_k u_k) \right], \qquad k= N-1, N-2, ..., 0 \\
+u_k &= g_k(x_k) = \underset{u_k \in U_k}{\mathrm{argmin}} \left[ \begin{bmatrix} x_k \\ u_k \end{bmatrix}^T \begin{bmatrix} Q_k & S_k \\ S_k^T & R_k \end{bmatrix} \begin{bmatrix} x_k \\ u_k \end{bmatrix} + V_{k+1}(A_k x_k + B_k u_k) \right], \qquad k= N-1, N-2, ..., 0 \\
+V_N(x_N) &= x_N^T Q_N x_N
+\end{split}
+\end{align*}
+
+\subsubsection*{Řešení lineárně-kvadratické úlohy (LQ úlohy)}
+\begin{enumerate}
+\item Úloha má vždy řešení a toto řešení je jediné.
+\item Bellmanova funkce je pozitivně semidefinitní kvadratická forma $ V_k(x_k) = x_k^T P_k x_k \, \forall k, \, P_k = P_k^T \geq 0 $
+\item Řešení je dáno pro okamžiky $ k = N-1,...,0 $ řešením \textit{Riccatiho diferenční rovnice}:
+\begin{equation}
+P_k = A_k^T P_{k+1} A_k + Q_k - (A_k^T P_{k+1} B_k + S_k)(B_k^T P_{k+1} B_k + R_k)^{-1}(A_k^T P_{k+1} B_k + S_k)^T
+\end{equation}
+s koncovou okrajovou podmínkou $ P_N = Q_N $.
+\item Optimální zpětnovazební strategie řízení při měřeném stavu je:
+\begin{equation*}
+u_k(x_k) = g_k(x_k) = -(B_k^T P_{k+1} B_k + R_k)^{-1}(A_k^T P_{k+1} B_k + S_k)^T x_k = - K_k x_k
+\end{equation*}
+\item Hodnota kritéria optimality podél trajektorie optimálního (uzavřeného) systému je:
+\begin{equation*}
+J^*(x_0) = x_0^T P_0 x_0
+\end{equation*}
+\end{enumerate}
+
+\subsubsection*{Asymptotická LQ úloha}
+\begin{itemize}
+\item Uvažujeme t-invariantní systém a nekonečný časový horizont:
+\begin{equation}
+x_{k+1} = A_k x_k + B_k u_k, \qquad k=0,1,...
+\end{equation}
+kde dvojice $ (A, B) $ je řiditelná a počátek je rovnovážným stavem, tj. $ f(0, 0) = 0 $.
+\item Kritérium je též uvažováno jako t-invariantní:
+\begin{equation}
+J(x_0, u_0^{\infty}) = \left[ \displaystyle{\sum_{k=0}^{\infty}} \begin{bmatrix} x_k \\ u_k \end{bmatrix}^T \begin{bmatrix} Q & S \\ S^T & R \end{bmatrix} \begin{bmatrix} x_k \\ u_k \end{bmatrix} \right]_{\mathrm{P.T.S}}
+\end{equation}
+Pro rovnovážný stav v počátku platí, že $ L(0, 0) = 0 $ a tedy, že i při nekonečném horizontu řízení nabývá kritérium konečné hodnoty.
+\end{itemize}
+Pro řešení asymptotické LQ úlohy platí:
+\begin{enumerate}
+\item Bellmanova funkce je pozitivně semidefinitní \textit{časově invariantní} kvadratická forma $ V_k(x_k) = x_k^T P x_k \, \forall k, \, P = P^T \geq 0 $
+\item Matice $ P $ definující kvadratickou formu Bellmanovy funkce je dáno řešením \textit{Riccatiho diferenční rovnice}:
+\begin{equation}
+P = A^T P A + Q - (A^T P B + S)(B^T P B + R)^{-1}(A^T P B + S)^T
+\end{equation}
+\item Optimální zpětnovazební strategie řízení při měřeném stavu je též \textit{časově invariantní}:
+\begin{equation*}
+u_k(x_k) = g(x_k) = -(B^T P B + R)^{-1}(A^T P B + S)^T x_k = - K x_k
+\end{equation*}
+\item Hodnota kritéria optimality podél trajektorie optimálního (uzavřeného) systému je:
+\begin{equation*}
+J^*(x_0) = x_0^T P x_0
+\end{equation*}
+\end{enumerate}
+Podmínky stability asymptotického řešení LQ úlohy:
+\begin{itemize}
+\item Je-li Bellmanova funkce Ljapunovovou funkcí, tj. řešení Riccatiho algebraické rovnice $ P $ je pozitivně definitní, pak je rovnovážný stav v počátku ($ x = 0 $) globálně asymptoticky stabilní.
+\item Je-li dvojice $ (A, B) $ řiditelná a dvojice $ (C, \bar{A}) $ pozorovatelná, pak je rovnovážný stav globálně asymptoticky stabilní. Matice $ C $ a  $ \bar{A} $ jsou definovány následovně:
+\begin{equation*}
+C^TC = Q - SR^{-1}S^T; \qquad \bar{A} = A + BR^{-1}S^T
+\end{equation*}
+Poznámky:
+\begin{itemize}
+\item Zavádí se fiktivní pozorování $ z_k = Cx_k $ skrze kritérium $ J(x_0, u_0^\infty = \displaystyle{\sum_{k=0}^\infty} z_k^T z_k + u_k^T R u_k $.
+\item Je-li tato podmínka splněna je matice $ P $ zároveň pozitivně definitní.
+\item Stabilita je zaručena i pro případ detekovatelné dvojice $ (C, \bar{A}) $, tj. jsou-li nepozorovatelné póly stabilní, a matice $ P $ je pak pozitivně semidefinitní.
+\end{itemize}
+\end{itemize}
 
 \subsection{Deterministický spojitý systém automatického řízení. Kontinualizace Bellmanovy optimalizační rekurze.}
+\subsubsection*{Formulace úlohy}
+\textit{Dáno:}
+\begin{enumerate}
+\item Systém: $ \dot{x}(t) = f(x(t), u(t), t), \qquad t \in \langle t_0, t_f \rangle, \qquad x(t_0) $ známé, $ x(t) \in R^n, u(t) \in R^m $
+\item Kritérium: $ J(x(t_0), u_{t_0}^{t_f}) = \left[ \Phi(x(t_f), t_f) + \displaystyle{\int_{t_0}^{t_f}} L(x(t), u(t), t) dt \right]_{\mathrm{P.T.S}} $, kde $ \Phi(x(t_f), t_f) $ je ohodnocení koncového stavu a $ L(x(t), u(t), t) $ je váhový funkcionál.
+\end{enumerate}
+\textit{Cílem} je nalézt funkci strategií řízení $ g(x(t), t) $, pro $ t \in \langle t_0, t_f \rangle $, která generuje řízení $ u(t) $ pro $ t \in \langle t_0, t_f \rangle $ takové, aby kritérium nabývalo své minimální hodnoty.
+
+\subsubsection*{Využití známého řešení pro diskrétní systém pomocí kontinualizace}
+Řešení hledáme pro diskrétní systém: $ x(t_k + h) \approx x(t_k) + f(x(t_k), u(t_k), t_k) \cdot h $, kde $ h = \frac{(t_f - t_0)}{N} $ a $ t_k = t_0 + kh, \, k=0,...,N-1 $. Kritérium kvality uvažujeme ve tvaru:
+\begin{equation}
+J(x_0, u_{t_0}^{t_f}) \approx \left[ \Phi(x(t_N), t_N) + \displaystyle{\sum_{k=0}^{N-1} L(x(t_k), u(t_k), t_k) h} \right]
+\end{equation}
+Bellmanovu optimalizační rekurzi pro tento problém vyjádříme následovně:
+\begin{align*}
+\begin{split}
+V(x(t), t) &= \underset{u(t) \in U}{\mathrm{min}} \left[ L(x(t), u(t), t) h + V(x(t+h), t+h) \right]_{\mathrm{P.T.S.}} \\
+g(x(t), t) &= \underset{u(t) \in U}{\mathrm{argmin}} \left[ L(x(t), u(t), t) h + V(x(t+h), t+h) \right]_{\mathrm{P.T.S.}} \\
+\end{split}
+\end{align*}
+s okrajovou podmínkou $ V(x(t_f), t_f) = \Phi(x(t_f), t_f) $. Problém pak řešíme pro $ h \to 0+ $, tj. kontinualizací diskrétního řešení.
+
+\subsubsection*{Bellmanova funkce pro spojitý deterministický systém}
+Je dána ve formě parciální diferenciální rovnice:
+\begin{equation}
+- \frac{\partial V(x,t)}{\partial t} = \underset{u(t) \in U}{\mathrm{min}} \left[ L(x, u, t) + \frac{\partial V(x,t)}{\partial x} f(x,u,t) \right]
+\end{equation}
+s okrajovou podmínkou $ V(x(t_f), t_f) = \Phi(x(t_f), t_f) $. Tato parciální diferenciální rovnice je obvykle nazývána Hamiltonova-Belmanova-Jacobiho parciální
+diferenciální rovnice. \textit{Strategie řízení} je pak hledána jako:
+\begin{equation}
+g(x,t) = \underset{u(t) \in U}{\mathrm{argmin}} \left[ L(x, u, t) + \frac{\partial V(x,t)}{\partial x} f(x,u,t) \right]
+\end{equation}
+
+\subsubsection*{Asymptotická úloha optimálního řízení pro spojitý systém}
+Předpoklady pro asymptotickou úlohu:
+\begin{enumerate}
+\item Uvažujeme t-invariantní systém a nekonečný časový horizont:
+\begin{equation*}
+\dot{x}(t) = f(x(t), u(t)), \qquad t = \langle 0, \infty \rangle, \qquad f(0,0) = 0
+\end{equation*}
+\item Kritérium je též uvažováno jako t-invariantní:
+\begin{equation*}
+J(x(t_0), u_{t_0}^\infty) = \left[ \displaystyle{\int_{t_0}^\infty L(x(t),u(t)) dt} \right]_{\mathrm{P.T.S.}}, \qquad L(x(t), u(t)) \geq 0 \, \forall t \land L(0,0) = 0
+\end{equation*}
+\end{enumerate}
+Bellmanova funkce a strategie řízení (t-invariantní, tj. $ \frac{\partial V}{\partial t} = 0 $):
+\begin{align*}
+\begin{split}
+0 &= \underset{u \in U}{\mathrm{min}} \left[ L(x, u, t) + \frac{\partial V(x)}{\partial x} f(x,u) \right] \\
+g(x) &= \underset{u \in U}{\mathrm{argmin}} \left[ L(x, u, t) + \frac{\partial V(x)}{\partial x} f(x,u) \right]
+\end{split}
+\end{align*}
+
+\subsubsection*{Asymptotická LQ úloha pro spojitý deterministický systém}
+\begin{enumerate}
+\item Úloha má řešení a to jediné.
+\item Matice $ P $ Bellmanovy funkce je časově invariantní symetrická pozitivně semidefinitní matice, která je řešením \textit{Riccatiho diferenční rovnice}:
+\begin{equation}
+0 = P A + A^T P - (P B + S) R^{-1} (P B + S)^T + Q
+\end{equation}
+\item Je-li navíc pozorovatelná dvojice $ (\bar{A}, C) $, kde:
+\begin{equation*}
+C^TC = Q - SR^{-1}S^T; \qquad \bar{A} = A + BR^{-1}S^T
+\end{equation*}
+je optimální systém \textit{globálně asymptoticky stabilní} a matice $ P $ pozitivně definitní.
+\item Hodnota kritéria podél optimální trajektorie je:
+\begin{equation*}
+J^*(x_0) = x_0^T P x_0
+\end{equation*}
+\end{enumerate}
 
 \subsection{Optimální stochastický systém automatického řízení. Strategie řízení. Bellmanova funkce a Bellmanova optimalizační rekurze.}
+\subsubsection*{Formulace úlohy}
+\textit{Dáno:}
+\begin{enumerate}
+\item Systém: $ \varphi_{k}(x_k, y_k, x_{k-1}, y_{k-1}, u_{k-1}) $, kde $ \begin{bmatrix} x_k \\ y_k \end{bmatrix} \in R^n $ představuje stav, dále $ u_k \in U_k \subset R^m $ a $ \varphi_0(x_0, y_0, 0) $ představuje počáteční podmínku.
+\item Kritérium:
+\begin{align*}
+\begin{split}
+J(\gamma_0^N) &= E \left[ L(x_0^N, y_0^N, u_0^N), \gamma_0^N \right] = \int \int \int L(x_0^N, y_0^N, u_0^N) p(x_0^N, y_0^N, u_0^N, \gamma_0^N) dx_0^N dy_0^N du_0^N \\
+L(x_0^N, y_0^N, u_0^N) & = \displaystyle{\sum_{k=0}^{N-1}} L_k(x_k, u_k), \gamma_0^N
+\end{split}
+\end{align*}
+\end{enumerate}
+\textit{Cílem} je nalézt posloupnost strategií řízení $ \gamma_k(y_0^k, u_0^{k-1}) \in \Gamma_k^N $, která pro $ k=0,...,N-1 $ generuje řízení $ u_k $ takové, aby kritérium nabývalo své minimální hodnoty.
+
+\subsubsection*{Kritérium optimality koncového úseku strategie řízení}
+\begin{equation*}
+J_k(\gamma_k^N, y_0^k, u_0^{k-1} = E \left[ \displaystyle{\sum_{l=k}^N} L_l(x_l, y_l, u_l), y_0^k, u_0^{k-1}, \gamma_k^N \right]
+\end{equation*}
+které může být vyjádřeno rekurentním vztahem
+\begin{equation*}
+J_k(\gamma_k^N, y_0^k, u_0^{k-1} = \displaystyle{\int_\infty^\infty} E \left[ L_k(x_k, y_k, u_k) + J_{k+1}(\gamma_{k+1}^N, y_0^{k+1}, u_0^{k}), y_0^k, u_0^k \right]  , \gamma_k(u_k, y_0^k, u_0^{k-1}) du_k
+\end{equation*}
+V případě deterministické strategie řízení $ \gamma_k^N = \delta (u_k - g_k (y_0^k, u_0^{k-1})) $ je kritériem optimality koncového úseku strategie řízení daného vztahem:
+\begin{equation*}
+J_k(\gamma_k^N, y_0^k, u_0^{k-1} = E \left[ L_k(x_k, y_k, u_k) + J_{k+1}(\gamma_{k+1}^N, y_0^{k+1}, u_0^{k}), y_0^k, u_0^k \right]
+\end{equation*}
+Okrajová podmínka je v obou případech $ J_{N+1} = 0 $. Hodnota kritéria podél optimální trajektorie systému je definována jako $ J(\gamma_0^N) = E \left[ J_0(\gamma_0^N, y_0) \right] $.
+
+\subsubsection*{Bellmanova funkce}
+Bellmanova funkce je definována jako minimální hodnota koncového úseku kritéria:
+\begin{align*}
+\begin{split}
+V_k(y_0^k, u_0^{k-1}) &= \underset{\gamma_k^N \in \gamma_k^N}{\mathrm{min}} J_k(\gamma_k^N, y_0^k, u_0^{k-1}) \\
+\gamma_0^N &= \underset{\gamma_k^N \in \gamma_k^N}{\mathrm{argmin}} J_k(\gamma_k^N, y_0^k, u_0^{k-1})
+\end{split}
+\end{align*}
+Optimalizace je opět založena na rekurzivním výpočtu hodnoty Bellmanovy funkce.
+
+\subsubsection*{Bellmanova optimalizační rekurze}
+\begin{align*}
+\begin{split}
+V_k(y_0^k, u_0^{k-1}) &= \underset{u_k \in u_k}{\mathrm{min}} E \left[ L_k(x_k, y_k, u_k) + V_{k+1}(y_0^{k+1}, u_0^k), y_0^k, u_0^k \right] \\
+g_k(y_0^k, u_0^{k-1}) &= \underset{u_k \in u_k}{\mathrm{argmin}} E \left[ L_k(x_k, y_k, u_k) + V_{k+1}(y_0^{k+1}, u_0^k), y_0^k, u_0^k \right] \\
+\gamma_0^*(u_k, y_0^k, u_0^{k-1}) &= \delta (u_k - g_k(y_0^k, u_0^{k-1}))
+\end{split}
+\end{align*}
+Okrajová podmínka rekurze je $ V_{N+1}(y_0^N, u_0^N) = 0 $ a hodnota kritéria optimality pro optimální strategii je $ J^*(\gamma_0^{* N}) = E [V_0(y_0)] $.
 
 \subsection{Syntéza optimálního systému automatického řízení pro lineární gaussovský řízený systém a kvadratické kritérium. Formulace a řešení. Separační teorém.}
+\subsubsection*{Formulace problému}
+\textit{Dáno:}
+\begin{enumerate}
+\item Systém: 
+\begin{align*}
+\begin{split}
+\varphi_{k}(x_k : x_{k-1}, u_{k-1}) &= \mathscr{N}(A_{k-1}x_{k-1} + B_{k-1} u_{k-1}, G_{k-1}G_{k-1}^T \\
+\varphi_0(x_0: 0) &= \mathscr{N}(\hat{x}_0, \Pi_0) \\
+\Psi_k(y_k: x_k &= \mathscr{N}(C_kx_k, H_kH_k^T)
+\end{split}
+\end{align*}
+\item Kritérium:
+\begin{align*}
+J(g_0^{N-1}) &= E \left[ x_N^T Q_N x_N + \displaystyle{\sum_{k=0}^{N-1}} \begin{bmatrix} x_k \\ u_k \end{bmatrix}^T \begin{bmatrix} Q_k & S_k \\ S_k^T & R_k \end{bmatrix} \begin{bmatrix} x_k \\ u_k \end{bmatrix}; g_0^{N-1} \right]
+\end{align*}
+\end{enumerate}
+\textit{Cílem} je nalézt posloupnost strategií řízení $ g_k(x_k) \, \forall k $, které generují posloupnost řízení $ u_0^{N-1} \in U_0^{N-1} $ takovou, aby kritérium nabývalo své minimální hodnoty.
 
+\subsubsection*{Alternativní ekvivalentní popisy systému}
+Popis pomocí stochastické rovnice s gaussovskými normovanými šumy:
+\begin{align*}
+\begin{split}
+x_{k+1} &= A_k x_k + B_k u_k + G_k \xi_k \\
+y_k &= C_k x_k + H_k \eta_k \\
+p(x_0) &= \mathscr{N}(\hat{x}_0, \Pi_0)
+\end{split}
+\end{align*}
+kde $ \xi_k \in R^n $ a $ \eta_k \in R^p $ jsou navzájem nezávislé gaussovské normované absolutně náhodné diskrétní procesy s rozložením $ \mathscr{N}(0, I) $. Oba tyto procesy jsou též nezávislé s náhodným počátečním stavem $ x_0 $.
+
+Popis pomocí stochastické rovnice s gaussovskými nenormovanými šumy:
+\begin{align*}
+\begin{split}
+x_{k+1} &= A_k x_k + B_k u_k + w_k \\
+y_k &= C_k x_k + v_k \\
+p(x_0) &= \mathscr{N}(\hat{x}_0, \Pi_0)
+\end{split}
+\end{align*}
+kde $ w_k \in R^n $ a $ v_k \in R^p $ jsou navzájem nezávislé gaussovské absolutně náhodné diskrétní procesy s rozložením $ \mathscr{N}(0, G_{k-1}G_{k-1}^T) $ a $ \mathscr{N}(0, H_{k-1}H_{k-1}^T) $. Oba tyto procesy jsou opět nezávislé s náhodným počátečním stavem $ x_0 $.
+
+\subsubsection*{Kalmanův filtr}
+Stav systému $ x_k $ není přímo měřitelný a proto je nutné nalézt jeho odhad. Pro lineární gaussovský systém poskytuje optimální odhad stavu Kalmanův filtr.
+
+Filtrační hustota pravděpodobnosti:
+\begin{align*}
+\begin{split}
+p(x_k | y_0^k, u_0^k) &= \mathscr{N}(u_k(y_0^k, u_0^{k-1}), \Pi_{k|k}) \\
+\mu_k &= \hat{x}_k + K_k^F(y_k-C_k\hat{x}_k) \\
+K_k^F &= \Pi_{k|k-1}C_k^T(H_kH_k^T + C_k\Pi_{k|k-1}C_k^T) \\
+\Pi_{k|k} &= \Pi_{k|k-1} - K_k^FC_k\Pi_{k|k-1}
+\end{split}
+\end{align*}
+
+Prediktivní hustota pravděpodobnosti:
+\begin{align*}
+\begin{split}
+p(x_{k+1} | y_0^k, u_0^k) &= \mathscr{N}(\hat{x}_{k+1}(y_0^k, u_0^{k-1}), \Pi_{k+1|k}) \\
+\hat{x}_{k+1} &= A_k \mu_k + B_k u_k \\
+\Pi_{k+1|k} &= A_k\Pi_{k|k}A_k^T + G_kG_k^T
+\end{split}
+\end{align*}
+
+Počáteční podmínka: $ p(x_0) = \mathscr{N}(\hat{x}_0, \Pi_0) $).
+
+\subsubsection*{Bellmanova funkce}
+Indukcí lze dokázat, že Bellmanova funkce je dána kvadratickou formou:
+\begin{equation*}
+V_k(y_0^k, u_0^{k-1} = \mu_k^T(y_0^k, u_0^{k-1})P_k\mu_k(y_0^k,u_0^{k-1}) + K_k, \, \forall k
+\end{equation*}
+kde $ P_k = P_k^T $ je pozitivně semidefinitní matice. Pro koncový čas pak platí: 
+\begin{equation*}
+V_N(y_0^N, u_0^{N-1}) = \mu_N^TP_N\mu_N + K_N
+\end{equation*}
+
+\subsubsection*{Bellmanova optimalizační rekurze}
+Pro časové okamžiky $ k=N-1,...,0 $ platí rekurentní vztahy, po jejichž úpravě dostaneme Bellmanovu funkci a zákon řízení ve tvaru:
+\begin{align*}
+\begin{split}
+V_k(y_0^k, u_0^{k-1}) &= \underset{u_k \in u_k}{\mathrm{min}} \left[ \begin{bmatrix} u_k \\ u_k \end{bmatrix}^T \begin{bmatrix} A_k^T P_{k+1} A_k + Q_k & A_k^T P_{k+1} B_k + S_k \\ B_k^T P_{k+1} A_k + S_k^T & B_k^T P_{k+1} B_k + R_k \end{bmatrix} \begin{bmatrix} u_k \\ u_k \end{bmatrix} \right] + K_k \\
+g_k(y_0^k, u_0^{k-1}) &= \underset{u_k \in u_k}{\mathrm{argmin}} \left[ \begin{bmatrix} u_k \\ u_k \end{bmatrix}^T \begin{bmatrix} A_k^T P_{k+1} A_k + Q_k & A_k^T P_{k+1} B_k + S_k \\ B_k^T P_{k+1} A_k + S_k^T & B_k^T P_{k+1} B_k + R_k \end{bmatrix} \begin{bmatrix} u_k \\ u_k \end{bmatrix} \right]
+\end{split}
+\end{align*}
+Je zřejmé, že $ V_k(y_0^k, u_0^{k-1}) = V_k(\mu_k) $ a $ g_k(y_0^k, u_0^{k-1}) = g_k(\mu_k) $.
+
+\subsubsection*{Separační teorém}
+Porovnáním s řešením deterministické LQ úlohy optimálního řízení zjistíme, že platí tzv. Separační teorém: \textit{Řešení LQG úlohy lze rozdělit na řešení dvou úloh a to:}
+\begin{enumerate}
+\item Návrh optimálního stavového regulátoru pro ekvivalentně určitý (deterministický) systém.
+\item Návrh optimálního estimátoru stavu generujícího jeho střední hodnotu podmíněnou dostupným pozorováním.
+\end{enumerate}
+Tj. v zákonu řízení nahradíme skutečné hodnoty stavu v regulátoru jejich odhady.
+
+\subsubsection*{Řešení LQG úlohy}
+\vspace{5cm}
+
+\newpage
 \section{Adaptivní systémy [AS]}
 
 \begin{table}[H]
@@ -403,12 +831,17 @@ je pouze koncová okrajová podmínka
 
 \subsection{Základní přístupy k syntéze adaptivních řídicích systémů, schematické vyjádření, srovnání s předpoklady a návrhem standardních regulátorů.}
 
+\newpage
 \subsection{Adaptivní řízení s referenčním modelem, MIT pravidlo, využití Ljapunovovy teorie stability.}
 
+\newpage
 \subsection{Samonastavující se regulátory, charakteristika a základní přístupy k návrhu bloku řízení, přiřazení pólů, diofantické rovnice, minimální variance.}
 
+\newpage
 \subsection{Samonastavující se regulátory, charakteristika a základní přístupy k návrhu bloku poznávání, parametrické metody odhadu.}
 
+\newpage
 \subsection{Adaptivní systémy na zpracování signálu, adaptivní prediktor, adaptivní filtr, analogie se samonastavujícími se regulátory.}
 
+\newpage
 \subsection{Adaptivní řízení a strukturální vlastnost stochastického optimálního řízení, duální řízení, neutralita, separabilita, ekvivalence určitosti.}
