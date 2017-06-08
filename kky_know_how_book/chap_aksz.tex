@@ -162,7 +162,87 @@ Příklady: hra Life, šíření epidemie
 \end{enumerate}
 
 \subsection{Konstrukce modelů na základě měření, zpracování signálu v časové, frekvenční a časo-frekvenční oblasti, modely periodických procesů.}
+\vspace{2.5cm}
+\begin{itemize}
+\item sledované veličiny: dynamické (krátkodobé) chování systému (dráha, rychlost, zrychlení)
+\item provozní parametry: statické (dlouhodobé) chování systému (teplota, tlak, otáčky, ...)
+\item analýza dat: určení stavu a vlastností systému v časové, frekvenční, časo-frekvenční oblasti
+\item vyhodnocení dat: funkce hodnotící analyzovaná data; překročení určitého prahu ukazuje na změnu stavu sledovaného systému (alarm)
+\end{itemize}
+Dělení signálu: 
+\begin{itemize}
+\item deterministický (periodický vs. neperiodický) vs. stochastický (stacionární vs. nestacionární)
+\item spojitý v čase vs. diskrétní v čase
+\item spojitý v hodnotách vs. diskrétní v hodnotách
+\end{itemize}
+Deterministické signály lze popsat pomocí přesného analytického vyjádření. Pro periodické signály platí $ x(t) = x(t+T) $. Harmonické signály s konstantní frekvencí a amplitudou lze popsat vztahem $ x(t) = A sin \left( \frac{2 \pi}{T} t + \varphi \right) = A sin (2\pi f t + \varphi) $
 
+\subsubsection*{Zpracování signálů v časové oblasti}
+Základní charakteristiky:
+\begin{itemize}
+\item \textit{Energie signálu}: $ E = \displaystyle{\int_{-\infty}^\infty} |x(t)|^2 dt $. Signály s konečnou energií nazýváme energetické.
+\item \textit{Výkon signálu}: $ P = \underset{T \to \infty}{\mathrm{lim}} \frac{1}{2T} \displaystyle{\int_{-\infty}^\infty} |x(t)|^2 dt $. Signály s konečným výkonem nazýváme výkonové (musí být periodické), ty lze dále charakterizovat stejnosměrnou složkou (bez abskv) a efektivní hodnotou ($ \sqrt{P} $).
+\item \textit{Korelační funkce}
+\begin{itemize}
+\item autokorelační funkce: $ R(\tau) = \displaystyle{\int_{-\infty}^\infty} x(t) x(t+\tau) dt $. Autokorelační funkce periodického signálu je také periodická.
+\item vzájemná korelační funkce: $ R_{xy}(\tau) = \displaystyle{\int_{-\infty}^\infty} x(t) y(t+\tau) dt $.  Ze vzájemné korelační funkce lze určit závislost dvou funkcí, např. posun v čase.
+\end{itemize}
+\end{itemize}
+
+\subsubsection*{Zpracování signálů ve frekvenční oblasti}
+Z časového průběhu často nelze získat dostatečné množství informace - změny vlastností systému jsou skryty v šumu pozadí (strukturální vibrace, akustické
+rezonance, ...) $ \to $ parametrické metody pro odhad spektra – Burg, Yule-Walker (průměrování spekter - v diagnostice nejpoužívanější metoda ke snížení šumu ve spektru).
+Pokud 1) počet nespojitostí signálu $ x(t) $ je konečný a 2) $ \displaystyle{\int_{0}^\tau}|x(t)| dt < \infty $, lze signál $ x(t) $ rozvinout v trigonometrickou řadu se základní frekvencí $ \omega = \frac{2\pi}{T} $ (lze ji zapsat také v komplexním tvaru).
+\begin{equation}
+x(t) = \frac{a_0}{2} + \displaystyle{\sum_{k=1}^\infty \left[ a_k cos(k\omega t) + b_k sin(k\omega t) \right]} = \frac{a_0}{2} + \displaystyle{\sum_{k=1}^\infty \left[ A_k cos(k\omega t + \varphi_k) \right]}
+\end{equation}
+Člen před sumou odpovídá stejnosměrné složce dané funkce (signálu). Harmonický člen pro $ k = 1 $ se nazývá první nebo základní harmonická a členům pro $ k > 1 $ říkáme vyšší harmonické. Hodnota $ A_k $ je amplitudou k-té harmonické a $ \varphi_k $ odpovídá počátečnímu fázovému posuvu dané harmonické.
+
+\textbf{Fourierova transformace} je limitním případem Fourierovy řady pro neperiodické signály.
+\begin{equation}
+\boxed{X(\omega) = F[x(t)] = \displaystyle{\int_{-\infty}^\infty} x(t) e^{-j\omega t} dt}
+\end{equation}
+\begin{itemize}
+\item linearita: $ F[ax(t) + by(t)] = aX(\omega) + bY(\omega) $
+\item posun signálu v čase má vliv pouze na fázové spektrum: $ F[x(t-t_0)] = X(\omega)e^{-j\omega t_0} $
+\item posun ve frekvenci: $ F[x(t)e^{j \omega_0 t}] = X(\omega-\omega_0) $
+\item součin signálů odpovídá konvoluci jejich Fourierových obrazů: $ F[x(t) \cdot y(t)] = X(\omega) * Y(\omega) $
+\item konvoluce signálů odpovídá součinu jejich Fourierových obrazů: $ F[x(t) * y(t)] = X(\omega) \cdot Y(\omega) $
+\end{itemize}
+Veškeré signály, které v praxi naměříme, mají konečnou délku (dáno trváním měření). Vzorkováním spojitého signálu získáme diskrétní signál definovaný v časových okamžicích $ x(kT_s) $. Diskrétní Fourierova transformace (\textbf{DFT}):
+\begin{equation}
+x \left[ \frac{n}{NT_s} \right] = T_s \displaystyle{\sum_{i=0}^{N-1}}x [kT_s]e^{-j\frac{2\pi k n}{N}}, \qquad k=0,1,...,N-1 
+\end{equation}
+
+\textbf{Analýza signálů ve frekvenční oblasti}: reálná diagnostická data z většiny procesů jsou ve své podstatě nejčastěji nestacionární, nelineární a příliš krátká (neopakovatelná). Fourierova transformace je obecná metoda pro analýzu celkového rozložení amplitudy v závislosti na frekvence, ale, systém musí být lineární, data musí být stacionární a nelze rozlišit puls a šum.
+
+\subsubsection*{Zpracování signálů v časo-frekvenční oblasti}
+Frekvenční analýza nestacionárních signálů, tj. signálů, jejichž parametry se mohou měnit v čase. Nutnou podmínkou pro korektní vyhodnocení výsledků DFT je právě neměnnost parametrů signálů a jeho periodicita. Jestliže signál není periodický, dochází k tzv. úniku ve spektru (prosakování ve spektru).
+
+\textbf{Krátkodobá Fourierova transformace (STFT)} je vypočtena z krátkých úseků analyzovaného signálu:
+\begin{equation}
+X(t,\omega) = \displaystyle{\sum_{-\infty}^\infty} x(\tau)h(\tau-t)e^{-j\omega t}d\tau
+\end{equation}
+kde $ x(t) $ je analyzovaný signál a $ h(t) $ je okénková funkce (pravoúhlé, Hamming,...). Předpokladem je, že ten krátký úsek signálu, vzniklý převážením původního signálu okénkovou funkcí, je stacionární, tj., že se jeho parametry nemění. Amplitudové spektrum krátkodobé Fourierovy transformace lze zobrazit třeba spektrogramem. Umožňuje sledovat změnu amplitudy (energie) signálu v závislosti na frekvenci a čase, ale analýza je ovlivněna Heisenberg-Gaborovým principem neurčitosti.
+
+\textbf{Wavelet transformace} využívá k dekompozici množinu ortonormálních funkcí (bází) a poskytuje analýzu s vícenásobným rozlišením (multiresolution) - použití okna proměnné délky s jednou vlnkou (waveletem) $ \to $ podrobnější časové rozlišení ve vyšších frekvencích (na úkor frekvenčního rozlišení). 
+
+Dosud jsme se bavili o metodách lineární časo-frekvenční dekompozice. Mezi metody využívající okamžitou frekvenci patří Hilbertova-Huangova transformace a Kalmanův filtr.
+
+\subsubsection*{Modely periodických procesů}
+Rubbing je ve většině případů až důsledkem některé závady stroje. Mezi nejčastější příčiny rubbingu patří síly, které způsobují ohyb hřídele. Změna geometrie hřídele může vést ke kontaktu mezi rotorem a statorem. Zvýšením teploty v místě kontaktu dochází k dilataci kovového materiálu což způsobuje další průhyby hřídele. Druhou častou příčinou rubbingu jsou nadměrné vibrace, kdy jejich amplituda přesáhne povolenou mez mezi rotorem a statorem. K tomuto jevu může docházet například během přechodu stroje přes kritické otáčky, a jedná se o děj přechodný.
+
+Projevy rubbingu:
+\begin{itemize}
+\item změna tuhosti spojení systému rotor-ložisko-stator $ \to $ změna přirozené frekvence, změna amplitudy a fáze
+\item nárazy $ \to $ vznik sub-a super-synchronních komponent, vznik vysokofrekvenčních komponent, šum
+\item tření $ \to $ vznik vysokofrekvenčních komponent, šum, povrchové opotřebení
+\end{itemize}
+Typy rubbingu: částečný vs. úplný. Typy úplného rubbingu:
+\begin{itemize}
+\item synchronní (s dopřednou precesí): Je buzen silou nevývažku rotoru. Precese rotoru je shodná se smyslem jeho otáčení okolo osy rotace.
+\item samobuzený (se zpětnou precesí): Precese rotoru není shodná se smyslem otáčení rotoru okolo osy rotace. Může vzniknout v oblasti rezonanční 
+\end{itemize}
 
 \subsection{Modely vibrací a kmitání, experimentální modální analýza.}
 
