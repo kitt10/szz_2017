@@ -377,6 +377,44 @@ Při zavedení do paměti se pro všechny metody vytvoří náhradní metody (st
 Typy v CLR (Common Type System - CTS): kód napsaný v jednom jazyku může pomoci nich komunikovat s kódem z jiného jazyka: field, method, property, event. Common Language Specification (CLS): CLR integruje všechny jazyky tak, že objekty vytvořené v jednom z nich mohou být plně využívány v úplně jiném jazyku. CLS definuje minimální množinu rysů, které musí podporovat každý překladač pro CLR.
 
 \subsection{Jazyk C Sharp: hodnotové a referenční typy; jednoduché typy, implicitní konverze; výrazy a operátory; příkazy; výjimky.}
+Datové typy (Types): hodnotové, referenční (odkazové), zabalení a rozbalení
+
+\subsubsection*{Hodnotové typy}
+Proměnná hodnotového typu obsahuje hodnotu tohoto typu (např. typ:int, proměnná:v, hodnota:123). Přiřazení vytváří kopii přiřazované hodnoty. Od hodnotových typů nelze dále dědit. Patří mezi ně:
+\begin{itemize}
+\item struktury (struct)
+\item jednoduché typy: rezervovaná slova (byte, short, int, long, char, float, bool, ...)
+\item výčtové typy (enum): deklarují množinu pojmenovaných konstant (pro každý enum je v pozadí nějaký celočíselný typ. Např. enum Color \{Red, Green, Blue\}.
+\end{itemize}
+
+\subsubsection*{Referenční typy}
+Proměnná referenčního typu obsahuje referenci (odkaz) na instanci typu objekt. Přiřazením do proměnné referenčního typu ukazuje proměnná na stejnou instanci objektu jako přiřazovaná. Referenční typy jsou:
+\begin{itemize}
+\item třídy (class)
+\item rozhraní (interface)
+\item pole
+\item delegáty (delegates): Umožňují implementovat scénáře známé z jazyků C, C++, Pascal, atd. jako ukazatele na funkce. Na rozdíl od C++ (atd.) jsou plně objektově orientovány a zapouzdřují (encapsulates) jak instanci objektu, tak i metodu. Deklarace delegáta definuje třídu odvozenou od System.Delegate a delegáty jsou implicitně sealed. Daná metoda a delegát jsou kompatibilní, mají-li stejný počet parametrů stejných typů ve stejném pořadí a se stejnými
+modifikátory parametrů a stejný návratový kód.
+\end{itemize}
+
+Převod z hodnotového typu na referenční se nazývá zabalení (boxing). Provádí se automaticky, když se hodnotový typ vyskytuje v místě, kde má být object. Opačný převod je rozbalení (unboxing). Je třeba použít explicitní přetypování, typ před zabalením a při rozbalení se musí přesně shodovat! Konverze mezi dvěma typy může být implicitní (long a = b) nebo explicitní (int c = (int) b).
+
+\subsubsection*{Výrazy a operátory}
+Výraz je posloupnost operátorů a operandů. Existují 3 druhy operátorů:
+\begin{itemize}
+\item unární (např. x++)
+\item binární (např. x+y)
+\item ternární (např. c ? x : y)
+\end{itemize}
+
+\subsubsection*{Příkazy}
+Patří sem bloky, prázdné příkazy, deklarační příkaz (deklaruje lokální proměnné nebo konstanty), výrazový příkaz (vyhodnocení výrazu), výběrové příkazy (if, switch), iterační příkazy (for, while, do, foreach), skokové příkazy (break, continu, goto, return, throw), příkaz try, příkazy checked a unchecked (určují, jak bude ošetřeno přetečení celočíselných aritmetických operací a konverzí), příkaz lock (realizuje vzájemně výlučný (mutual-exclusive) přístup k danému objektu, vykoná příkaz a přístup uvolní), příkaz using.
+
+Všechny příkazy kromě příkazů s návěštím a deklaračních příkazů se nazývají vložené (embedded). Vložené příkazy se používají v rámci jiných příkazů.
+
+\subsubsection*{Výjimky}
+Výjimky jsou v C\# strukturovaným a typově bezpečným způsobem zpracování systémových i aplikačních chyb. Mohou být vyvolány dvěma způsoby: 1) příkazem throw; 2) Během zpracování příkazů a výrazů jazyka C\#, kdy nějaká operace nemůže být dokončena normálně. Jsou obsluhovány příkazem try.
+
 
 \subsection{Jazyk C Sharp: Členy a přístup k nim; jmenné prostory; třídy, metody, vlastnosti, konstruktory, destruktory; struktury; pole; delegáty; atributy.}
 
