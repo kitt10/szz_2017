@@ -245,6 +245,55 @@ Typy rubbingu: částečný vs. úplný. Typy úplného rubbingu:
 \end{itemize}
 
 \subsection{Modely vibrací a kmitání, experimentální modální analýza.}
+\begin{enumerate}[label=(\alph*)]
+\item \textbf{Statistické metody}
+\begin{enumerate}[label=(\roman*)]
+\item \textit{Činitel výkmitu - crest-faktor}: Metoda je založena na faktu, že periodicky se opakující vibrační ráz lze s postačujícím rozlišením vyhodnotit z výkmitu měřeného vibračního signálu. Tento výkmit je však prakticky neměřitelný jako efektivní hodnota v daném kmitočtovém rozsahu. Zhoršující se technický stav se projevuje nárůstem jak četnosti rázů tak jejich výkmitů. Efektivní hodnota vibračního signálu se zvětšuje se zvyšující se četností rázů, zatímco se hodnota výkmitů stabilizuje. Podíl mezi maximální a efektivní hodnotou vibrací (zrychlení). Vyhodnocuje se z časového signálu (frekvenční pásmo 10Hz – 10kHz): $ c_f = \frac{\hat{a}}{a_{eff}} $. Metoda je rychlá a laciná, ale není příliš přesná co se týče stanovení stupně poškození. Je navíc nevýhodná při parazitních zdrojích kmitů.
+
+\item \textit{K-hodnota}: Zohledňuje efektivní a maximální (špičkové) hodnoty při stavu bez poškození a v aktuálním stavu: $ K(t) = \frac{a_{eff}(0) \cdot \hat{a}(0)}{a_{eff}(t) \cdot \hat{a}(t)} $. K tomu, aby mohlo být rozhodnuto o aktuálním stavu, jsou stanoveny hladiny parametru $ K(t) $, které vycházejí z dlouholetých zkušeností a poznatků. Metoda parametru K(t) je rychlá a nenáročná a oproti srovnatelným metodám spočívá její výhoda v diagnostikovatelnosti většího množství zdrojů poškození. Nebylo zjištěno omezení její platnosti.
+\item \textit{Kurtosis}: Nespoléhá se na měření absolutní velikosti vibrací. Způsob výpočtu veličiny je je založen na rozdělení amplitud signálu: $ K = \frac{\int (x-x^{-4})p(x)dx}{\sigma^4} $. Nepoškozené ložisko emituje stochastické kmitání, které má gaussovo normální rozdělení
+pravděpodobnosti a hodnota K pro toto rozdělení je K=3. Tuto hodnotu můžeme naměřit v širokém pásmu od 2,5 kHz do 80 kHz s odchylkami +- 8\% (nezávisle na zatížení a otáčkách). S postupujícím poškozením roste koeficient K v nižším frekvenčním pásmu. Velké poškození vede k nárůstu hodnoty K ve vyšších frekvencích, zatímco v nízkých frekvencích se koeficient K vrací zpět na svou původní hodnotu.Míra poškození určovaná Kurtosis faktorem se proto odhaduje v pěti frekvenčních pásmech.
+\end{enumerate}
+\item \textbf{Rezonanční metody} (rezonance snímače)
+\begin{enumerate}[label=(\roman*)]
+\item \textit{Metoda rázových pulsů (SPM/BCU)}: Princip spočívá v měření a posouzení rázových pulzů. V měřícím zařízení je signál filtrován pásmovou propustí se střední frekvencí pásma v okolí rezonanční frekvence snímače. (nejčastěji cca 35 kHz). K určení vlastního stavu je monitorována maximální hodnota špičky impulsu (shock value) v signálu, jejíž nárůst poukazuje na počínající poškození v drahách ložiska. V prahové hodnotě (carpet value) je shrnut vibrační šum ložiska. Nárůst této hodnoty zpravidla poukazuje na problémy s mazáním. Aby mohl být stav ložiska posuzován objektivněji a aby mohla být posuzována různá ložiska navzájem, je nutné provádět měření ložiska v dobrém stavu (nově osazené ložisko) a hodnoty metody normovat. Diference špičkové a prahové hodnoty se blíží svými vlastnostmi činiteli výkmitu (crest- factor).
+\item \textit{Metoda špičkové energie (Spike Energy)}: Zpracováván je signál z akcelerometru v oblasti od 100 Hz až do 65 kHz. Dále je definována očekávaná frekvence poškození ložiska $ f_D $, požadovaný počet harmonických $ n_{SE} $, které budou k dispozici ve výsledném spektru. Pokud není nastavena očekávaná frekvence poškození $ f_D $, pak je pro další výpočet použita maximální frekvence $ f_{max} $ obsažená v měřeném signálu. Pro každý vzorek signálu z A/D převodníku se počítá odstup aktuálního vzorku od předchozího maximálního záporného impulsu. Pokud je hodnota aktuálního vzorku menší než hodnota maximálního záporného impulsu, pak bude maximální záporný impuls nastaven na tuto hodnotu. Odstup aktuálního vzorku od maximálního záporného impulsu je označován jako peak-to-peak a je v každém kroku násoben konstantou tlumení. \end{enumerate}
+\item \textbf{Frekvenční metody}
+\begin{enumerate}[label=(\roman*)]
+\item \textit{Obálková analýza}: Metoda, kterou mohou být detekovány a monitorovány opakující se rázy již v raném stadiu jejich vzniku a vývoje. Velmi krátké a rychle doznívající pulsy nejsou rozpoznatelné přímou frekvenční analýzou
+měřeného signálu. K tomu slouží vytvoření obálkové křivky časového signálu. Měřený signál je vlastně superpozicí vibračního signálu ložiska se stacionárním základním kmitáním a rovněž s cizími vibracemi, které se šíří materiálem z okolních částí stroje. Filtrace horní propustí, nebo pásmovou propustí proto, aby se odstranily vlivy například otáček rotoru a dalších složek, které se projevují v nízkých frekvencích. Signál na výstupu obsahuje jen složky s vysokými kmitočty, ke kterým zaručeně patří i kmitání, impulsy v důsledku rázů. Následně je filtrovaný signál usměrněn a filtrován dolní propustí. Tento postup odstraňuje nosný signál (vlastní kmitavé pohyby stroje) a výsledkem je obálka původního časového signálu. Signál obálky se dále analyzuje např. pomocí FFT ve frekvenčním spektru. 
+\vspace{3cm}
+\item \textit{Kepstrální analýza}: Slouží k rozpoznání periodicit ve frekvenčním spektru: $ c(\tau) = F[log[]F(x(t))[]] $ 
+\end{enumerate}
+\item \textbf{podíl KRMS/LRMS}: Podíl mezi krátkodobou a dlouhodobou efektivní hodnotou - pro ohodnocení navýšení intenzity signálu (odhalení nestacionarit z časového signálu). Při vzniku nestacionarity dojde k navýšení intenzity signálu a tím i k nárůstu efektivní hodnoty. Efektivní hodnota může ale vlivem změn stavu zařízení značně kolísat. Pro odstranění těchto relativně pomalých změn je krátkodobá efektivní hodnota K-RMS (Kurzzeit-RMS) dělena dlouhodobou efektivní hodnotou L-RMS (Langzeit-RMS). Délka okna LRMS je řádově větší než u KRMS (jedná se řádově o sekundy, kdežto okno KRMS je v řádu milisekund).
+\end{enumerate}
+
+Využití: monitoring volných částí v primárním okruhu JE, detekce pádu keramického obkladu ve spalovací komoře plynové turbíny, včasné určení poruchy ložiska.
+
+Shrnutí:
+\begin{itemize}
+\item akcelerometry: senzory pro snímání vibrací
+\item analýza vibračních signálů v časové a frekvenční oblasti odděleně je dobře použitelná v mnoha aplikacích, ale je vždy nutné zhodnotit jejich použití vzhledem k charakteru úlohy
+\item časo-frekvenční analýza je důležitým nástrojem pro řešení problémů s analýzou nestacionárních a nelineárních signálů
+\item v časo-frekvenční oblasti je možné selektivně analyzovat krátkodobé změny na určitých frekvencích a v určitém čase odděleně od rezonancí
+\item pro potlačení nežádoucích frekvencí v zobrazení je používáno tzv. normování (adaptivní pro krátkodobé změny a na určitý stav systému pro dlouhodobé změny)
+\end{itemize}
+
+\subsubsection*{Experimentální modální analýza}
+Cílem modální analýzy je určení vlastních frekvencí dílu nebo soustavy dílů (součástí mechanické konstrukce). Tyto vlastní frekvence slouží k informaci o měřeném objektu, které se potom využívají k hodnocení provozních stavů, kdy by případná rezonance některé z provozních frekvencí s vlastní frekvencí vedla k totálnímu zničení objektu. Možnost určení vlastních frekvencí jsou podle způsobu zjišťování: 1) \textit{výpočet} - teoretická (analytická modální analýza); 2) \textit{experiment} - experimentální modální analýza (modální zkouška).
+
+Vytvoření matematického modelu popisujícího dynamické chování testované struktury experimentální cestou. Získáme: 1) vlastní frekvence, 2) modální tlumení, 3) vlastní tvar $ \to $ modální model (fyzikální/modální/odezvový).
+
+\textit{Proč se provádějí modální zkoušky?} Většina průmyslových odvětví běžně navrhuje své struktury na počítačích a často mají jejich analytický model. Dynamické vlastnosti vypočítané pomocí tohoto modelu je potřeba ověřit pomocí modální zkoušky na prototypu $ \to $ doladění konečnoprvkového (MKP) modelu, snížení vibrací, simulace scénáře "co se stane, když..." (letecký, automobilový průmysl).
+
+Shrnutí:
+\begin{enumerate}
+\item Vytvoření modelu pro modální zkoušku. Často už před zkouškou existuje počítačový geometrický model. Potom je úkolem definovat, které body na struktuře se mají měřit a ve kterých směrech. Tento krok je velmi důležitý, protože cílem je omezit množství měření a neprovádět zbytečnou, časově náročnou, přípravnou práci. Na druhé straně je však třeba vybrat správné body, aby byl vytvořen použitelný modální model. Často se použije část MKP modelu a výhodou je, že MKP analýza nám dává množství hodnotných informací pro tvorbu co nejlepšího modelu pro modální zkoušku.
+\item Měření je často časově nejnáročnější krok. Čas zabírá instalace snímačů a jejich nastavení, což může často zabrat 80\% času celé zkoušky. Jak už bylo diskutováno, pro
+prokládání křivek se používají frekvenční odezvové funkce, ale často jsou pro ověření důležité i jiné funkce. Můžeme zmínit koherenci, autospektrum aj.
+\item Mnoho softwarových balíků má implementováno množství různých aproximačních metod a je důležité vybrat tu správnou pro řešenou úlohu.
+\item Je důležité provést ověření, než data použijeme pro simulaci nebo pro srovnání s MKP daty.
+\end{enumerate}
 
 \subsection{Generování náhodných čísel, metoda Monte Carlo a odhad přesnosti simulačních výsledků.}
 
