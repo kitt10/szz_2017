@@ -652,8 +652,46 @@ Všechny počítačové aplikace potřebují ukládat a načítat informace. Př
 
 
 \subsection{Operační systémy reálného času: statické a dynamické plánovací algoritmy.}
+OS reálného času (RTOS) jsou takové OS, kde čas hraje podstatnou roli. Na podnět generovaný externími zařízeními musí reagovat do určitého pevného času. Správná reakce, ale pozdě je totéž co žádná reakce! Systémy reálného času lze rozdělit na:
+\begin{itemize}
+\item Systémy pevného reálného času (hard real time) – mezní termíny (deadlines) musí být dodrženy.
+\item Systémy měkkého reálného času (soft real time) – občasné nesplnění mezního termínu je nežádoucí, avšak tolerované.
+\end{itemize}
+Chování systému reálného času musí být predikovatelné a známé předem! Mohou vyskytovat dva typy událostí: periodické/aperiodické (nelze předvídat).
 
-\newpage
+Systém může obsluhovat několik posloupností periodických událostí. Rozvrhovatelný (schedulable) RTOS: $ U = \displaystyle{\sum_{i=1}^m} \frac{C_i}{P_i} \leq 1 $.
+
+\textit{Deadline (mezní termín)}: čas do kterého musí být daná úloha vykonána.
+
+\textit{Real-time scheduling (rozvrhování reálného času)}: rozvrhování několika úloh „soupeřících“ (competing) o CPU, z nichž některé mají mezní termíny, kterým musí vyhovět - v případě periodických úloh se často mezním termínem rozumí okamžik, kdy má být spuštěna následující perioda dané úlohy.
+
+\subsubsection*{Rate Monotonic Scheduling (RMS}
+Statický rozvrhovací algoritmus: Preemptivní spouštění periodických úloh podle priorit. Čím je daná úloha častěji spouštěna, tím má větší prioritu (proporcionálně). Liu a Layland (1973) stanovili 5 podmínek, za kterých lze algoritmus použít:
+\begin{itemize}
+\item Každý periodický proces musí skončit během své periody.
+\item Procesy jsou vzájemně nezávislé.
+\item Každý proces trvá stejnou dobu při každém spuštění.
+\item Žádné neperiodické procesy nemají deadline.
+\item Přepnutí procesů (preemption) se provede okamžitě s nulovou režií.
+\end{itemize}
+
+\subsubsection*{Earliest Deadline First (EDF}
+Dynamický rozvrhovací algoritmus, nevyžadující periodické úlohy ani stejnou dobu trvání úloh při každém spuštění (jako RMS).
+\begin{itemize}
+\item Každá úloha, které má být přidělena CPU, oznamuje svůj deadline.
+\item Scheduler vždy spouští úlohu s nejbližším časem deadline.
+\item K tomuto účelu má scheduler úlohy uložené v seznamu setříděném podle mezních časů.
+\item Kdykoliv se nějaká úloha dostane do připraveného stavu, scheduler zjistí, zda její deadline není dřív než u právě prováděného procesu. Pokud ano, odstaví prováděný proces a spustí tuto úlohu.
+\end{itemize}
+Podstatný rozdíl se ukáže, vzroste-li zatížení CPU $ \to $ RMS selže. RMS zaručeně funguje, pokud $ U \leq m(2^{\frac{1}{m}}-1) $
+
+Příklady RTOS:
+\begin{itemize}
+\item \textit{Windows CE}: malý, konfigurovatelný, dobře „propojený“ operační systém reálného času; multithreadový programový model, důmyslná správa paměti, rozsáhlá množina ovladačů, podpora RT aplikací. Na rozdíl od stadardních Windows nepodporují více procesorů. Windows CE řeší inverzi priorit do hloubky 1. Rozlišovací schopnost časovače: 1ms.
+\item \textit{Phar Lap ETS (Embedded Tools Suite)}: podpora 32-bitové procesorové platformy x86 firmy Intel, největší výhodou je vývoj aplikací v Microsoft Visual Studiu.
+\item \textit{VxWorks}: asi nejslavnější a nejdražší RTOS, používá jej např. NASA
+\end{itemize}
+
 \subsection{Struktury vzdálených a virtuálních laboratoří.}
 
 \newpage
