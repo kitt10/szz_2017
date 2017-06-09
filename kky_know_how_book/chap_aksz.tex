@@ -660,6 +660,7 @@ OS reálného času (RTOS) jsou takové OS, kde čas hraje podstatnou roli. Na p
 Chování systému reálného času musí být predikovatelné a známé předem! Mohou vyskytovat dva typy událostí: periodické/aperiodické (nelze předvídat).
 
 Systém může obsluhovat několik posloupností periodických událostí. Rozvrhovatelný (schedulable) RTOS: $ U = \displaystyle{\sum_{i=1}^m} \frac{C_i}{P_i} \leq 1 $.
+\vspace{3cm}
 
 \textit{Deadline (mezní termín)}: čas do kterého musí být daná úloha vykonána.
 
@@ -674,6 +675,7 @@ Statický rozvrhovací algoritmus: Preemptivní spouštění periodických úloh
 \item Žádné neperiodické procesy nemají deadline.
 \item Přepnutí procesů (preemption) se provede okamžitě s nulovou režií.
 \end{itemize}
+\vspace{2cm}
 
 \subsubsection*{Earliest Deadline First (EDF}
 Dynamický rozvrhovací algoritmus, nevyžadující periodické úlohy ani stejnou dobu trvání úloh při každém spuštění (jako RMS).
@@ -683,6 +685,7 @@ Dynamický rozvrhovací algoritmus, nevyžadující periodické úlohy ani stejn
 \item K tomuto účelu má scheduler úlohy uložené v seznamu setříděném podle mezních časů.
 \item Kdykoliv se nějaká úloha dostane do připraveného stavu, scheduler zjistí, zda její deadline není dřív než u právě prováděného procesu. Pokud ano, odstaví prováděný proces a spustí tuto úlohu.
 \end{itemize}
+\vspace{2cm}
 Podstatný rozdíl se ukáže, vzroste-li zatížení CPU $ \to $ RMS selže. RMS zaručeně funguje, pokud $ U \leq m(2^{\frac{1}{m}}-1) $
 
 Příklady RTOS:
@@ -693,8 +696,42 @@ Příklady RTOS:
 \end{itemize}
 
 \subsection{Struktury vzdálených a virtuálních laboratoří.}
+Oblast automatického řízení lze podle Fleminga (1989) charakterizovat následovně:
+\begin{itemize}
+\item Automatické řízení je ze své podstaty interdisciplinárním oborem.
+\item Matematika hrála a v budoucnu bude ještě více hrát zásadní roli v rozvoji automatického řízení.
+\item Od samého začátku je vztah mezi matematikou a automatickým řízením vztahem vzájemného „proplétání“.
+\item Pokroků v oblasti automatického řízení se dosahuje prostřednictvím směsi matematiky, modelování, výpočetní techniky a experimentování.
+\end{itemize}
+Nové technologie ve výpočetní technice podstatně rozšiřují možnosti praktických aplikací z automatického řízení (inteligentní čidla a akční členy, vložené řízení, pokročilé řídicí algoritmy, průmyslové komunikace, internetové řídicí systémy). Výjimečné postavení internetu má vliv nejen na výuku automatického řízení ale umožňuje i \textbf{experimentování na dálku}.
 
-\newpage
+\textbf{Vzdálená laboratoř}: Uživatel není fyzicky přítomen, ale je ve spojení s jejím zařízením přes komunikaci, nejčastěji internet.
+
+\textbf{Virtuální laboratoř}: Experimenty se neprovádějí na skutečném zařízení, ale na simulačním modelu (virtuálním zařízení).
+
+Vytvoření kvalitní vzdálené nebo virtuální laboratoře je komplexní interdisciplinární úkol (didaktická/technická oblast).
+\vspace{3cm}
+
+Používané softwarové technologie:
+\begin{itemize}
+\item \textit{RTOS}: Windows CE, Phar Lap ETS, RTX, Hyperkernel, RTLinux, QNX, VxWorks
+\item \textit{Komunikační protokoly}: TCP/IP, UDP/IP, FTP, HTTP, RTP, RPC, DCOM
+\item \textit{Softwarové komponenty}: DLL, COM, OLE, ActiveX, OPC
+\item \textit{Scripty pro klienty}: VBScript, Jscript, Java applety
+\item \textit{Skripty pro servery}: CGI, Perl, PHP, ASP, ASP.NET
+\end{itemize}
+
+\textbf{Ad hoc vs. koncepční řešení}: Ad hoc řešení neuvažují širší souvislosti (nedoporučeno). Koncepční řešení do návrhu systematicky zahrnují společné rysy řešených úloh (2 typy: 1) založená na standardním firemním řešení; 2) založená na vlastním výzkumu autorů).
+
+\textbf{Offline vs. Online interaktivita}: Offline (batch) úlohy - Klient odešle na server např. název a parametry úlohy, server danou úlohu s těmito parametry spustí a výsledky odešle klientovi formou HTML stránky (např. Matlab Web Server). Výhoda snadná implementace, komunikace požadavek (request) - odpověď (reply) je zabudována do HTTP protokolu. Zásadní nevýhoda - uživatel nemůže do probíhajícího experimentu zasahovat. Online interaktivita je zásadní rys určující iluzi přítomnosti v laboratoři.
+
+\textbf{Omezené vs. otevřené experimenty}: Experimenty s omezenou interakcí  - změna jednoho či několika parametrů, doporučeno pro počáteční fáze seznamování se s daným modelem. Otevřené experimenty - mnohem větší rozsah možností, tvorba vlastní řídících systému nebo uživatelského rozhraní, zajímavější práce, větší motivace, příprava experimentů je však náročnější, nutno zabránit zničení modelu neodborným zásahem.
+
+\textbf{Simulace vs. řízení v reálném čase}: Pro daný fyzikální model je vhodné mít i odpovídající simulační úlohy. U otevřených úloh je důležité, aby návrh algoritmů pro simulaci i řízení probíhal jednotným způsobem.
+
+\textbf{Měkký vs. pevný reálný čas}: Operační systémy s měkkým reálným časem (soft real-time) nedosahují příliš dobré přesnosti periody vzorkování.
+
+
 \section{Převodníky fyzikálních veličin [PFV]}
 
 \begin{table}[H]
