@@ -534,9 +534,126 @@ Specifikace OPC obsahují vždy dvě sady interfaců:
 \textit{Kde je OPC vhodné?} OPC je primárně navrženo pro přístup k datům ze síťového serveru. OPC interfacy však mohou být použity na mnoha místech v aplikaci (SCADA). Architektura a návrh OPC dovoluje klientské aplikaci přistupovat k datům z mnoha OPC serverů, mnoha dodavatelů, běžících na různých počítačích v síti prostřednictvím jediného objektu serveru.
 
 \subsection{Operační systémy: procesy a thready, synchronizace, deadlock, inverze priorit; správa paměti; vstupně-výstupní systém, programované vstupy/výstupy, přerušení, DMA, ovladače zařízení; souborové systémy.}
+Na operační systém (OS) se lze dívat dvěma způsoby:
+\begin{itemize}
+\item \textit{Rozšířený stroj (extended machine), virtuální stroj (virtual machine)}: Zavádí abstrakci poskytovaných služeb, skrývá pro uživatele implementační detaily. Sjednocuje rozhraní pro programování pomocí tzv. systémových volání. Abstrakce pro příklad harddisku: otevření souboru, čtení/zápis souboru, zavření souboru. Abstrakce skrývá skutečnou nízkoúrovňovou (low-level) obsluhu zařízení (interrupty, časovače, správa paměti).
+\item \textit{Manažer zdrojů (resource manager)}: Multiplexování v čase - sdílení jednoho zařízení více uživateli, např. přidělování CPU (Central Processing Unit) různým programům. Multiplexování v prostoru - rozdělení jednoho zdroje několika programům po částech, např. přidělování paměti nebo prostoru na disku a udržování informací o tom, jakou část má který program přidělenu.
+\end{itemize}
+\textit{Historie OS}:
+\begin{itemize}
+\item \textit{1945-1955: 1. generace počítačů} - založené na relé, pomalé, žádné programovací jazyky
+\item \textit{1955-1965: 2. generace počítačů (mainframes)} - transistorové, spolehlivější, dávkový systém, FORTRAN, assembler
+\item \textit{1965-1980: 3. generace počítačů} - integrované obvody (IBM), přenositelný kód, vznik UNIX OS
+\item \textit{1980 $ \to $ 4. generace počítačů} - mikroprocesory, osobní počítače, zpočátku OS CP/M, Bill Gates a jeho Basic, DOS (Disc Operating System) -> Microsoft, Apple Macintosh (first GUI), Windows, v současnosti síťové a distribuované OS
+\end{itemize}
+
+\subsubsection*{Procesy}
+Abstrakce běžícího programu, klíčový koncept OS. Moderní počítače umí dělat několik věcí najednou, dělá se to dvěma způsoby:
+\begin{itemize}
+\item přepínání mezi programy po desítkách ms (pseudoparalelismus)
+\item skutečný hardwarový paralelismus víceprocesorových systémů, kdy více procesorů sdílí společnou fyzickou paměť
+\end{itemize}
+Veškerý spouštěný software na daném počítači (někdy včetně OS) se skládá z několika sekvenčních procesů. Proces je prováděný program, včetně aktuálních hodnot programového čítače (program counter), registrů a proměnných. Multiprogramming je rychlé přepínání mezi procesy. Procesy jsou principiálně vytvářeny následujícími způsoby:
+\begin{itemize}
+\item při inicializaci (boot) systému - typicky několik procesů (foreground/background)
+\item vykonáním systémového volání pro vytvoření procesu běžícím procesem (child/parent proces)
+\item požadavkem uživatele na vytvoření nového procesu (kliknutí na ikonu)
+\end{itemize}
+Každý proces jednou skončí jedním z následujících způsobů:
+\begin{itemize}
+\item normální ukončení (exit) - dobrovolně
+\item fatální chyba - dobrovolně (proces sám narazí na fatal error)
+\item ukončení chybou - nedobrovolně (ilegální instrukce, dělení nulou, ...)
+\item ukončení jiným procesem - nedobrovolně (kill(), nutná oprávnění)
+\end{itemize}
+Z hlediska provádění mohou být procesy ve třech stavech:
+\begin{itemize}
+\item \textit{běžící (running)} - právě v daném okamžiku používá CPU
+\item \textit{připravený (ready)} - může být spuštěn, ale v daném okamžiku neběží
+\item \textit{blokovaný (blocked)} - nemůže běžet, dokud nenastane nějaká externí událost
+\end{itemize}
+
+\subsubsection*{Thready (vlákna)}
+Procesy mají v tradičních OS svůj adresový prostor a v něm běží jedna posloupnost instrukcí (thread of control). Často se vyskytují situace, kdy by bylo vhodné v jednom adresovém prostoru kvazi paralelně spouštět více posloupností instrukcí, jako by byly samostatné procesy (až na sdílený paměťový prostor). Takový „odlehčený“ proces (lightweight process) se nazývá thread. Multithreading označuje možnost spouštění více threadů v jednom procesu Příklad: a) tři procesy, každý s jedním threadem, b) jeden proces se třemi thready Největší výhoda threadů: jednoduché vytvoření (cca 100x rychlejší než u procesu) a velká výkonnost. Thready spolupracují v rámci procesu, proto jsou některá data dostupná v celém procesu (adresový prostor, globální proměnné, otevřené soubory), některá vlastní pouze v daný thread (čítač instrukcí, registry).
+
+Inter-Process Communication - přenos informací z jednoho procesu do druhého, synchronizace přístupu ke sdíleným datům a synchronizace běhu (race conditions - bez koordinace).
+\begin{itemize}
+\item \textit{kritická sekce}: části programu, kde se přistupuje ke sdíleným datům
+\item \textit{semafory}: Dijkstra (1965): počet vzbuzení (wakeups)
+\item \textit{mutexy}: zjednodušená verze semaforu, když není potřeba čítání (někdy je nazýván binárním semaforem - locked/unlocked)
+\item \textit{deadlock}: K některým zdrojům (resources) v operačním systému musí být umožněno přistupovat exkluzivně. Deadlock nastává, když dva nebo více procesů chce současně exkluzivně přistupovat k několika zařízením a blokují se navzájem.
+\item \textit{plánovač (scheduler)}: součást operačního systému, určující, jaký proces má být spuštěn (Round-Robin scheduling, priority scheduling).
+\item \textit{inverze priorit}
+\end{itemize}
+
+\subsubsection*{Správa paměti (Memory Management)}
+Memory Manager sleduje, jaké části paměti jsou používány a jaké jsou volné. Přiděluje paměť procesům a uvolňuje ji při jejich skončení. Zařizuje „přehazování“ (swapping) paměti na disk, není-li dostatek místa pro všechny procesy. Multiprogramování přináší dva zásadní problémy:
+\begin{itemize}
+\item \textit{Přemisťování paměti (relocation)}: Program může být vždy umístěn do jiné oblasti paměti, proto musí být vyřešeno přeadresování všech skoků (např. modifikací instrukcí).
+\item \textit{Ochrana paměti (protection)}: Je velmi nežádoucí, aby jeden program mohl zapisovat do oblasti paměti vyhrazené jinému programu (úmyslně nebo v důsledku chyby).
+\end{itemize}
+Řešení zavedením speciálních registrů:
+\begin{itemize}
+\item \textit{Base register}: Při přepnutí do procesu je do registru zavedena počáteční adresa paměti procesu a k ní jsou všechny adresy přičítány.
+\item \textit{Limit register}: Je naplněn délkou oblasti paměti. Každý přístup do paměti je hardwarově kontrolován vzhledem k tomuto registru.
+\end{itemize}
+\textit{Swapping} je jednou ze strategií pro řešení nedostatku hlavní paměti. Každý proces je přenesen jako celek do hlavní paměti, na chvíli je spuštěn a pak je vrácen (jako celek) na disk. V paměti pak vznikají "díry", kterých se lze zbavit přesunem procesů co nejvíce k nižším adresám (memory compaction).
+Alternativně se dá pracovat s \textit{virtuální pamětí} pro řešení nedostatku hlavní paměti (v paměti není celý program najednou, ale jen jeho část). Memory management unit (MMU) potom mapuje virtuální adresy na fyzické adresy (velikost stránek 4 až 64 kB).
+
+\subsubsection*{Vstupně-výstupní systém (I/O)}
+Řízení I/O devices je jedním z hlavních úkolů OS. OS posílá k zařízením příkazy, obsluhuje přerušení (interrupts), chyby a měl by poskytovat co „nejjednotnější“ (pokud možno stejné) rozhraní ke všem zařízením (device independence). Obsluha chyb (error handling) by měla být prováděna co nejblíže
+hardwaru. I/O zařízení lze zhruba rozdělit do dvou typů:
+\begin{itemize}
+\item \textit{Bloková zařízení}: Pracují s informací organizovanou do bloků pevné délky (typicky od 512 do 32768 bytů), každý blok má svou adresu. Nejtypičtějšími zařízeními tohoto typu jsou disky (HDD, FDD, CD, DVD).
+\item \textit{Znaková zařízení}: Dodávají nebo přijímají posloupnost (stream) znaků, které nemají blokovou strukturu. Typickými představiteli jsou tiskárny, síťové adaptéry, myši, sériové a USB porty a většina „nediskových“ zařízení.
+\item zařadit nelze např. časovač (clock) či pamět videokarty
+\end{itemize}
+I/O zařízení se typicky skládá z mechanické a elektronické součásti. Elektronická část se nazývá řadič zařízení (device controller). Každý řadič má několik registrů pro komunikaci s CPU. Existují dva základní způsoby komunikace CPU s I/O zařízením:
+\begin{itemize}
+\item \textit{I/O porty}: čtení/zápis pomocí instrukcí
+\item \textit{Mapování do paměti}: Každému řídicímu registru je přiřazena jedinečná adresa v paměti. Není třeba speciálních instrukcí IN a OUT pro přístup k I/O portům, nemusí být proto ve vyšších programovacích jazycích užíván assembler. Také není třeba žádný dodatečný mechanismus ochrany paměti. Ovšem většina CPU podporuje práci s cacheováním paměti. Je-li užito na řídicí registry, může způsobit katastrofu. Pro zabránění tomuto problému musí být HW vybaven selektivním zakazováním cacheování, např. pro jednotlivé stránky.
+\end{itemize}
+
+\textbf{Direct Memory Access (DMA) - přímý přístup do paměti}: Často používaný mechanismus přímého přístupu do paměti, který je nezávislý na CPU. Vyžaduje přítomnost řadiče DMA (má jej většina systémů), který má přístup na sběrnici (nezávisle na CPU). Jeho registry jsou programovány z CPU.
+
+\textbf{Přerušení (interrupts)}: Způsob signalizace ukončení I/O operace. Interrupt generuje řadič interruptů (interrupt controller). I/O řízené interrupty signalizují dokončení každé operace vygenerováním interruptu. Zřejmou nevýhodou I/O řízených interrupty je výskyt interruptu za každý znak (spotřebovává čas CPU) $ \to $ řešením je využití DMA (ale obvykle je pomalejší než CPU).
+
+\textit{Buffering}: Ukládání do bufferů - často nemohou být data ukládána přímo na cílovou adresu, dokud nejsou zpracována.
+
+\textit{Programované I/O}: technika, kde všechnu práci dělá CPU (programově). Např. tisk řetězce na tiskárně.
+
+\subsubsection*{Ovladače zařízení (device drivers)}
+Každý řadič zařízení má nějaké registry pro posílání příkazů a nějaké registry pro čtení stavu. Počet registrů a jednotlivé příkazy se radikálně liší v závislosti na jednotlivých zařízeních. Každé I/O zařízení potřebuje specifický
+kód pro svou obsluhu. Tento kód se nazývá ovladačem zařízení (device driver). Většina OS definuje standardní rozhraní, které musí dodržet všechna bloková zařízení a druhé rozhraní, které musí dodržet všechna znaková zařízení. Ovladače zařízení mají několik funkcí:
+\begin{itemize}
+\item Musí akceptovat abstraktní požadavky na čtení (read) a zápis (write) z nadřazené vrstvy SW nezávislého na zařízení.
+\item Musí inicializovat zařízení (je-li třeba) a mohou též spravovat požadavky na napájení.
+\item Ovladače musí být reentrantní! Běžící ovladač musí očekávat, že bude zavolán podruhé ještě předtím, než bylo ukončeno první volání.
+\end{itemize}
+
+\textbf{Časovače (clocks, timers)}: Nejčastěji je časovač složen ze tří komponent:
+\begin{itemize}
+\item krystalový oscilátor: generuje periodický signál vysoké přesnosti a frekvence (typicky stovky MHz)
+\item čítač: dekrementuje svou hodnotu na každém pulsu. V okamžiku dosažení nuly generuje interrupt CPU (jednorázový/periodický)
+\item uchovávací registr: slouží pro zavedení počáteční hodnoty do čítače
+\end{itemize}
+Hardware pouze generuje tiky s danou periodou. Všechno ostatní řeší SW (virtuální časovače odvozené od 1 fyzického, aktualizace času v daném dni, ...).
+
+\subsubsection*{Souborové systémy}
+Všechny počítačové aplikace potřebují ukládat a načítat informace. Při běhu procesu může být omezené množství informace uloženo v adresním prostoru procesu, ale po ukončení běhu procesu, restartu počítače nebo „spadnutí“ programu je informace z paměti ztracena! Ideou je odstranění závislosti mezi procesy a dlouhodobě ukládanou informací. Musí být možno ukládat velké množství informace, informace musí přežít spadnutí a několik procesů musí mít možnost přistupovat k informaci současně. Obvykle je problém řešen ukládáním informace na disk nebo jiné externí médium do jednotek nazývaných soubory (files) - spravovány OS (file system). Soubory jsou tedy abstrakcí, jak ukládat informaci a později ji číst.
+\begin{itemize}
+\item \textit{file naming}
+\item \textit{struktura}: poslupnost bytů
+\item \textit{typy souborů}: normální/adresáře
+\item \textit{přístup k souborům}: sekvenční/libovolný
+\item \textit{atributy souborů}: příznaky (flags), velikost, časové údaje, ochrana, ...
+\item \textit{operace}: create, delete, open, close, read, write, append, seek, ...
+\end{itemize}
+
 
 \subsection{Operační systémy reálného času: statické a dynamické plánovací algoritmy.}
 
+\newpage
 \subsection{Struktury vzdálených a virtuálních laboratoří.}
 
 \newpage
@@ -556,14 +673,19 @@ Specifikace OPC obsahují vždy dvě sady interfaců:
 
 \subsection{Struktura a parametry senzorů pro automatizaci, statické a dynamické modely a chyby, metody snižování chyb senzorů.}
 
+\newpage . \newpage
 \subsection{A/D a D/A převodníky, obvody pro úpravu signálů, frekvenční filtry.}
 
+\newpage . \newpage
 \subsection{Senzory teploty a tepla, obvody pro měření odporu, kapacity, indukčnosti a frekvence.}
 
+\newpage . \newpage
 \subsection{Senzory polohy a vzdálenosti (odporové, indukční, kapacitní, ultrazvukové, optické).}
 
+\newpage . \newpage
 \subsection{Senzory síly, hmotnosti, deformace, tlaku, rychlosti, zrychlení a vibrací (tenzometrické, piezoelektrické, kapacitní a elektrodynamické).}
 
+\newpage . \newpage
 \subsection{Senzory průtoku, množství, hustoty, viskozity, koncentrace a chemického složení.}
 \subsubsection*{Senzory průtoku}
 Senzory průtoku tekutin (tj. kapalin i plynů) určují množství objemové $ Q_V $ nebo hmotnostní $ Q_m $ tekutiny proteklé zvoleným průřezem za jednotku času.
@@ -576,6 +698,8 @@ Senzory průtoku tekutin (tj. kapalin i plynů) určují množství objemové $ 
 \item \textit{Indukční senzory}: 
 \end{itemize}
 
+\newpage
 \subsection{Elektrické akční členy a jejich budiče (stejnosměrné, střídavé, krokové motory, PWM zesilovače, frekvenční měniče).}
 
+\newpage . \newpage
 \subsection{Hydraulické a pneumatické akční členy (pracovní a řídicí mechanizmy a zdroje tlakového média).}

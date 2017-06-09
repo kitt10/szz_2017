@@ -7,7 +7,7 @@
 \begin{tabular}{p{4cm} p{12cm}}
 \textit{vyučující:}             & Prof. Ing. Josef Psutka, CSc. \\
 \textit{ročník/semestr studia:} & 3.ročník/LS \\
-\textit{datum zkoušky:}         & X. 4. 2014 \\
+\textit{datum zkoušky:}         & $\quad $. 4. 2014 \\
 \textit{hodnocení:}             & 1 \\
 \textit{cíl předmětu (STAG):}   & \\
 \multicolumn{2}{p{16cm}}{Cílem předmětu je seznámit studenty se základními metodami klasifikace předmětů a jevů, které jsou reprezentovány svými obrazy (vektory příznaků). Výuka bude zaměřena na klasifikátory, které jsou trénovány s podporou učitele (supervised) anebo bez učitele (unsupervised).}
@@ -426,9 +426,9 @@ Postup:
 \end{enumerate}
 
 Funkce metody je ovlivněna zejména specifickým počtem shluků a volbou počátečních středů shluků. Metoda sice pro vhodná data poskytuje přijatelné výsledky, ale dosažení globálního minima ukazatele jakosti  procesu shlukování není zaručeno (konvergence nejčastěji končí v nějakém lokálním minimu).
-
+\vspace{1cm}
 \item \textbf{Iterativní optimalizace}
-V k-tém iteračním kroku změníme zařazení jednoho obrazu.
+V k-tém iteračním kroku změníme zařazení jednoho obrazu. 
 
 Postup:
 \begin{enumerate}[label=(\roman*)]
@@ -449,7 +449,6 @@ Urči $ j^* = \underset{j}{\mathrm{argmin}} \, A_j $. Jestliže $ A_i > A_{j^*} 
 
 Pokud bychom chtěli dosáhnout opravdu globálního minima $ J $, mohli bychom vyzkoušet teoreticky všechny možnosti rozkladu, ale existuje obecně $ \frac{R^N}{R!} $ možností (pro $ R = 3 $ a $ N = 100 $ je to $ \approx 10^{47} $ možností).
 \end{enumerate}
-
 \subsubsection*{Hierarchické shlukovací metody}
 Většinou aplikujeme, pokud není známa informace o počtu tříd.
 \begin{enumerate}[label=(\Alph*)]
@@ -493,8 +492,6 @@ S i-tým členem této posloupnosti potom spojíme vzdálenost $ d_i = d(x_{(i),
 
 \item \textbf{Metoda MAXIMIN (maximum-minimum)}
 Jedná se o jednoduchý heuristický algoritmus, který je vhodný pro odhad počtu shluků v obrazovém prostoru. Je dána množina obrazů $ T = \{x_k\}_{k=1}^N $ a volitelná konstanta $ q > 0 $.
-
-Postup:
 \begin{enumerate}[label=(\roman*)]
 \item Z trénovací množiny vybereme "startovací" obraz a ztotožníme ho se středem prvního shluku, tj. $ \mu_1 \coloneqq x_{(1)} $.
 \item Dále zvolíme (ve smyslu zvolené metriky) nejvzdálenější obraz k $ \mu_1 $ a ztotožníme ho se středem druhého shluku, tj. $ \mu_2 \coloneqq x_{(2)} $.
@@ -503,15 +500,13 @@ Postup:
 \item Jestliže je ta maximální vzdálenost větší než $ q \cdot d(\mu_1, \mu_2) $, zavedeme nový shluk se středem $ \mu_3 \coloneqq x_{(3)} $, jinak shlukovací proces končí.
 \item V dalším kroku algoritmu postupujeme stejně jako v kroku (iii), ale pro tři středy shluků. To znamená, že z minimálních vzdáleností obrazů trénovací množiny ($ T \setminus \{x_{(1)}, x_{(2)}, x_{(3)} \} $) ke středům shluků $ \mu_1 $, $ \mu_2 $ a $ \mu_3 $ vybereme maximální a opět posoudíme, je-li větší než q-násobek např. průměru vzdáleností mezi již vytvořenými středy shluků. Postup opakujeme pro vzrůstající počet (středů) shluků, dokud se nová maximální vzdálenost nedostane do sporu s podmínkou vytvoření nového středu shluku.
 \end{enumerate}
-Po nalezení počtu shluků a jejich středů lze provést rozdělení obrazů trénovací množiny do jednotlivých shluků podle kritéria minimální vzdálenosti, přičemž za vzorové obrazy považujeme středy shluků.
+Po nalezení počtu shluků a jejich středů lze provést rozdělení obrazů trénovací množiny do jednotlivých shluků podle kritéria minimální vzdálenosti.
 
 \item \textbf{Metody binárního dělení}
 Předpokládejme, že jsme v procesu shlukování získali $ R $ shluků. V dalším postupu obvykle provádíme zařazování neznámých obrazů do nejvhodnějších shluků podle pravidla nejbližšího souseda $ \to $ musíme nalézt takový shluk, jehož centroid má k neznámému obrazu $ x_i $ nejmenší vzdálenost. Při vyčerpávajícím porovnání se všemi centroidy narážíme při velkém $ R $ na velké množství operací. Metoda binárního dělení umožňuje redukci množství operací.
 \begin{itemize}
 \item \textbf{Rovnoměrné binární dělení}
-Požadovaný počet výsledných shluků $ R $ musí být mocninou $ 2 $. V prvním kroku dělení je prvotní shluk obrazů trénovací množiny rozdělen na dva subshluky a každý z těchto subshluků je poté v dalším kroku rozdělen na další dva subshluky, atd. Proces končí, až je dosažen požadovaný konečný počet shluků $ R $. Platí $ R = 2^B $, kde $ B $ je počet kroků dělení. Proces lze znázornit prohledávacím stromem.
-
-Při rovnoměrném dělení se mechanicky rozdělují všechny koncové shluky (reprezentované v prohledávacím stromu aktuálními koncovými uzly). Při tomto procesu se může stát, že v některém subshluku zůstane několik nebo dokonce jen jediný obraz $ \to $ další dělení takových shluků výrazně nepřispívá k minimalizaci celkového zkreslení.
+Požadovaný počet výsledných shluků $ R $ musí být mocninou $ 2 $. V prvním kroku dělení je prvotní shluk obrazů trénovací množiny rozdělen na dva subshluky a každý z těchto subshluků je poté v dalším kroku rozdělen na další dva subshluky, atd. Proces končí, až je dosažen požadovaný konečný počet shluků $ R $. Platí $ R = 2^B $, kde $ B $ je počet kroků dělení. Proces lze znázornit prohledávacím stromem. Při rovnoměrném dělení se mechanicky rozdělují všechny koncové shluky (reprezentované v prohledávacím stromu aktuálními koncovými uzly). Při tomto procesu se může stát, že v některém subshluku zůstane několik nebo dokonce jen jediný obraz $ \to $ další dělení takových shluků výrazně nepřispívá k minimalizaci celkového zkreslení.
 
 \item \textbf{Nerovnoměrné binární dělení}
 Zde výsledný počet shluků $ R $ nemusí být mocninou $ 2 $. Abychom zajistili nižší celkové zkreslení při daném počtu shluků, je vhodné nedělit prohledávací strom rovnoměrně, ale v každém kroku subdělícího procesu vyčíslit zkreslení všech koncových shluků a rozdělit ten shluk, který přispívá do celkového zkreslení největší měrou. Po každém kroku algoritmu, který měl za následek rozdělení nějakého subshluku zjistíme, zda již nebylo dosaženo stanoveného počtu shluků nebo zda velkost celkového zkreslení nepoklesla pod stanovenou mez. Pokud některá z těchto podmínek byla splněna, proces dělení končí.
