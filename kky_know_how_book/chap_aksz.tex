@@ -481,7 +481,57 @@ Třída je datová struktura, která může obsahovat: 1) datové členy (konsta
 \end{itemize}
 
 \subsection{Softwarové komponenty: DLL, RPC, COM; interface; OPC.}
+\subsubsection*{Dynamicky linkované knihovny (.DLL)}
+Moduly obsahující funkce a data. Jsou zaváděny do paměti svými volajícími moduly (.exe nebo .dll) a jsou mapovány do paměti volajícího procesu (programu). Mohou definovat dva druhy funkcí:
+\begin{itemize}
+\item \textit{exportované funkce} - mohou být volány jinými moduly
+\item \textit{interní funkce} - mohou být volány jen uvnitř DLL, kde jsou definovány
+\end{itemize}
+DLL umožnily rozdělit aplikace do více modulů tak, aby kód mohl být snadněji sdílen a aktualizován. Existují dva způsoby, jak volat funkci z DLL:
+\begin{itemize}
+\item \textit{Load-time dynamic linking} – modul přímo explicitně volá funkce exportované z DLL. To vyžaduje linkování daného modulu s tzv. import library z DLL, která obsahuje informace o tom, kde leží dané exportované funkce.
+\item \textit{Run-time dynamic linking} – modul používá funkci LoadLibrary() nebo LoadLibraryEx() k zavedení DLL knihovny za běhu. Pak volá funkci GetProcAddress() pro získání adres exportovaných funkcí z DLL. Tento způsob nepotřebuje import library.
+\end{itemize}
 
+\subsubsection*{Remote Procedure Call (RPC)}
+Volání funkcí na vzdáleném počítači v architektuře klient-server. V obvyklých aplikacích architektury klient-server se programátor musí naučit detaily komunikace pro dané sítě včetně způsobu obsluhy chyb, převádět data do různých interních formátů a komunikovat s různými rozhraními.Při použití RPC se nemusí psát žádný kód obsluhující síťovou komunikaci v daném protokolu.
+
+\textbf{Jak RPC funguje?} RPC „se tváří“, jako by klient přímo volal proceduru v programu serveru, ve skutečnosti však volá stejnojmennou proceduru z „Client Stub“:
+\begin{itemize}
+\item získává parametry z adresového prostoru klienta
+\item převádí parametry do standardní reprezentace NDR (network data representation)
+\item volá funkce pro RPC z Client Run-Time Library
+\end{itemize}
+Server pro volání vzdálené procedury dělá:
+\begin{itemize}
+\item „Server Run-Time Library“ přijme požadavek a zavolá proceduru ze „Server Stub“
+\item Tato procedura vyjme parametry z bufferu a převede je z NDR do potřebného tvaru
+\item „Server Stub“ zavolá proceduru na serveru
+\end{itemize}
+Po provedení procedury se výsledná data vrací klientovi obdobným způsobem. RPC je jednou částí DCE (Distributed Computing Environment) - prostředí pro distribuované počítání definované sdružením Open Software Foundation (OSF).
+
+\subsubsection*{Component Object Model (COM)}
+\textit{Motivace pro používání komponent}: Monolitické aplikace musely být aktualizovány jako celek, komponentové aplikace mohou se aktualizovat (upgrade) po částech. Komponenta je jakási miniaplikace. Celá aplikace se skládá z pospojovaných komponent („LEGO“). Vylepšování aplikace je často záležitostí nahrazování starých komponent novými.
+
+\textit{Požadavky na komponenty}: dynamické linkování - možnost výměny komponenty za běhu; zapouzdření (encapsulation) - Aby bylo možno nahrazovat komponenty bez nutnosti překladu musí být dodrženo rozhraní (interface) mezi komponentou a jejím klientem (programem, který ji využívá). Jsou dodávány v binární formě a nezveřejňují jazyk, v kterém byly napsány.
+
+\textit{Co je COM?} COM je nástroj, který umožnil „rozbít“ monolitické aplikace na komponenty. COM je specifikace (standard) - říká, jak vytvářet (psát) komponenty, které mohou být dynamicky zaměňovány. COM má své API, tzn COM knihovnu, které poskytuje služby pro práci s komponentami. COM používá DLL, aby komponenty měly schopnost dynamického linkování.
+
+\textit{Historie}: Původní cíl byla podpora koncepce známé jako „Object Linking and Embedding“ (OLE) - např. vložení a editace tabulky Excelu do Wordu.
+
+\textbf{COM Interface (rozhraní}: Interface v COMu je množinou funkcí, které implementuje komponenta a klient je volá. Přesněji, interface je paměťová struktura obsahující pole ukazatelů na funkce. Interface lze reprezentovat obdélníkem s naznačeným vysunutým „jackem“.
+
+\subsubsection*{OLE for Process Control (OPC)}
+OPC Foundation - neziskové sdružení, které zavedlo několik standardizovaných protokolů na bázi OLE/COM. Snaha o zlepšení interoperability mezi aplikacemi v oblasti automatizace a řízení, řídicími systémy a kancelářskými aplikacemi v oblasti řízení procesů. Definují standardní objekty, metody a vlastnosti pro servery poskytující informace v reálném čase, např. distribuované řídicí systémy, programovatelné automaty (PLC), inteligentní snímače, apod. Informace se v reálném čase komunikují do zařízení podporujících OLE/COM (servery, aplikace, apod.).
+
+Komunikace prostřednictvím OPC má architekturu Klient-Server. Server poskytuje data, komunikuje s fyzickými zařízeními a klient komunikuje se serverem, který plní jeho požadavky. OPC server poskytuje přístup (čtení, zápis, komunikaci) k množině datových zdrojů (sources). OPC klient se připojuje k OPC serveru a komunikuje s ním prostřednictvím interfaců.
+
+Specifikace OPC obsahují vždy dvě sady interfaců:
+\begin{itemize}
+\item \textit{Custom interfacy} - základní rozhraní implementovaná OPC servery, poskytují maximální výkon
+\item \textit{Automation interfacy} - nepovinná rozhraní, jsou vhodné pro skriptovací jazyky (Visual Basic, Excel, ...)
+\end{itemize}
+\textit{Kde je OPC vhodné?} OPC je primárně navrženo pro přístup k datům ze síťového serveru. OPC interfacy však mohou být použity na mnoha místech v aplikaci (SCADA). Architektura a návrh OPC dovoluje klientské aplikaci přistupovat k datům z mnoha OPC serverů, mnoha dodavatelů, běžících na různých počítačích v síti prostřednictvím jediného objektu serveru.
 
 \subsection{Operační systémy: procesy a thready, synchronizace, deadlock, inverze priorit; správa paměti; vstupně-výstupní systém, programované vstupy/výstupy, přerušení, DMA, ovladače zařízení; souborové systémy.}
 
