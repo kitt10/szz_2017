@@ -300,7 +300,36 @@ prokládání křivek se používají frekvenční odezvové funkce, ale často 
 \end{enumerate}
 
 \subsection{Generování náhodných čísel, metoda Monte Carlo a odhad přesnosti simulačních výsledků.}
+\subsubsection*{Generování náhodných čísel}
+Náhodné číslo je realizace náhodné proměnné. Náhodné veličiny používáme pro modelování dějů, které jsou příliš komplexní, abychom je mohli popsat (vývoj počasí, hod kostkou).
+\begin{itemize}
+\item \textit{Fyzikální/hardwarové metody}: výsledky fyzikálního pokusu, hod mincí/kostkou, ruleta, radioaktivní rozpad, počet fotonů dopadající na plochu, ...
+\item \textit{Výpočetní/softwarové metody - pseudonáhodná čísla}: deterministický markovský systém, stav určuje celou posloupnost náhodných čísel.
 
+\textbf{Požadavky na generátor pseudonáhodných čísel}:
+\begin{itemize}
+\item stabilita a nezávislost na vnějších podmínkách (hardwarové)
+\item nízké nároky na implementaci, výpočet a paměť (softwarové)
+\item realizace požadovaného rozdělení af využití celého definičního oboru rozdělení
+\item není autokorelace, dlouhá perioda
+\end{itemize}
+\end{itemize}
+Lineární kongruentní generátor: $ x_{i+1} = (ax_i + c) mod m $. Často se také transformuje z rovnoměrného rozdělení (generujeme $ F_y(y) $, nalezneme $ y $). Další používaná: Gaussovo, exponenciální, fázová rozdělení (použití, pokud je aproximace exp. rozdělením příliš hrubá, definována jako doba absorpce markovského řetězce).
+
+\subsubsection*{Metoda Monte Carlo (40.léta 20.století; S.M.Ulman and J. von Neumann)}
+Numerická výpočetní metoda založena na využití náhodných veličin a teorie pravděpodobnosti. \textit{Použití}: řešení úloh, které nelze exaktně vyřešit, ověření analytických výpočtů. \textit{Výhody}: jednoduché nasazení metody, obecnost. \textit{Nevýhody}: výpočetní náročnost, poskytuje pouze bodové odhady a odhady chyb výpočtu. Minimální velikost statistického souboru je okolo 30. Metodu lze rozdělit do tří kroků:
+\begin{enumerate}
+\item Rozbor problému a návrh simulačního modelu
+\item Vygenerování dostatečného množství realizací
+\item Statistické vyhodnocení – střední hodnoty, kvantily, histogramy...
+\end{enumerate}
+\begin{itemize}
+\item \textit{Neanalogový model}: úlohy, ve kterých se nevytváří model reálného děje (výpočet $ \pi $, integrálů, řešení rovnic)
+\item \textit{Analogový model}: založeno na simulaci procesu na počítači (výpočet rozdělení veličin v el. sítích, výpočet kvantilů velikosti napětí, plán údržby tepelné elektrárny, ...)
+\end{itemize}
+
+\subsubsection*{Analýza chyb modelů a simulací}
+Centrální limitní věta: rozdělení výběrového průměru se blíží k normálnímu rozdělení $ \bar{x} = \mathscr{N}(\mu, \frac{\sigma^2}{n}) $. Pro zlepšení odhadu 10x je nutné počítat 100x více iterací.
 \newpage
 \section{Programové prostředky řízení [PP]}
 
@@ -452,6 +481,7 @@ Třída je datová struktura, která může obsahovat: 1) datové členy (konsta
 \end{itemize}
 
 \subsection{Softwarové komponenty: DLL, RPC, COM; interface; OPC.}
+
 
 \subsection{Operační systémy: procesy a thready, synchronizace, deadlock, inverze priorit; správa paměti; vstupně-výstupní systém, programované vstupy/výstupy, přerušení, DMA, ovladače zařízení; souborové systémy.}
 
